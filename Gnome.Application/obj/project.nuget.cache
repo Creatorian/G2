@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "SDQZlA5EBicNnH34Tzln++QjPCFRtKr0Ef8xltHkiob/+ul+pGgm7mrgioyY5kIxJKEayiUiBONjG5sjOxf7tw==",
+  "success": true,
+  "projectFilePath": "C:\\GIT\\Gnome\\Gnome.Application\\Gnome.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\PC\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.6\\microsoft.visualstudio.azure.containers.tools.targets.1.19.6.nupkg.sha512"
+  ],
+  "logs": []
+}
