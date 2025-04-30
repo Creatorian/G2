@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gnome.Api", "Gnome.Api\Gnome.Api.csproj", "{94232393-8E77-46E1-9652-C05A8605702E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gnome.Api", "Gnome.Api\Gnome.Api.csproj", "{94232393-8E77-46E1-9652-C05A8605702E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gnome.Application", "Gnome.Application\Gnome.Application.csproj", "{28CC3C27-1A8F-474A-9047-59373794022F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gnome.Application", "Gnome.Application\Gnome.Application.csproj", "{28CC3C27-1A8F-474A-9047-59373794022F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gnome.Domain", "Gnome.Domain\Gnome.Domain.csproj", "{8CFDD84F-6148-4023-B5C6-76C0EDA04D93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gnome.Domain", "Gnome.Domain\Gnome.Domain.csproj", "{8CFDD84F-6148-4023-B5C6-76C0EDA04D93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gnome.Infastructure", "Gnome.Infastructure\Gnome.Infastructure.csproj", "{64492B89-B026-4356-B90E-2A90A7150451}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gnome.Infrastructure", "Gnome.Infrastructure\Gnome.Infrastructure.csproj", "{F6BD5077-C1FE-4EDB-8A92-EBBEA556D7D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{8CFDD84F-6148-4023-B5C6-76C0EDA04D93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CFDD84F-6148-4023-B5C6-76C0EDA04D93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CFDD84F-6148-4023-B5C6-76C0EDA04D93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64492B89-B026-4356-B90E-2A90A7150451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64492B89-B026-4356-B90E-2A90A7150451}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64492B89-B026-4356-B90E-2A90A7150451}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64492B89-B026-4356-B90E-2A90A7150451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6BD5077-C1FE-4EDB-8A92-EBBEA556D7D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6BD5077-C1FE-4EDB-8A92-EBBEA556D7D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6BD5077-C1FE-4EDB-8A92-EBBEA556D7D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6BD5077-C1FE-4EDB-8A92-EBBEA556D7D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

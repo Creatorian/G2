@@ -1,14 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "lLTJAT7ApBTH1gnFGzk3OoefRDVMo/zsFG2a5WIVPlc1dRxVl1YS0IF9vVGuljMkAfC1ZEre5Ldk8GyHu6VNsw==",
+  "dgSpecHash": "Il4ABAqFhAqbg6W9WDh16ggy7rOXwtxNAKlCZuxl20UJZ5lwW5iEOw3CWA0uY6vkBXlaYYHO9TY8Ho2Rwu8igA==",
   "success": true,
-  "projectFilePath": "C:\\GIT\\Gnome\\Gnome.Domain\\Gnome.Domain.csproj",
+  "projectFilePath": "C:\\GIT\\G2\\Gnome.Domain\\Gnome.Domain.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\PC\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
-    "C:\\Users\\PC\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
-    "C:\\Users\\PC\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.6\\microsoft.visualstudio.azure.containers.tools.targets.1.19.6.nupkg.sha512",
-    "C:\\Users\\PC\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
-    "C:\\Users\\PC\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512"
+    "C:\\Users\\PC\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.6\\microsoft.visualstudio.azure.containers.tools.targets.1.19.6.nupkg.sha512"
   ],
   "logs": []
 }

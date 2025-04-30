@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Gnome.Application": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

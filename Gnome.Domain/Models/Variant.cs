@@ -22,5 +22,7 @@ namespace Gnome.Domain.Models
         public int Stock { get; set; }
         public bool IsPrimary { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
     }
 }

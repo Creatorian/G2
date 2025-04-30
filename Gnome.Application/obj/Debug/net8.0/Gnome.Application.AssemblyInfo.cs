@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gnome.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b18a228081939c60dd95d68afa208b4322a841e7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Gnome.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Gnome.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

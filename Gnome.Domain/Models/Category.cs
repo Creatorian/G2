@@ -18,6 +18,6 @@ namespace Gnome.Domain.Models
         [Required]
         public string Slug { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
-        public List<Product>? Products { get; set; }
+        public List<Product> Products { get; set; } = new List<Product>();
     }
 }

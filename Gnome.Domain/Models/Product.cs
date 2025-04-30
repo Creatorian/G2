@@ -18,7 +18,11 @@ namespace Gnome.Domain.Models
         [Required]
         public string Slug { get; set; }
         public string Description { get; set; }
-        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
-        public List<Variant>? Variants { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
+
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+
+        public List<Variant> Variants { get; set; } = new List<Variant>();
     }
 }
