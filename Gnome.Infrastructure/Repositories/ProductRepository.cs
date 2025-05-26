@@ -1,11 +1,14 @@
 ﻿using Gnome.Domain.Interfaces;
 using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,5 +88,94 @@ namespace Gnome.Infrastructure.Repositories
             return await products.CountAsync();
         }
 
+        public async Task<int> AddProductAsync(Product product)
+        {
+            try
+            {
+                // Prepare DataTable for VariantTableType
+                var variantsTable = new DataTable();
+                variantsTable.Columns.Add("Name", typeof(string));
+                variantsTable.Columns.Add("Slug", typeof(string));
+                variantsTable.Columns.Add("Image", typeof(string));
+                variantsTable.Columns.Add("Price", typeof(decimal));
+                variantsTable.Columns.Add("Stock", typeof(int));
+                variantsTable.Columns.Add("IsPrimary", typeof(bool));
+
+                if (product.Variants != null)
+                {
+                    foreach (var variant in product.Variants)
+                    {
+                        variantsTable.Rows.Add(
+                            variant.Name,
+                            variant.Slug,
+                            variant.Image,
+                            variant.Price,
+                            variant.Stock,
+                            variant.IsPrimary
+                        );
+                    }
+                }
+
+                // Prepare parameters
+                var productNameParam = new SqlParameter("@ProductName", SqlDbType.NVarChar) { Value = product.Name };
+                var productSlugParam = new SqlParameter("@ProductSlug", SqlDbType.NVarChar) { Value = product.Slug };
+                var descriptionParam = new SqlParameter("@Description", SqlDbType.NVarChar) { Value = (object?)product.Description ?? DBNull.Value };
+                var categoryIdParam = new SqlParameter("@CategoryId", SqlDbType.Int) { Value = product.CategoryId };
+                var variantsParam = new SqlParameter("@Variants", SqlDbType.Structured)
+                {
+                    TypeName = "dbo.VariantTableType",
+                    Value = variantsTable
+                };
+
+                var sql = @"
+                    DECLARE @NewProductId INT;
+                    EXEC [dbo].[CreateProduct]
+                        @ProductName = @ProductName,
+                        @ProductSlug = @ProductSlug,
+                        @Description = @Description,
+                        @CategoryId = @CategoryId,
+                        @Variants = @Variants;
+                    SELECT @NewProductId = SCOPE_IDENTITY();
+                    SELECT @NewProductId AS Id;
+                ";
+
+                var newProductId = 0;
+                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = sql;
+                    command.CommandType = CommandType.Text;
+                    command.Parameters.Add(productNameParam);
+                    command.Parameters.Add(productSlugParam);
+                    command.Parameters.Add(descriptionParam);
+                    command.Parameters.Add(categoryIdParam);
+                    command.Parameters.Add(variantsParam);
+
+                    if (command.Connection.State != ConnectionState.Open)
+                        await command.Connection.OpenAsync();
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            newProductId = reader.GetInt32(0);
+                        }
+                    }
+                }
+
+                return newProductId;
+            }
+            catch (SqlException ex)
+            {
+                // Log the SQL error (replace with your logger if available)
+                // _logger?.LogError(ex, "SQL error occurred while adding product.");
+                throw new InvalidOperationException("A database error occurred while adding the product.", ex);
+            }
+            catch (Exception ex)
+            {
+                // Log the general error (replace with your logger if available)
+                // _logger?.LogError(ex, "An error occurred while adding product.");
+                throw new InvalidOperationException("An unexpected error occurred while adding the product.", ex);
+            }
+        }
     }
 }
