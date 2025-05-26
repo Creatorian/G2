@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Gnome.Application.G2.Query.AddProduct;
 using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using System;
@@ -14,6 +15,10 @@ namespace Gnome.Application.Mappings
         public ProductProfile() 
         {
             CreateMap<Product, ProductListResponse>();
+
+
+            CreateMap<AddProductCommand, Product>();
+            CreateMap<AddProductCommand.AddVariantDto, Variant>();
         }
     }
 }
