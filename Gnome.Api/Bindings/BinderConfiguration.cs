@@ -13,6 +13,8 @@ namespace Gnome.Api.Bindings
             LinqModelBuilderConfiguration configuration = new();
 
             configuration.ApplyConfiguration(new ListProductsCommandBinding());
+            configuration.ApplyConfiguration(new ListCategoriesCommandBinding());
+            configuration.ApplyConfiguration(new ListVariantsCommandBinding());
 
             return configuration;
         }

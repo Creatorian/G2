@@ -59,6 +59,7 @@ namespace Gnome.Infrastructure.Repositories
             return await products.Select(productsEntity => new ProductListResponse
             {
                 Id = productsEntity.Id,
+                Name = productsEntity.Name,
                 Slug = productsEntity.Slug,
                 Description = productsEntity.Description,
                 CreatedDateTime = productsEntity.CreatedDateTime,

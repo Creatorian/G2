@@ -17,7 +17,7 @@ namespace Gnome.Domain.Models
         public string Name { get; set; }
         [Required]
         public string Slug { get; set; }
-        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+        public DateTime? CreatedDateTime { get; set; } = DateTime.Now;
         public List<Product> Products { get; set; } = new List<Product>();
     }
 }

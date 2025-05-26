@@ -47,6 +47,8 @@ builder.Services.AddControllers();
 // Register IProductRepository (example using scoped lifetime)
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IVariantRepository, VariantRepository>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddSingleton(new BinderConfiguration().CreateConfiguration());
 

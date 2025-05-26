@@ -18,7 +18,7 @@ namespace Gnome.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("product/list", Name = "GetProductsList_Action")]
+        [HttpGet("list", Name = "GetProductsList_Action")]
         public async Task<IActionResult> ListProducts([ModelBinder(typeof(LinqModelBinder))] ListProductsQueryCommand command)
         {
             var products = await _mediator.Send(command);

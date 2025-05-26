@@ -1,5 +1,5 @@
 ﻿using Gnome.Api.Bindings.Common;
-using Gnome.Application.G2.Query.ListProducts;
+using Gnome.Application.G2.Query.ListCategories;
 using Gnome.Application.Shared;
 using Gnome.Domain.Common;
 using Gnome.Domain.Responses;
@@ -9,7 +9,7 @@ namespace Gnome.Api.Bindings
     /// <summary>
     /// 
     /// </summary>
-    public class ListProductsCommandBinding : PagedQueryBinding<ListProductsQueryCommand, SortedPagedList<ProductListResponse>>, ILinqModelBinderConfiguration<ListProductsQueryCommand>
+    public class ListCategoriesCommandBinding : PagedQueryBinding<ListCategoriesQueryCommand, SortedPagedList<CategoryListResponse>>, ILinqModelBinderConfiguration<ListCategoriesQueryCommand>
     {
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace Gnome.Api.Bindings
         /// </summary>
         /// <param name="builder"></param>
         /// 
-        public override void Configure(ModelBinderBuilder<ListProductsQueryCommand> builder)
+        public override void Configure(ModelBinderBuilder<ListCategoriesQueryCommand> builder)
         {
             base.Configure(builder);
 
