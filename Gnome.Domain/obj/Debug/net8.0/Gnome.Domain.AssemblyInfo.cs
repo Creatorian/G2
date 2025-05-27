@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gnome.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ee62e0402d9c9f34896680c88ba066cd0008fcf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+51980953c69e1aa7042329c2d4c5eb893963ca55")]
 [assembly: System.Reflection.AssemblyProductAttribute("Gnome.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Gnome.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

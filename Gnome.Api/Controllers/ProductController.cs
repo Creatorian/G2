@@ -1,5 +1,6 @@
 ﻿using Gnome.Application.G2.Query.AddProduct;
 using Gnome.Application.G2.Query.ListProducts;
+using Gnome.Application.G2.Query.UpdateProduct;
 using Gnome.Application.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,13 @@ namespace Gnome.Api.Controllers
         {
             var newProductId = await _mediator.Send(command);
             return Ok(new { Id = newProductId });
+        }
+
+        [HttpPut("update", Name = "UpdateProduct_Action")]
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
+        {
+            var updatedProductId = await _mediator.Send(command);
+            return Ok(new { Id = updatedProductId });
         }
     }
 }
