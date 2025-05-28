@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Gnome.Application.G2.Query.AddProduct;
+using Gnome.Application.G2.Query.UpdateProduct;
 using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using System;
@@ -19,6 +20,9 @@ namespace Gnome.Application.Mappings
 
             CreateMap<AddProductCommand, Product>();
             CreateMap<AddProductCommand.AddVariantDto, Variant>();
+            CreateMap<UpdateProductCommand, Product>();
+            CreateMap<UpdateProductCommand.UpdateVariantDto, Variant>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.VariantId ?? 0));
         }
     }
 }
