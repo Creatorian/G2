@@ -164,78 +164,55 @@ namespace Gnome.Infrastructure.Repositories
         {
             try
             {
-                var variantsTable = new DataTable();
-                variantsTable.Columns.Add("VariantId", typeof(int));
-                variantsTable.Columns.Add("Name", typeof(string));
-                variantsTable.Columns.Add("Slug", typeof(string));
-                variantsTable.Columns.Add("Image", typeof(string));
-                variantsTable.Columns.Add("Price", typeof(decimal));
-                variantsTable.Columns.Add("Stock", typeof(int));
-                variantsTable.Columns.Add("IsPrimary", typeof(bool));
+                var existingProduct = await _context.Products.FindAsync(product.Id);
+                if (existingProduct == null)
+                    throw new InvalidOperationException("Product not found.");
 
-                if (product.Variants != null)
-                {
-                    foreach (var variant in product.Variants)
-                    {
-                        variantsTable.Rows.Add(
-                            variant.Id == 0 ? (object)DBNull.Value : variant.Id,
-                            variant.Name,
-                            variant.Slug,
-                            variant.Image,
-                            variant.Price,
-                            variant.Stock,
-                            variant.IsPrimary
-                        );
-                    }
-                }
+                existingProduct.Name = product.Name;
+                existingProduct.Slug = product.Slug;
+                existingProduct.Description = product.Description;
+                existingProduct.CategoryId = product.CategoryId;
 
-                var productIdParam = new SqlParameter("@ProductId", SqlDbType.Int) { Value = product.Id };
-                var productNameParam = new SqlParameter("@ProductName", SqlDbType.NVarChar) { Value = product.Name };
-                var productSlugParam = new SqlParameter("@ProductSlug", SqlDbType.NVarChar) { Value = product.Slug };
-                var descriptionParam = new SqlParameter("@Description", SqlDbType.NVarChar) { Value = (object?)product.Description ?? DBNull.Value };
-                var categoryIdParam = new SqlParameter("@CategoryId", SqlDbType.Int) { Value = product.CategoryId };
-                var variantsParam = new SqlParameter("@Variants", SqlDbType.Structured)
-                {
-                    TypeName = "dbo.VariantUpdateTableType",
-                    Value = variantsTable
-                };
-
-                var sql = @"
-                EXEC [dbo].[UpdateProduct]
-                @ProductId = @ProductId,
-                @ProductName = @ProductName,
-                @ProductSlug = @ProductSlug,
-                @Description = @Description,
-                @CategoryId = @CategoryId,
-                @Variants = @Variants;
-        ";
-
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = sql;
-                    command.CommandType = CommandType.Text;
-                    command.Parameters.Add(productIdParam);
-                    command.Parameters.Add(productNameParam);
-                    command.Parameters.Add(productSlugParam);
-                    command.Parameters.Add(descriptionParam);
-                    command.Parameters.Add(categoryIdParam);
-                    command.Parameters.Add(variantsParam);
-
-                    if (command.Connection.State != ConnectionState.Open)
-                        await command.Connection.OpenAsync();
-
-                    await command.ExecuteNonQueryAsync();
-                }
-
+                await _context.SaveChangesAsync();
                 return product.Id;
-            }
-            catch (SqlException ex)
-            {
-                throw new InvalidOperationException("A database error occurred while updating the product.", ex);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An unexpected error occurred while updating the product.", ex);
+                throw new InvalidOperationException("An error occurred while updating the product.", ex);
+            }
+        }
+
+        public async Task<Product> GetProductByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Variants)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Product> GetProductBySlugAsync(string slug)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Variants)
+                .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                    return false;
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while deleting the product.", ex);
             }
         }
     }

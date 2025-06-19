@@ -101,5 +101,69 @@ namespace Gnome.Infrastructure.Repositories
                 throw new InvalidOperationException("An error occurred while adding the variant.", ex);
             }
         }
+
+        public async Task<Variant> GetVariantByIdAsync(int id)
+        {
+            return await _context.Variants
+                .Include(v => v.Product)
+                .FirstOrDefaultAsync(v => v.Id == id);
+        }
+
+        public async Task<Variant> GetVariantBySlugAsync(string slug)
+        {
+            return await _context.Variants
+                .Include(v => v.Product)
+                .FirstOrDefaultAsync(v => v.Slug == slug);
+        }
+
+        public async Task<List<Variant>> GetVariantsByProductIdAsync(int productId)
+        {
+            return await _context.Variants
+                .Where(v => v.ProductId == productId)
+                .ToListAsync();
+        }
+
+        public async Task<int> UpdateVariantAsync(Variant variant)
+        {
+            try
+            {
+                var existingVariant = await _context.Variants.FindAsync(variant.Id);
+                if (existingVariant == null)
+                    throw new InvalidOperationException("Variant not found.");
+
+                existingVariant.Name = variant.Name;
+                existingVariant.Slug = variant.Slug;
+                existingVariant.Image = variant.Image;
+                existingVariant.Price = variant.Price;
+                existingVariant.Stock = variant.Stock;
+                existingVariant.IsPrimary = variant.IsPrimary;
+                existingVariant.ProductId = variant.ProductId;
+
+                await _context.SaveChangesAsync();
+                return variant.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while updating the variant.", ex);
+            }
+        }
+
+        public async Task<bool> DeleteVariantAsync(int id)
+        {
+            try
+            {
+                var variant = await _context.Variants.FindAsync(id);
+                if (variant == null)
+                    return false;
+
+                _context.Variants.Remove(variant);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while deleting the variant.", ex);
+            }
+        }
     }
 }

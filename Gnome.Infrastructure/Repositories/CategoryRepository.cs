@@ -1,4 +1,5 @@
 ﻿using Gnome.Domain.Interfaces;
+using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -78,6 +79,72 @@ namespace Gnome.Infrastructure.Repositories
             #endregion
 
             return await categories.CountAsync();
+        }
+
+        public async Task<Category> GetCategoryByIdAsync(int id)
+        {
+            return await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Category> GetCategoryBySlugAsync(string slug)
+        {
+            return await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Slug == slug);
+        }
+
+        public async Task<int> AddCategoryAsync(Category category)
+        {
+            try
+            {
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+                return category.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while adding the category.", ex);
+            }
+        }
+
+        public async Task<int> UpdateCategoryAsync(Category category)
+        {
+            try
+            {
+                var existingCategory = await _context.Categories.FindAsync(category.Id);
+                if (existingCategory == null)
+                    throw new InvalidOperationException("Category not found.");
+
+                existingCategory.Name = category.Name;
+                existingCategory.Slug = category.Slug;
+
+                await _context.SaveChangesAsync();
+                return category.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while updating the category.", ex);
+            }
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            try
+            {
+                var category = await _context.Categories.FindAsync(id);
+                if (category == null)
+                    return false;
+
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while deleting the category.", ex);
+            }
         }
     }
 }
