@@ -12,7 +12,11 @@ namespace Gnome.Domain.Interfaces
     {
         Task<List<VariantListResponse>> GetVariants(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = default, string sortBy = default, string sortOrder = "desc");
         Task<int> CountVariants(DateTime dateFrom, DateTime dateTo, string name = default);
+        Task<Variant> GetVariantByIdAsync(int id);
+        Task<Variant> GetVariantBySlugAsync(string slug);
+        Task<List<Variant>> GetVariantsByProductIdAsync(int productId);
         Task<int> AddVariantAsync(Variant variant);
-
+        Task<int> UpdateVariantAsync(Variant variant);
+        Task<bool> DeleteVariantAsync(int id);
     }
 }

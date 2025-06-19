@@ -12,7 +12,10 @@ namespace Gnome.Domain.Interfaces
     {
         Task<List<ProductListResponse>> GetProducts(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = default, string sortBy = default, string sortOrder = "desc");
         Task<int> CountProducts(DateTime dateFrom, DateTime dateTo, string name = default);
+        Task<Product> GetProductByIdAsync(int id);
+        Task<Product> GetProductBySlugAsync(string slug);
         Task<int> AddProductAsync(Product product);
         Task<int> UpdateProductAsync(Product product);
+        Task<bool> DeleteProductAsync(int id);
     }
 }
