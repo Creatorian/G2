@@ -39,7 +39,9 @@ namespace Gnome.Application.G2.Query.ListProducts
                 Items = productListResponse,
                 Page = page,
                 PageSize = pageSize,
-                TotalPages = totalPages
+                TotalPages = totalPages,
+                SortBy = request.SortBy,
+                SortOrder = request.SortOrder
             };
         }
     }

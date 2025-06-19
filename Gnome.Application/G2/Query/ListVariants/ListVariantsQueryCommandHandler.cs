@@ -40,7 +40,9 @@ namespace Gnome.Application.G2.Query.ListVariants
                 Items = variantListResponse,
                 Page = page,
                 PageSize = pageSize,
-                TotalPages = totalPages
+                TotalPages = totalPages,
+                SortBy = request.SortBy,
+                SortOrder = request.SortOrder
             };
         }
     }

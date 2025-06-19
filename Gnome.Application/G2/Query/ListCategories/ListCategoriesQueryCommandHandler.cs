@@ -37,7 +37,9 @@ namespace Gnome.Application.G2.Query.ListCategories
                 Items = categoryListResponse,
                 Page = page,
                 PageSize = pageSize,
-                TotalPages = totalPages
+                TotalPages = totalPages,
+                SortBy = request.SortBy,
+                SortOrder = request.SortOrder
             };
         }
     }
