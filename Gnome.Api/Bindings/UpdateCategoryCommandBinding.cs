@@ -1,15 +1,12 @@
-using Gnome.Api.Bindings.Common;
 using Gnome.Application.G2.Query.UpdateCategory;
 using Gnome.Application.Shared;
 
 namespace Gnome.Api.Bindings
 {
-    public class UpdateCategoryCommandBinding : BindingBase<UpdateCategoryCommand, int>, ILinqModelBinderConfiguration<UpdateCategoryCommand>
+    public class UpdateCategoryCommandBinding : ILinqModelBinderConfiguration<UpdateCategoryCommand>
     {
-        public override void Configure(ModelBinderBuilder<UpdateCategoryCommand> builder)
+        public void Configure(ModelBinderBuilder<UpdateCategoryCommand> builder)
         {
-            base.Configure(builder);
-
             builder.ForMember(x => x.Id)
                 .FromForm()
                 .HasParameterName("id");

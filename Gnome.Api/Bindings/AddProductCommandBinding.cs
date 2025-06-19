@@ -1,15 +1,12 @@
-using Gnome.Api.Bindings.Common;
 using Gnome.Application.G2.Query.AddProduct;
 using Gnome.Application.Shared;
 
 namespace Gnome.Api.Bindings
 {
-    public class AddProductCommandBinding : BindingBase<AddProductCommand, int>, ILinqModelBinderConfiguration<AddProductCommand>
+    public class AddProductCommandBinding : ILinqModelBinderConfiguration<AddProductCommand>
     {
-        public override void Configure(ModelBinderBuilder<AddProductCommand> builder)
+        public void Configure(ModelBinderBuilder<AddProductCommand> builder)
         {
-            base.Configure(builder);
-
             builder.ForMember(x => x.Name)
                 .FromForm()
                 .HasParameterName("name");

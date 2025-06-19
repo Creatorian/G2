@@ -1,15 +1,12 @@
-using Gnome.Api.Bindings.Common;
 using Gnome.Application.G2.Query.UpdateVariant;
 using Gnome.Application.Shared;
 
 namespace Gnome.Api.Bindings
 {
-    public class UpdateVariantCommandBinding : BindingBase<UpdateVariantCommand, int>, ILinqModelBinderConfiguration<UpdateVariantCommand>
+    public class UpdateVariantCommandBinding : ILinqModelBinderConfiguration<UpdateVariantCommand>
     {
-        public override void Configure(ModelBinderBuilder<UpdateVariantCommand> builder)
+        public void Configure(ModelBinderBuilder<UpdateVariantCommand> builder)
         {
-            base.Configure(builder);
-
             builder.ForMember(x => x.Id)
                 .FromForm()
                 .HasParameterName("id");
@@ -37,10 +34,6 @@ namespace Gnome.Api.Bindings
             builder.ForMember(x => x.ProductId)
                 .FromForm()
                 .HasParameterName("product-id");
-
-            builder.ForMember(x => x.Image)
-                .FromFormFile()
-                .HasParameterName("image");
         }
     }
 } 

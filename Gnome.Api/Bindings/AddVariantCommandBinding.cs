@@ -1,15 +1,12 @@
-using Gnome.Api.Bindings.Common;
 using Gnome.Application.G2.Query.AddVariant;
 using Gnome.Application.Shared;
 
 namespace Gnome.Api.Bindings
 {
-    public class AddVariantCommandBinding : BindingBase<AddVariantCommand, int>, ILinqModelBinderConfiguration<AddVariantCommand>
+    public class AddVariantCommandBinding : ILinqModelBinderConfiguration<AddVariantCommand>
     {
-        public override void Configure(ModelBinderBuilder<AddVariantCommand> builder)
+        public void Configure(ModelBinderBuilder<AddVariantCommand> builder)
         {
-            base.Configure(builder);
-
             builder.ForMember(x => x.Name)
                 .FromForm()
                 .HasParameterName("name");
@@ -35,7 +32,7 @@ namespace Gnome.Api.Bindings
                 .HasParameterName("product-id");
 
             builder.ForMember(x => x.Image)
-                .FromFormFile()
+                .FromForm()
                 .HasParameterName("image");
         }
     }

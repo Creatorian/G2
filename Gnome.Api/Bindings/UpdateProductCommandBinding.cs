@@ -1,15 +1,12 @@
-using Gnome.Api.Bindings.Common;
 using Gnome.Application.G2.Query.UpdateProduct;
 using Gnome.Application.Shared;
 
 namespace Gnome.Api.Bindings
 {
-    public class UpdateProductCommandBinding : BindingBase<UpdateProductCommand, int>, ILinqModelBinderConfiguration<UpdateProductCommand>
+    public class UpdateProductCommandBinding : ILinqModelBinderConfiguration<UpdateProductCommand>
     {
-        public override void Configure(ModelBinderBuilder<UpdateProductCommand> builder)
+        public void Configure(ModelBinderBuilder<UpdateProductCommand> builder)
         {
-            base.Configure(builder);
-
             builder.ForMember(x => x.Id)
                 .FromForm()
                 .HasParameterName("id");
