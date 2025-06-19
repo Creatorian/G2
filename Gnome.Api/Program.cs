@@ -1,10 +1,13 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using dotenv.net;
+using FluentValidation;
 using Gnome.Api.Bindings;
+using Gnome.Api.Middleware;
 using Gnome.Application.G2.Query.ListProducts;
 using Gnome.Application.Mappings;
 using Gnome.Application.Services;
+using Gnome.Application.Validators;
 using Gnome.Domain.Interfaces;
 using Gnome.Infrastructure;
 using Gnome.Infrastructure.Repositories;
@@ -15,10 +18,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System;
 using System.IO;
-
 
 DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
 
@@ -31,17 +35,28 @@ if (string.IsNullOrEmpty(cloudinaryUrl))
 var cloudinary = new Cloudinary(cloudinaryUrl);
 cloudinary.Api.Secure = true;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(ListProductsQueryCommandHandler).Assembly));
 
+// Add FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<AddCategoryCommandValidator>();
+
 // Access configuration
 var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory()) // Root of the startup project (Gnome.Api)
-    .AddJsonFile("Configuration/appsettings.json") // Path to your appsettings.json
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("Configuration/appsettings.json")
     .AddJsonFile($"Configuration/appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables()
     .Build();
@@ -59,8 +74,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddControllers();
 
-
-
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -69,7 +82,6 @@ builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddSingleton(new BinderConfiguration().CreateConfiguration());
 builder.Services.AddSingleton(cloudinary);
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
-
 
 builder.Services.AddCors(options =>
 {
@@ -85,9 +97,6 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gnome API", Version = "v1" });
 });
-
-// Add other application services here
-// builder.Services.AddScoped<IMyService, MyService>();
 
 var app = builder.Build();
 
@@ -111,6 +120,9 @@ else
     app.UseHttpsRedirection();
 }
 
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseRouting();
 
 app.UseCors();
@@ -120,4 +132,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    Log.Information("Starting Gnome API");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
