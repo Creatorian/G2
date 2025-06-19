@@ -1,0 +1,619 @@
+{
+	"info": {
+		"_postman_id": "f4a8cfb7-12c7-46f3-b6fc-61bf08cb4a4b",
+		"name": "Gnome API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12622722"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "List Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&date-to=2024-12-31&name=&sort-by=created-date-time&sort-order=desc",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page-size",
+									"value": "10"
+								},
+								{
+									"key": "date-from",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "date-to",
+									"value": "2024-12-31"
+								},
+								{
+									"key": "name",
+									"value": ""
+								},
+								{
+									"key": "sort-by",
+									"value": "created-date-time"
+								},
+								{
+									"key": "sort-order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get paginated list of products with filtering and sorting"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/product/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"1"
+							]
+						},
+						"description": "Get a specific product by ID with category and variants"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Chess Master Pro",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "chess-master-pro",
+									"description": ")",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Advanced chess set with premium pieces",
+									"type": "text"
+								},
+								{
+									"key": "category-id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/product/add",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"add"
+							]
+						},
+						"description": "Create a new product (form data)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Updated Chess Master Pro",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "updated-chess-master-pro",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Updated description for the chess set",
+									"type": "text"
+								},
+								{
+									"key": "category-id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/product/update",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"update"
+							]
+						},
+						"description": "Update an existing product with variants"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/product/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"1"
+							]
+						},
+						"description": "Delete a product by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "List Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/category/list?page=1&page-size=10&date-from=2024-01-01&date-to=2024-12-31&name=&sort-by=created-date-time&sort-order=desc",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page-size",
+									"value": "10"
+								},
+								{
+									"key": "date-from",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "date-to",
+									"value": "2024-12-31"
+								},
+								{
+									"key": "name",
+									"value": ""
+								},
+								{
+									"key": "sort-by",
+									"value": "created-date-time"
+								},
+								{
+									"key": "sort-order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get paginated list of categories with filtering and sorting"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/category/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"1"
+							]
+						},
+						"description": "Get a specific category by ID with products count"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Strategy Games",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "strategy-games",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/category/add",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"add"
+							]
+						},
+						"description": "Create a new category"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Updated Strategy Games",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "updated-strategy-games",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/category/update",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"update"
+							]
+						},
+						"description": "Update an existing category"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/category/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"1"
+							]
+						},
+						"description": "Delete a category by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Variants",
+			"item": [
+				{
+					"name": "List Variants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/variant/list?page=1&page-size=10&date-from=2024-01-01&name=&sort-by=created-date-time&sort-order=desc",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"variant",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page-size",
+									"value": "10"
+								},
+								{
+									"key": "date-from",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "date-to",
+									"value": "2024-12-31",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": ""
+								},
+								{
+									"key": "sort-by",
+									"value": "created-date-time"
+								},
+								{
+									"key": "sort-order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get paginated list of variants with filtering and sorting"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Variant by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/variant/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"variant",
+								"1"
+							]
+						},
+						"description": "Get a specific variant by ID with product details"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Variant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Premium Edition",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "premium-edition",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "39.99",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "is-primary",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "product-id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/variant/add",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"variant",
+								"add"
+							]
+						},
+						"description": "Create a new variant with image upload to Cloudinary"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Variant",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Updated Premium Edition",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "updated-premium-edition",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "49.99",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "75",
+									"type": "text"
+								},
+								{
+									"key": "is-primary",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "product-id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/variant/update",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"variant",
+								"update"
+							]
+						},
+						"description": "Update an existing variant with optional image upload"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Variant",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/variant/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"variant",
+								"1"
+							]
+						},
+						"description": "Delete a variant by ID"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseURL",
+			"value": "https://localhost:7080",
+			"type": "string"
+		}
+	]
+}
