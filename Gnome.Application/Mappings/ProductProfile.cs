@@ -16,6 +16,11 @@ namespace Gnome.Application.Mappings
         public ProductProfile() 
         {
             CreateMap<Product, ProductListResponse>();
+            CreateMap<Product, ProductResponse>()
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
+                .ForMember(dest => dest.Variants, opt => opt.MapFrom(src => src.Variants));
+
+            CreateMap<AddProductCommand, Product>();
             CreateMap<UpdateProductCommand, Product>();
             CreateMap<UpdateProductCommand.UpdateVariantDto, Variant>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.VariantId ?? 0));

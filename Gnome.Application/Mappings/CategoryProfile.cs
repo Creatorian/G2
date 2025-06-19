@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Gnome.Application.G2.Query.AddCategory;
+using Gnome.Application.G2.Query.UpdateCategory;
 using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using System;
@@ -14,6 +16,11 @@ namespace Gnome.Application.Mappings
         public CategoryProfile()
         {
             CreateMap<Category, CategoryListResponse>();
+            CreateMap<Category, CategoryResponse>()
+                .ForMember(dest => dest.ProductsCount, opt => opt.MapFrom(src => src.Products.Count));
+
+            CreateMap<AddCategoryCommand, Category>();
+            CreateMap<UpdateCategoryCommand, Category>();
         }
     }
 }
