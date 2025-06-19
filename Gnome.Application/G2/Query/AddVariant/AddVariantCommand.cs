@@ -7,14 +7,17 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gnome.Application.G2.Query.AddProduct
+namespace Gnome.Application.G2.Query.AddVariant
 {
     [DataContract]
-    public class AddProductCommand : IRequest<int>
+    public class AddVariantCommand : IRequest<int>
     {
         public string Name { get; set; }
         public string Slug { get; set; }
-        public string Description { get; set; }
-        public int CategoryId { get; set; }
+        public IFormFile Image { get; set; }
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+        public bool IsPrimary { get; set; }
+        public int ProductId { get; set; }
     }
 }

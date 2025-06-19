@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Gnome.Application.G2.Query.AddVariant;
 using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using System;
@@ -14,6 +15,7 @@ namespace Gnome.Application.Mappings
         public VariantProfile()
         {
             CreateMap<Variant, VariantListResponse>();
+            CreateMap<AddVariantCommand, Variant>();
         }
     }
 }

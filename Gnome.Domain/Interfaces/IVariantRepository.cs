@@ -1,4 +1,5 @@
-﻿using Gnome.Domain.Responses;
+﻿using Gnome.Domain.Models;
+using Gnome.Domain.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace Gnome.Domain.Interfaces
     {
         Task<List<VariantListResponse>> GetVariants(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = default, string sortBy = default, string sortOrder = "desc");
         Task<int> CountVariants(DateTime dateFrom, DateTime dateTo, string name = default);
+        Task<int> AddVariantAsync(Variant variant);
+
     }
 }

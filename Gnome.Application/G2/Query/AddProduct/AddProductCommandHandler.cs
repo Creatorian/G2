@@ -19,7 +19,9 @@ namespace Gnome.Application.G2.Query.AddProduct
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public AddProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        public AddProductCommandHandler(
+            IProductRepository productRepository,
+            IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -27,7 +29,14 @@ namespace Gnome.Application.G2.Query.AddProduct
 
         public async Task<int> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
-            var product = _mapper.Map<Product>(request);
+            var product = new Product
+            {
+                Name = request.Name,
+                Slug = request.Slug,
+                Description = request.Description,
+                CategoryId = request.CategoryId,
+                CreatedDateTime = DateTime.UtcNow
+            };
 
             var newProductId = await _productRepository.AddProductAsync(product);
             return newProductId;

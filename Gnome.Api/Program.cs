@@ -1,5 +1,16 @@
-﻿using Gnome.Infrastructure;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using dotenv.net;
+using Gnome.Api.Bindings;
+using Gnome.Application.G2.Query.ListProducts;
+using Gnome.Application.Mappings;
+using Gnome.Application.Services;
+using Gnome.Domain.Interfaces;
+using Gnome.Infrastructure;
+using Gnome.Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,13 +18,19 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
-using MediatR;
-using Gnome.Api.Bindings;
-using Gnome.Domain.Interfaces;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Gnome.Application.G2.Query.ListProducts;
-using Gnome.Infrastructure.Repositories;
-using Gnome.Application.Mappings;
+
+
+DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+
+var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL");
+if (string.IsNullOrEmpty(cloudinaryUrl))
+{
+    throw new InvalidOperationException("Cloudinary URL not found in environment variables");
+}
+
+var cloudinary = new Cloudinary(cloudinaryUrl);
+cloudinary.Api.Secure = true;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,13 +61,14 @@ builder.Services.AddControllers();
 
 
 
-// Register IProductRepository (example using scoped lifetime)
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IVariantRepository, VariantRepository>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddSingleton(new BinderConfiguration().CreateConfiguration());
+builder.Services.AddSingleton(cloudinary);
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 
 builder.Services.AddCors(options =>

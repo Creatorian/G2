@@ -28,7 +28,7 @@ namespace Gnome.Api.Controllers
         }
 
         [HttpPost("add", Name = "AddProduct_Action")]
-        public async Task<IActionResult> AddProduct([FromBody] AddProductCommand command)
+        public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
             var newProductId = await _mediator.Send(command);
             return Ok(new { Id = newProductId });

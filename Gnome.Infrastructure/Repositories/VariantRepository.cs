@@ -1,4 +1,5 @@
 ﻿using Gnome.Domain.Interfaces;
+using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -84,6 +85,21 @@ namespace Gnome.Infrastructure.Repositories
             #endregion
 
             return await variants.CountAsync();
+        }
+
+
+        public async Task<int> AddVariantAsync(Variant variant)
+        {
+            try
+            {
+                _context.Variants.Add(variant);
+                await _context.SaveChangesAsync();
+                return variant.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while adding the variant.", ex);
+            }
         }
     }
 }
