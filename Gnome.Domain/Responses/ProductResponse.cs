@@ -37,6 +37,6 @@ namespace Gnome.Domain.Responses
         public CategoryResponse Category { get; set; }
         
         [DataMember(Name = "variants")]
-        public List<VariantResponse> Variants { get; set; } = new();
+        public List<VariantListResponse> Variants { get; set; } = new();
     }
 } 
