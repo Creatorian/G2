@@ -15,6 +15,6 @@ namespace Gnome.Application.G2.Query.AddProduct
         public string Name { get; set; }
         public string Slug { get; set; }
         public string Description { get; set; }
-        public int CategoryId { get; set; }
+        public List<int> CategoryIds { get; set; } = new List<int>();
     }
 }

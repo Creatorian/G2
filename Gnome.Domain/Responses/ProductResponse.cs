@@ -30,11 +30,8 @@ namespace Gnome.Domain.Responses
         [DataMember(Name = "created-date-time")]
         public DateTime? CreatedDateTime { get; set; }
         
-        [DataMember(Name = "category-id")]
-        public int CategoryId { get; set; }
-        
-        [DataMember(Name = "category")]
-        public CategoryResponse Category { get; set; }
+        [DataMember(Name = "categories")]
+        public List<CategoryResponse> Categories { get; set; } = new();
         
         [DataMember(Name = "variants")]
         public List<VariantListResponse> Variants { get; set; } = new();

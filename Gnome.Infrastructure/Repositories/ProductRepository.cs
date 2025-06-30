@@ -174,7 +174,6 @@ namespace Gnome.Infrastructure.Repositories
                 existingProduct.Name = product.Name;
                 existingProduct.Slug = product.Slug;
                 existingProduct.Description = product.Description;
-                existingProduct.CategoryId = product.CategoryId;
 
                 await _context.SaveChangesAsync();
                 return product.Id;
@@ -188,7 +187,8 @@ namespace Gnome.Infrastructure.Repositories
         public async Task<Product> GetProductByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.Category)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
                 .Include(p => p.Variants)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -196,7 +196,8 @@ namespace Gnome.Infrastructure.Repositories
         public async Task<Product> GetProductBySlugAsync(string slug)
         {
             return await _context.Products
-                .Include(p => p.Category)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
                 .Include(p => p.Variants)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }

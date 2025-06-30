@@ -19,10 +19,8 @@ namespace Gnome.Domain.Models
         public string Slug { get; set; }
         public string Description { get; set; }
         public DateTime? CreatedDateTime { get; set; }
-
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
-
+        
+        public List<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
         public List<Variant> Variants { get; set; } = new List<Variant>();
     }
 }

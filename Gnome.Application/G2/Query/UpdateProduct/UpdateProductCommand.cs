@@ -13,7 +13,7 @@ namespace Gnome.Application.G2.Query.UpdateProduct
         public string Name { get; set; }
         public string Slug { get; set; }
         public string Description { get; set; }
-        public int CategoryId { get; set; }
+        public List<int> CategoryIds { get; set; } = new List<int>();
         public List<UpdateVariantDto> Variants { get; set; } = new();
 
         public class UpdateVariantDto
