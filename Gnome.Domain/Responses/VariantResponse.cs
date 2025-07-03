@@ -41,8 +41,8 @@ namespace Gnome.Domain.Responses
         
         [DataMember(Name = "product-id")]
         public int ProductId { get; set; }
-        
+
         [DataMember(Name = "product")]
-        public ProductResponse Product { get; set; }
+        public ProductListResponse Product { get; set; }
     }
 } 
