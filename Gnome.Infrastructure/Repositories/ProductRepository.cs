@@ -4,6 +4,7 @@ using Gnome.Domain.Responses;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,10 +19,12 @@ namespace Gnome.Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductRepository(AppDbContext context)
+        public ProductRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<List<ProductListResponse>> GetProducts(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = default, string sortBy = default, string sortOrder = "desc")
         {
@@ -66,7 +69,7 @@ namespace Gnome.Infrastructure.Repositories
                 Slug = productsEntity.Slug,
                 Description = productsEntity.Description,
                 CreatedDateTime = productsEntity.CreatedDateTime,
-                Variants = productsEntity.Variants
+                Variants = _mapper.Map<List<VariantListResponse>>(productsEntity.Variants)
             }).ToListAsync();
         }
 
@@ -171,7 +174,6 @@ namespace Gnome.Infrastructure.Repositories
                 existingProduct.Name = product.Name;
                 existingProduct.Slug = product.Slug;
                 existingProduct.Description = product.Description;
-                existingProduct.CategoryId = product.CategoryId;
 
                 await _context.SaveChangesAsync();
                 return product.Id;
@@ -185,7 +187,8 @@ namespace Gnome.Infrastructure.Repositories
         public async Task<Product> GetProductByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.Category)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
                 .Include(p => p.Variants)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -193,7 +196,8 @@ namespace Gnome.Infrastructure.Repositories
         public async Task<Product> GetProductBySlugAsync(string slug)
         {
             return await _context.Products
-                .Include(p => p.Category)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
                 .Include(p => p.Variants)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }

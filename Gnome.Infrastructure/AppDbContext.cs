@@ -14,6 +14,7 @@ namespace Gnome.Infrastructure
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Variant> Variants { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -24,21 +25,27 @@ namespace Gnome.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
-            // Product->Category
-            modelBuilder.Entity<Product>()
-                .HasOne(p => p.Category)
-                .WithMany(c => c.Products)
-                .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Variant -> Product
             modelBuilder.Entity<Variant>()
                 .HasOne(v => v.Product)
                 .WithMany(p => p.Variants)
                 .HasForeignKey(v => v.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Unique indexes
+            modelBuilder.Entity<ProductCategory>()
+                .HasKey(pc => new { pc.ProductId, pc.CategoryId });
+
+            modelBuilder.Entity<ProductCategory>()
+                .HasOne(pc => pc.Product)
+                .WithMany(p => p.ProductCategories)
+                .HasForeignKey(pc => pc.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductCategory>()
+                .HasOne(pc => pc.Category)
+                .WithMany(c => c.ProductCategories)
+                .HasForeignKey(pc => pc.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Category>()
                 .HasIndex(c => c.Slug)
                 .IsUnique();
@@ -51,15 +58,11 @@ namespace Gnome.Infrastructure
                 .HasIndex(v => v.Slug)
                 .IsUnique();
 
-            // Performance indexes
             modelBuilder.Entity<Category>()
                 .HasIndex(c => c.CreatedDateTime);
 
             modelBuilder.Entity<Product>()
                 .HasIndex(p => p.CreatedDateTime);
-
-            modelBuilder.Entity<Product>()
-                .HasIndex(p => p.CategoryId);
 
             modelBuilder.Entity<Variant>()
                 .HasIndex(v => v.CreatedDateTime);
@@ -70,12 +73,10 @@ namespace Gnome.Infrastructure
             modelBuilder.Entity<Variant>()
                 .HasIndex(v => v.IsPrimary);
 
-            // Data precision
             modelBuilder.Entity<Variant>()
                 .Property(v => v.Price)
                 .HasPrecision(18, 2);
 
-            // Required fields
             modelBuilder.Entity<Category>()
                 .Property(c => c.Name)
                 .IsRequired()

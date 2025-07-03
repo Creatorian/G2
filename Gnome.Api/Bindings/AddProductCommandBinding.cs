@@ -19,9 +19,9 @@ namespace Gnome.Api.Bindings
                 .FromForm()
                 .HasParameterName("description");
 
-            builder.ForMember(x => x.CategoryId)
+            builder.ForMember(x => x.CategoryIds)
                 .FromForm()
-                .HasParameterName("category-id");
+                .HasParameterName("category-ids");
         }
     }
 } 
