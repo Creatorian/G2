@@ -25,6 +25,8 @@ namespace Gnome.Domain.Responses
         public string Description { get; set; }
         [DataMember(Name = "created-date-time")]
         public DateTime? CreatedDateTime { get; set; }
+        [DataMember(Name = "categories")]
+        public List<CategoryListResponse> Categories { get; set; } = new();
         [DataMember(Name = "variants")]
         public List<VariantListResponse>? Variants { get; set; }
     }

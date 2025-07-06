@@ -196,6 +196,11 @@ namespace Gnome.Application.Shared
                 {
                     return formFile.OpenReadStream();
                 }
+
+                if (propertyData.PropertyType.Equals(typeof(IFormFile)) || propertyData.PropertyType.IsAssignableFrom(typeof(IFormFile)))
+                {
+                    return formFile;
+                }
             }
 
             return null;
@@ -216,6 +221,26 @@ namespace Gnome.Application.Shared
             }
 
             Type type = Nullable.GetUnderlyingType(propertyData.PropertyType) ?? propertyData.PropertyType;
+            
+            if (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string))
+            {
+                if (stringValues.Value.Count == 0 || (stringValues.Value.Count == 1 && string.IsNullOrEmpty(stringValues.Value[0])))
+                {
+                    return propertyData.DefaultValue;
+                }
+
+                var values = ((stringValues.Value.Count != 1) ? stringValues.Value.AsEnumerable() : stringValues.Value[0].Split(',').AsEnumerable());
+                object collection = Activator.CreateInstance(type);
+                {
+                    foreach (string item in values)
+                    {
+                        type.GetMethod("Add").Invoke(collection, new object[1] { propertyData.ChangeType(type.GenericTypeArguments[0], item.Trim()) });
+                    }
+
+                    return collection;
+                }
+            }
+
             return propertyData.ChangeType(type, obj);
         }
     }

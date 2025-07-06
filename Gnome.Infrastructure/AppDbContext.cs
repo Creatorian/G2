@@ -1,7 +1,10 @@
 ﻿using Gnome.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +18,8 @@ namespace Gnome.Infrastructure
         public DbSet<Product> Products { get; set; }
         public DbSet<Variant> Variants { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<AdminUser> AdminUsers { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -113,7 +118,70 @@ namespace Gnome.Infrastructure
 
             modelBuilder.Entity<Variant>()
                 .Property(v => v.Image)
+                .HasMaxLength(500)
+                .IsRequired(false);
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.Username)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.Email)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.PasswordHash)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.FirstName)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.LastName)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<AdminUser>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<AdminUser>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.Token)
+                .IsRequired()
                 .HasMaxLength(500);
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.ExpiresAt)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.IsRevoked)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.CreatedAt)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.AdminUserId)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasIndex(rt => rt.Token)
+                .IsUnique();
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasOne(rt => rt.AdminUser)
+                .WithMany(au => au.RefreshTokens)
+                .HasForeignKey(rt => rt.AdminUserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -140,6 +208,26 @@ namespace Gnome.Infrastructure
             }
 
             return await base.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    {
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false)
+                .AddJsonFile("appsettings.Development.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            var connectionString = configuration.GetConnectionString("GnomeConnection");
+            
+            optionsBuilder.UseSqlServer(connectionString);
+
+            return new AppDbContext(optionsBuilder.Options);
         }
     }
 }

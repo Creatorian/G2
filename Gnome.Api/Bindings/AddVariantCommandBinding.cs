@@ -32,7 +32,7 @@ namespace Gnome.Api.Bindings
                 .HasParameterName("product-id");
 
             builder.ForMember(x => x.Image)
-                .FromForm()
+                .FromFormFile()
                 .HasParameterName("image");
         }
     }

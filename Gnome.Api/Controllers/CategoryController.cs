@@ -4,15 +4,21 @@ using Gnome.Application.G2.Query.UpdateCategory;
 using Gnome.Application.G2.Query.DeleteCategory;
 using Gnome.Application.G2.Query.GetCategory;
 using Gnome.Application.Shared;
+using Gnome.Api.Models.SwaggerResponses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 
 namespace Gnome.Api.Controllers
 {
-
+    /// <summary>
+    /// Controller for managing board game categories
+    /// </summary>
     [ApiController]
     [Route("category")]
+    [SwaggerTag("Category management operations")]
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -22,14 +28,34 @@ namespace Gnome.Api.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Retrieves a paginated list of categories with filtering and sorting options
+        /// </summary>
+        /// <param name="command">Query parameters for filtering, pagination, and sorting</param>
+        /// <returns>Paginated list of categories with metadata</returns>
+        /// <response code="200">Successfully retrieved the category list.</response>
+        /// <response code="400">Invalid query parameters.</response>
         [HttpGet("list", Name = "GetCategoriesList_Action")]
+        [SwaggerOperation(Summary = "Get categories list", Description = "Retrieves a paginated list of categories with optional filtering by name, date range, and sorting options")]
+        [SwaggerResponse(200, "Categories retrieved successfully", typeof(CategoryListResponse))]
+        [SwaggerResponse(400, "Invalid query parameters")]
         public async Task<IActionResult> ListCategories([ModelBinder(typeof(LinqModelBinder))] ListCategoriesQueryCommand command)
         {
             var categories = await _mediator.Send(command);
             return Ok(categories);
         }
 
+        /// <summary>
+        /// Retrieves a specific category by its ID
+        /// </summary>
+        /// <param name="id">The unique identifier of the category</param>
+        /// <returns>Category details including products count</returns>
+        /// <response code="200">Category found and returned successfully.</response>
+        /// <response code="404">Category not found.</response>
         [HttpGet("{id}", Name = "GetCategoryById_Action")]
+        [SwaggerOperation(Summary = "Get category by ID", Description = "Retrieves detailed information about a specific category including its products count")]
+        [SwaggerResponse(200, "Category found", typeof(CategoryResponse))]
+        [SwaggerResponse(404, "Category not found")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
             var command = new GetCategoryByIdCommand { Id = id };
@@ -41,21 +67,62 @@ namespace Gnome.Api.Controllers
             return Ok(category);
         }
 
+        /// <summary>
+        /// Creates a new category (Admin only)
+        /// </summary>
+        /// <param name="command">Category creation data including name and slug</param>
+        /// <returns>ID of the newly created category</returns>
+        /// <response code="200">Category created successfully.</response>
+        /// <response code="400">Invalid category data.</response>
+        /// <response code="401">Unauthorized - Admin access required.</response>
         [HttpPost("add", Name = "AddCategory_Action")]
+        [Authorize(Roles = "Admin")]
+        [SwaggerOperation(Summary = "Add new category", Description = "Creates a new board game category. Requires admin authentication.")]
+        [SwaggerResponse(200, "Category created successfully", typeof(CategoryCreatedResponse))]
+        [SwaggerResponse(400, "Invalid category data")]
+        [SwaggerResponse(401, "Unauthorized - Admin access required")]
         public async Task<IActionResult> AddCategory([ModelBinder(typeof(LinqModelBinder))] AddCategoryCommand command)
         {
             var newCategoryId = await _mediator.Send(command);
             return Ok(new { Id = newCategoryId });
         }
 
+        /// <summary>
+        /// Updates an existing category (Admin only)
+        /// </summary>
+        /// <param name="command">Category update data including ID and modified fields</param>
+        /// <returns>ID of the updated category</returns>
+        /// <response code="200">Category updated successfully.</response>
+        /// <response code="400">Invalid category data.</response>
+        /// <response code="401">Unauthorized - Admin access required.</response>
+        /// <response code="404">Category not found.</response>
         [HttpPut("update", Name = "UpdateCategory_Action")]
+        [Authorize(Roles = "Admin")]
+        [SwaggerOperation(Summary = "Update category", Description = "Updates an existing board game category. Requires admin authentication.")]
+        [SwaggerResponse(200, "Category updated successfully", typeof(CategoryUpdatedResponse))]
+        [SwaggerResponse(400, "Invalid category data")]
+        [SwaggerResponse(401, "Unauthorized - Admin access required")]
+        [SwaggerResponse(404, "Category not found")]
         public async Task<IActionResult> UpdateCategory([ModelBinder(typeof(LinqModelBinder))] UpdateCategoryCommand command)
         {
             var updatedCategoryId = await _mediator.Send(command);
             return Ok(new { Id = updatedCategoryId });
         }
 
+        /// <summary>
+        /// Deletes a category by ID (Admin only)
+        /// </summary>
+        /// <param name="id">The unique identifier of the category to delete</param>
+        /// <returns>Confirmation of successful deletion</returns>
+        /// <response code="200">Category deleted successfully.</response>
+        /// <response code="401">Unauthorized - Admin access required.</response>
+        /// <response code="404">Category not found.</response>
         [HttpDelete("{id}", Name = "DeleteCategory_Action")]
+        [Authorize(Roles = "Admin")]
+        [SwaggerOperation(Summary = "Delete category", Description = "Permanently deletes a board game category. Requires admin authentication.")]
+        [SwaggerResponse(200, "Category deleted successfully", typeof(CategoryDeletedResponse))]
+        [SwaggerResponse(401, "Unauthorized - Admin access required")]
+        [SwaggerResponse(404, "Category not found")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var command = new DeleteCategoryCommand { Id = id };

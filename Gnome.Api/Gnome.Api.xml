@@ -1,0 +1,758 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gnome.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Gnome.Api.Bindings.BinderConfiguration">
+            <summary>
+            Configuration for all command bindings
+            </summary>
+        </member>
+        <member name="T:Gnome.Api.Bindings.ListCategoriesCommandBinding">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Gnome.Api.Bindings.ListCategoriesCommandBinding.Configure(Gnome.Application.Shared.ModelBinderBuilder{Gnome.Application.G2.Query.ListCategories.ListCategoriesQueryCommand})">
+            <summary>
+            
+            </summary>
+            <param name="builder"></param>
+            
+        </member>
+        <member name="T:Gnome.Api.Bindings.ListProductsCommandBinding">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Gnome.Api.Bindings.ListProductsCommandBinding.Configure(Gnome.Application.Shared.ModelBinderBuilder{Gnome.Application.G2.Query.ListProducts.ListProductsQueryCommand})">
+            <summary>
+            
+            </summary>
+            <param name="builder"></param>
+            
+        </member>
+        <member name="M:Gnome.Api.Bindings.ListVariantsCommandBinding.Configure(Gnome.Application.Shared.ModelBinderBuilder{Gnome.Application.G2.Query.ListVariants.ListVariantsQueryCommand})">
+            <summary>
+            
+            </summary>
+            <param name="builder"></param>
+            
+        </member>
+        <member name="T:Gnome.Api.Controllers.AuthController">
+            <summary>
+            Authentication controller for admin user login, token refresh, and validation
+            </summary>
+        </member>
+        <member name="M:Gnome.Api.Controllers.AuthController.Login(Gnome.Domain.DTOs.LoginDto)">
+            <summary>
+            Authenticates an admin user and returns JWT and refresh tokens
+            </summary>
+            <param name="loginDto">Login credentials containing username and password</param>
+            <returns>JWT token, refresh token, expiration time, and user information</returns>
+            <response code="200">Login successful. Returns authentication tokens and user data.</response>
+            <response code="401">Invalid username or password.</response>
+            <response code="500">Internal server error during authentication.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.AuthController.RefreshToken(Gnome.Api.Models.SwaggerResponses.RefreshTokenDto)">
+            <summary>
+            Refreshes JWT token using a valid refresh token
+            </summary>
+            <param name="refreshTokenDto">Refresh token data</param>
+            <returns>New JWT token, new refresh token, and updated expiration time</returns>
+            <response code="200">Token refresh successful. Returns new authentication tokens.</response>
+            <response code="401">Invalid or expired refresh token.</response>
+            <response code="500">Internal server error during token refresh.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.AuthController.ValidateToken">
+            <summary>
+            Validates the current JWT token
+            </summary>
+            <returns>Confirmation that the token is valid</returns>
+            <response code="200">Token is valid and user is authenticated.</response>
+            <response code="401">Token is invalid or expired.</response>
+        </member>
+        <member name="T:Gnome.Api.Controllers.CategoryController">
+            <summary>
+            Controller for managing board game categories
+            </summary>
+        </member>
+        <member name="M:Gnome.Api.Controllers.CategoryController.ListCategories(Gnome.Application.G2.Query.ListCategories.ListCategoriesQueryCommand)">
+            <summary>
+            Retrieves a paginated list of categories with filtering and sorting options
+            </summary>
+            <param name="command">Query parameters for filtering, pagination, and sorting</param>
+            <returns>Paginated list of categories with metadata</returns>
+            <response code="200">Successfully retrieved the category list.</response>
+            <response code="400">Invalid query parameters.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.CategoryController.GetCategoryById(System.Int32)">
+            <summary>
+            Retrieves a specific category by its ID
+            </summary>
+            <param name="id">The unique identifier of the category</param>
+            <returns>Category details including products count</returns>
+            <response code="200">Category found and returned successfully.</response>
+            <response code="404">Category not found.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.CategoryController.AddCategory(Gnome.Application.G2.Query.AddCategory.AddCategoryCommand)">
+            <summary>
+            Creates a new category (Admin only)
+            </summary>
+            <param name="command">Category creation data including name and slug</param>
+            <returns>ID of the newly created category</returns>
+            <response code="200">Category created successfully.</response>
+            <response code="400">Invalid category data.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.CategoryController.UpdateCategory(Gnome.Application.G2.Query.UpdateCategory.UpdateCategoryCommand)">
+            <summary>
+            Updates an existing category (Admin only)
+            </summary>
+            <param name="command">Category update data including ID and modified fields</param>
+            <returns>ID of the updated category</returns>
+            <response code="200">Category updated successfully.</response>
+            <response code="400">Invalid category data.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+            <response code="404">Category not found.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.CategoryController.DeleteCategory(System.Int32)">
+            <summary>
+            Deletes a category by ID (Admin only)
+            </summary>
+            <param name="id">The unique identifier of the category to delete</param>
+            <returns>Confirmation of successful deletion</returns>
+            <response code="200">Category deleted successfully.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+            <response code="404">Category not found.</response>
+        </member>
+        <member name="T:Gnome.Api.Controllers.ProductController">
+            <summary>
+            Controller for managing board game products
+            </summary>
+        </member>
+        <member name="M:Gnome.Api.Controllers.ProductController.ListProducts(Gnome.Application.G2.Query.ListProducts.ListProductsQueryCommand)">
+            <summary>
+            Retrieves a paginated list of products with filtering and sorting options
+            </summary>
+            <param name="command">Query parameters for filtering, pagination, and sorting</param>
+            <returns>Paginated list of products with metadata</returns>
+            <response code="200">Successfully retrieved the product list.</response>
+            <response code="400">Invalid query parameters.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.ProductController.GetProductById(System.Int32)">
+            <summary>
+            Retrieves a specific product by its ID
+            </summary>
+            <param name="id">The unique identifier of the product</param>
+            <returns>Product details including categories and variants</returns>
+            <response code="200">Product found and returned successfully.</response>
+            <response code="404">Product not found.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.ProductController.AddProduct(Gnome.Application.G2.Query.AddProduct.AddProductCommand)">
+            <summary>
+            Creates a new product (Admin only)
+            </summary>
+            <param name="command">Product creation data including name, description, and category associations</param>
+            <returns>ID of the newly created product</returns>
+            <response code="200">Product created successfully.</response>
+            <response code="400">Invalid product data.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.ProductController.UpdateProduct(Gnome.Application.G2.Query.UpdateProduct.UpdateProductCommand)">
+            <summary>
+            Updates an existing product (Admin only)
+            </summary>
+            <param name="command">Product update data including ID and modified fields</param>
+            <returns>ID of the updated product</returns>
+            <response code="200">Product updated successfully.</response>
+            <response code="400">Invalid product data.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+            <response code="404">Product not found.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.ProductController.DeleteProduct(System.Int32)">
+            <summary>
+            Deletes a product by ID (Admin only)
+            </summary>
+            <param name="id">The unique identifier of the product to delete</param>
+            <returns>Confirmation of successful deletion</returns>
+            <response code="200">Product deleted successfully.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+            <response code="404">Product not found.</response>
+        </member>
+        <member name="T:Gnome.Api.Controllers.VariantController">
+            <summary>
+            Controller for managing product variants
+            </summary>
+        </member>
+        <member name="M:Gnome.Api.Controllers.VariantController.ListVariants(Gnome.Application.G2.Query.ListVariants.ListVariantsQueryCommand)">
+            <summary>
+            Retrieves a paginated list of variants with filtering and sorting options
+            </summary>
+            <param name="command">Query parameters for filtering, pagination, and sorting</param>
+            <returns>Paginated list of variants with metadata</returns>
+            <response code="200">Successfully retrieved the variant list.</response>
+            <response code="400">Invalid query parameters.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.VariantController.GetVariantById(System.Int32)">
+            <summary>
+            Retrieves a specific variant by its ID
+            </summary>
+            <param name="id">The unique identifier of the variant</param>
+            <returns>Variant details including product information</returns>
+            <response code="200">Variant found and returned successfully.</response>
+            <response code="404">Variant not found.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.VariantController.AddVariant(Gnome.Application.G2.Query.AddVariant.AddVariantCommand)">
+            <summary>
+            Creates a new variant with optional image upload (Admin only)
+            </summary>
+            <param name="command">Variant creation data including name, price, stock, and optional image</param>
+            <returns>ID of the newly created variant</returns>
+            <response code="200">Variant created successfully.</response>
+            <response code="400">Invalid variant data.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.VariantController.UpdateVariant(Gnome.Application.G2.Query.UpdateVariant.UpdateVariantCommand)">
+            <summary>
+            Updates an existing variant with optional image upload (Admin only)
+            </summary>
+            <param name="command">Variant update data including ID and modified fields</param>
+            <returns>ID of the updated variant</returns>
+            <response code="200">Variant updated successfully.</response>
+            <response code="400">Invalid variant data.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+            <response code="404">Variant not found.</response>
+        </member>
+        <member name="M:Gnome.Api.Controllers.VariantController.DeleteVariant(System.Int32)">
+            <summary>
+            Deletes a variant by ID (Admin only)
+            </summary>
+            <param name="id">The unique identifier of the variant to delete</param>
+            <returns>Confirmation of successful deletion</returns>
+            <response code="200">Variant deleted successfully.</response>
+            <response code="401">Unauthorized - Admin access required.</response>
+            <response code="404">Variant not found.</response>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.RefreshTokenDto">
+            <summary>
+            DTO for refresh token requests
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.RefreshTokenDto.RefreshToken">
+            <summary>
+            The refresh token to use for generating new JWT token
+            </summary>
+            <example>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.TokenValidationResponse">
+            <summary>
+            Response DTO for token validation
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.TokenValidationResponse.Message">
+            <summary>
+            Confirmation message that the token is valid
+            </summary>
+            <example>Token is valid</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ErrorResponse">
+            <summary>
+            Response DTO for error responses
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ErrorResponse.Message">
+            <summary>
+            Error message describing what went wrong
+            </summary>
+            <example>Invalid username or password</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryListResponse">
+            <summary>
+            Response DTO for category list
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.Items">
+            <summary>
+            List of categories
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.TotalCount">
+            <summary>
+            Total number of categories
+            </summary>
+            <example>5</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.PageNumber">
+            <summary>
+            Current page number
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.PageSize">
+            <summary>
+            Number of items per page
+            </summary>
+            <example>10</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.TotalPages">
+            <summary>
+            Total number of pages
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.HasPreviousPage">
+            <summary>
+            Whether there is a previous page
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryListResponse.HasNextPage">
+            <summary>
+            Whether there is a next page
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryResponse">
+            <summary>
+            Response DTO for category details
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryResponse.Id">
+            <summary>
+            Category ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryResponse.Name">
+            <summary>
+            Category name
+            </summary>
+            <example>Strategy Games</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryResponse.Slug">
+            <summary>
+            URL-friendly category name
+            </summary>
+            <example>strategy-games</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryResponse.ProductsCount">
+            <summary>
+            Number of products in this category
+            </summary>
+            <example>5</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryResponse.CreatedDateTime">
+            <summary>
+            Category creation date
+            </summary>
+            <example>2024-01-01T00:00:00Z</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryResponse.UpdatedDateTime">
+            <summary>
+            Category last update date
+            </summary>
+            <example>2024-01-15T10:00:00Z</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryCreatedResponse">
+            <summary>
+            Response DTO for category creation
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryCreatedResponse.Id">
+            <summary>
+            The ID of the newly created category
+            </summary>
+            <example>2</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryUpdatedResponse">
+            <summary>
+            Response DTO for category updates
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryUpdatedResponse.Id">
+            <summary>
+            The ID of the updated category
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryDeletedResponse">
+            <summary>
+            Response DTO for category deletion
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryDeletedResponse.Success">
+            <summary>
+            Confirmation that the category was deleted successfully
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ProductListResponse">
+            <summary>
+            Response DTO for product list
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.Items">
+            <summary>
+            List of products
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.TotalCount">
+            <summary>
+            Total number of products
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.PageNumber">
+            <summary>
+            Current page number
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.PageSize">
+            <summary>
+            Number of items per page
+            </summary>
+            <example>10</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.TotalPages">
+            <summary>
+            Total number of pages
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.HasPreviousPage">
+            <summary>
+            Whether there is a previous page
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.HasNextPage">
+            <summary>
+            Whether there is a next page
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ProductResponse">
+            <summary>
+            Response DTO for product details
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Id">
+            <summary>
+            Product ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Name">
+            <summary>
+            Product name
+            </summary>
+            <example>Chess Master Pro</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Slug">
+            <summary>
+            URL-friendly product name
+            </summary>
+            <example>chess-master-pro</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Description">
+            <summary>
+            Product description
+            </summary>
+            <example>Professional chess set with premium pieces</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Categories">
+            <summary>
+            Associated categories
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Variants">
+            <summary>
+            Associated variants
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.CreatedDateTime">
+            <summary>
+            Product creation date
+            </summary>
+            <example>2024-01-01T00:00:00Z</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.UpdatedDateTime">
+            <summary>
+            Product last update date
+            </summary>
+            <example>2024-01-15T10:00:00Z</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryDto">
+            <summary>
+            DTO for category information in product responses
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryDto.Id">
+            <summary>
+            Category ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryDto.Name">
+            <summary>
+            Category name
+            </summary>
+            <example>Strategy Games</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.CategoryDto.Slug">
+            <summary>
+            URL-friendly category name
+            </summary>
+            <example>strategy-games</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.VariantDto">
+            <summary>
+            DTO for variant information in product responses
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.Id">
+            <summary>
+            Variant ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.Name">
+            <summary>
+            Variant name
+            </summary>
+            <example>Standard Edition</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.Slug">
+            <summary>
+            URL-friendly variant name
+            </summary>
+            <example>standard-edition</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.Price">
+            <summary>
+            Variant price
+            </summary>
+            <example>29.99</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.Stock">
+            <summary>
+            Available stock quantity
+            </summary>
+            <example>50</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.IsPrimary">
+            <summary>
+            Whether this is the primary variant
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDto.ImageUrl">
+            <summary>
+            Variant image URL
+            </summary>
+            <example>https://res.cloudinary.com/example/image/upload/v1/chess-standard.jpg</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ProductCreatedResponse">
+            <summary>
+            Response DTO for product creation
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductCreatedResponse.Id">
+            <summary>
+            The ID of the newly created product
+            </summary>
+            <example>2</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ProductUpdatedResponse">
+            <summary>
+            Response DTO for product updates
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductUpdatedResponse.Id">
+            <summary>
+            The ID of the updated product
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ProductDeletedResponse">
+            <summary>
+            Response DTO for product deletion
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductDeletedResponse.Success">
+            <summary>
+            Confirmation that the product was deleted successfully
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.VariantListResponse">
+            <summary>
+            Response DTO for variant list
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.Items">
+            <summary>
+            List of variants
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.TotalCount">
+            <summary>
+            Total number of variants
+            </summary>
+            <example>3</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.PageNumber">
+            <summary>
+            Current page number
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.PageSize">
+            <summary>
+            Number of items per page
+            </summary>
+            <example>10</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.TotalPages">
+            <summary>
+            Total number of pages
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.HasPreviousPage">
+            <summary>
+            Whether there is a previous page
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantListResponse.HasNextPage">
+            <summary>
+            Whether there is a next page
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.VariantResponse">
+            <summary>
+            Response DTO for variant details
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.Id">
+            <summary>
+            Variant ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.Name">
+            <summary>
+            Variant name
+            </summary>
+            <example>Standard Edition</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.Slug">
+            <summary>
+            URL-friendly variant name
+            </summary>
+            <example>standard-edition</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.Price">
+            <summary>
+            Variant price
+            </summary>
+            <example>29.99</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.Stock">
+            <summary>
+            Available stock quantity
+            </summary>
+            <example>50</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.IsPrimary">
+            <summary>
+            Whether this is the primary variant
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.ImageUrl">
+            <summary>
+            Variant image URL
+            </summary>
+            <example>https://res.cloudinary.com/example/image/upload/v1/chess-standard.jpg</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.Product">
+            <summary>
+            Associated product information
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.CreatedDateTime">
+            <summary>
+            Variant creation date
+            </summary>
+            <example>2024-01-01T00:00:00Z</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantResponse.UpdatedDateTime">
+            <summary>
+            Variant last update date
+            </summary>
+            <example>2024-01-15T10:00:00Z</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.ProductDto">
+            <summary>
+            DTO for product information in variant responses
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductDto.Id">
+            <summary>
+            Product ID
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductDto.Name">
+            <summary>
+            Product name
+            </summary>
+            <example>Chess Master Pro</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductDto.Slug">
+            <summary>
+            URL-friendly product name
+            </summary>
+            <example>chess-master-pro</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.VariantCreatedResponse">
+            <summary>
+            Response DTO for variant creation
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantCreatedResponse.Id">
+            <summary>
+            The ID of the newly created variant
+            </summary>
+            <example>2</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.VariantUpdatedResponse">
+            <summary>
+            Response DTO for variant updates
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantUpdatedResponse.Id">
+            <summary>
+            The ID of the updated variant
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="T:Gnome.Api.Models.SwaggerResponses.VariantDeletedResponse">
+            <summary>
+            Response DTO for variant deletion
+            </summary>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.VariantDeletedResponse.Success">
+            <summary>
+            Confirmation that the variant was deleted successfully
+            </summary>
+            <example>true</example>
+        </member>
+    </members>
+</doc>

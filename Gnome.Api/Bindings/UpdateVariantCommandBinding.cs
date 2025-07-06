@@ -19,6 +19,10 @@ namespace Gnome.Api.Bindings
                 .FromForm()
                 .HasParameterName("slug");
 
+            builder.ForMember(x => x.Image)
+                .FromFormFile()
+                .HasParameterName("image");
+
             builder.ForMember(x => x.Price)
                 .FromForm()
                 .HasParameterName("price");

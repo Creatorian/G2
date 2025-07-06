@@ -28,7 +28,12 @@ namespace Gnome.Infrastructure.Repositories
         }
         public async Task<List<ProductListResponse>> GetProducts(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = default, string sortBy = default, string sortOrder = "desc")
         {
-            var products = _context.Products.AsQueryable().AsNoTracking();
+            var products = _context.Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Include(p => p.Variants)
+                .AsQueryable()
+                .AsNoTracking();
 
             #region Filters
 
@@ -69,6 +74,13 @@ namespace Gnome.Infrastructure.Repositories
                 Slug = productsEntity.Slug,
                 Description = productsEntity.Description,
                 CreatedDateTime = productsEntity.CreatedDateTime,
+                Categories = productsEntity.ProductCategories.Select(pc => new CategoryListResponse
+                {
+                    Id = pc.Category.Id,
+                    Name = pc.Category.Name,
+                    Slug = pc.Category.Slug,
+                    CreatedDateTime = pc.Category.CreatedDateTime
+                }).ToList(),
                 Variants = _mapper.Map<List<VariantListResponse>>(productsEntity.Variants)
             }).ToListAsync();
         }
@@ -167,13 +179,33 @@ namespace Gnome.Infrastructure.Repositories
         {
             try
             {
-                var existingProduct = await _context.Products.FindAsync(product.Id);
+                var existingProduct = await _context.Products
+                    .Include(p => p.ProductCategories)
+                    .FirstOrDefaultAsync(p => p.Id == product.Id);
+                
                 if (existingProduct == null)
                     throw new InvalidOperationException("Product not found.");
 
                 existingProduct.Name = product.Name;
                 existingProduct.Slug = product.Slug;
                 existingProduct.Description = product.Description;
+
+                // Handle many-to-many relationship
+                if (product.ProductCategories != null)
+                {
+                    // Remove existing category associations
+                    _context.ProductCategories.RemoveRange(existingProduct.ProductCategories);
+                    
+                    // Add new category associations
+                    foreach (var productCategory in product.ProductCategories)
+                    {
+                        existingProduct.ProductCategories.Add(new ProductCategory
+                        {
+                            ProductId = existingProduct.Id,
+                            CategoryId = productCategory.CategoryId
+                        });
+                    }
+                }
 
                 await _context.SaveChangesAsync();
                 return product.Id;
