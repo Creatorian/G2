@@ -5,6 +5,21 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     -- ======================
+    -- 0. Drop existing data and recreate tables
+    -- ======================
+
+    -- Drop existing data (in reverse dependency order)
+    DELETE FROM ProductCategories;
+    DELETE FROM Variants;
+    DELETE FROM Products;
+    DELETE FROM Categories;
+
+    -- Reset ID counters for all tables
+    DBCC CHECKIDENT ('Categories', RESEED, 0);
+    DBCC CHECKIDENT ('Products', RESEED, 0);
+    DBCC CHECKIDENT ('Variants', RESEED, 0);
+
+    -- ======================
     -- 1. Insert Categories
     -- ======================
 
@@ -94,220 +109,299 @@ BEGIN TRY
             @CastlesBurgundyId INT,
             @ViticultureId INT;
 
-
     -- Strategy Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Gloomhaven', 'gloomhaven', 'Cooperative strategy legacy game', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Gloomhaven', 'gloomhaven', 'Cooperative strategy legacy game', GETDATE());
     SELECT @GloomhavenId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Terraforming Mars', 'terraforming-mars', 'Engineer Mars ecosystem', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Terraforming Mars', 'terraforming-mars', 'Engineer Mars ecosystem', GETDATE());
     SELECT @TerraformingMarsId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Twilight Imperium IV', 'twilight-imperium-4', 'Epic space empire building', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Twilight Imperium IV', 'twilight-imperium-4', 'Epic space empire building', GETDATE());
     SELECT @TwilightImperiumId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Scythe', 'scythe', 'Alternate-history 1920s Europe', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Scythe', 'scythe', 'Alternate-history 1920s Europe', GETDATE());
     SELECT @ScytheId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Root', 'root', 'Asymmetric woodland warfare', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Root', 'root', 'Asymmetric woodland warfare', GETDATE());
     SELECT @RootId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Brass: Birmingham', 'brass-birmingham', 'Industrial revolution strategy', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Brass: Birmingham', 'brass-birmingham', 'Industrial revolution strategy', GETDATE());
     SELECT @BrassBirminghamId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Spirit Island', 'spirit-island', 'Defend island from invaders', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Spirit Island', 'spirit-island', 'Defend island from invaders', GETDATE());
     SELECT @SpiritIslandStrategyId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Ark Nova', 'ark-nova', 'Zoo management simulation', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Ark Nova', 'ark-nova', 'Zoo management simulation', GETDATE());
     SELECT @ArkNovaId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Great Western Trail', 'great-western-trail', 'Cattle drive strategy', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Great Western Trail', 'great-western-trail', 'Cattle drive strategy', GETDATE());
     SELECT @GreatWesternTrailId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Dune: Imperium', 'dune-imperium', 'Bluffing and worker placement', GETDATE(), @StrategyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Dune: Imperium', 'dune-imperium', 'Bluffing and worker placement', GETDATE());
     SELECT @DuneImperiumId = SCOPE_IDENTITY();
 
-
     -- Family Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Ticket to Ride', 'ticket-to-ride', 'Railway adventure game', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Ticket to Ride', 'ticket-to-ride', 'Railway adventure game', GETDATE());
     SELECT @TicketToRideId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Carcassonne', 'carcassonne', 'Tile-placement medieval game', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Carcassonne', 'carcassonne', 'Tile-placement medieval game', GETDATE());
     SELECT @CarcassonneId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Azul', 'azul', 'Abstract mosaic-building', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Azul', 'azul', 'Abstract mosaic-building', GETDATE());
     SELECT @AzulId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Kingdomino', 'kingdomino', 'Domino kingdom-building', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Kingdomino', 'kingdomino', 'Domino kingdom-building', GETDATE());
     SELECT @KingdominoId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Pandemic', 'pandemic', 'Save the world from diseases', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Pandemic', 'pandemic', 'Save the world from diseases', GETDATE());
     SELECT @PandemicFamilyId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Splendor', 'splendor', 'Gemstone trading engine', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Splendor', 'splendor', 'Gemstone trading engine', GETDATE());
     SELECT @SplendorId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Catan', 'catan', 'Classic resource trading', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Catan', 'catan', 'Classic resource trading', GETDATE());
     SELECT @CatanId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Dixit', 'dixit', 'Creative storytelling game', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Dixit', 'dixit', 'Creative storytelling game', GETDATE());
     SELECT @DixitId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Patchwork', 'patchwork', 'Tetris-like quilting game', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Patchwork', 'patchwork', 'Tetris-like quilting game', GETDATE());
     SELECT @PatchworkId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Wingspan', 'wingspan', 'Bird-collection engine builder', GETDATE(), @FamilyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Wingspan', 'wingspan', 'Bird-collection engine builder', GETDATE());
     SELECT @WingspanId = SCOPE_IDENTITY();
 
-
     -- Party Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Codenames', 'codenames', 'Word association game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Codenames', 'codenames', 'Word association game', GETDATE());
     SELECT @CodenamesId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Just One', 'just-one', 'Cooperative clue-giving', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Just One', 'just-one', 'Cooperative clue-giving', GETDATE());
     SELECT @JustOneId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Telestrations', 'telestrations', 'Pictionary telephone', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Telestrations', 'telestrations', 'Pictionary telephone', GETDATE());
     SELECT @TelestrationsId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Cards Against Humanity', 'cards-against-humanity', 'Adult party game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Cards Against Humanity', 'cards-against-humanity', 'Adult party game', GETDATE());
     SELECT @CardsAgainstHumanityId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Wavelength', 'wavelength', 'Psychic guessing game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Wavelength', 'wavelength', 'Psychic guessing game', GETDATE());
     SELECT @WavelengthId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Decrypto', 'decrypto', 'Code-breaking team game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Decrypto', 'decrypto', 'Code-breaking team game', GETDATE());
     SELECT @DecryptoId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('The Resistance', 'the-resistance', 'Social deduction game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('The Resistance', 'the-resistance', 'Social deduction game', GETDATE());
     SELECT @TheResistanceId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Monikers', 'monikers', 'Progressive charades', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Monikers', 'monikers', 'Progressive charades', GETDATE());
     SELECT @MonikersId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Concept', 'concept', 'Visual guessing game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Concept', 'concept', 'Visual guessing game', GETDATE());
     SELECT @ConceptId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Joking Hazard', 'joking-hazard', 'Comic creation game', GETDATE(), @PartyId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Joking Hazard', 'joking-hazard', 'Comic creation game', GETDATE());
     SELECT @JokingHazardId = SCOPE_IDENTITY();
 
-
     -- Cooperative Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Pandemic Legacy: Season 1', 'pandemic-legacy-s1', 'Campaign-style Pandemic', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Pandemic Legacy: Season 1', 'pandemic-legacy-s1', 'Campaign-style Pandemic', GETDATE());
     SELECT @PandemicLegacyId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Gloomhaven: Jaws of the Lion', 'jaws-of-lion', 'Entry-level Gloomhaven', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Gloomhaven: Jaws of the Lion', 'jaws-of-lion', 'Entry-level Gloomhaven', GETDATE());
     SELECT @JawsOfLionId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Spirit Island', 'spirit-island-coop', 'Cooperative island defense', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Spirit Island', 'spirit-island-coop', 'Cooperative island defense', GETDATE());
     SELECT @SpiritIslandCoopId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Marvel Champions', 'marvel-champions', 'Superhero card game', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Marvel Champions', 'marvel-champions', 'Superhero card game', GETDATE());
     SELECT @MarvelChampionsId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('The Crew', 'the-crew', 'Trick-taking space game', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('The Crew', 'the-crew', 'Trick-taking space game', GETDATE());
     SELECT @TheCrewId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Mysterium', 'mysterium', 'Ghostly murder mystery', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Mysterium', 'mysterium', 'Ghostly murder mystery', GETDATE());
     SELECT @MysteriumId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Forbidden Island', 'forbidden-island', 'Treasure recovery game', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Forbidden Island', 'forbidden-island', 'Treasure recovery game', GETDATE());
     SELECT @ForbiddenIslandId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Hanabi', 'hanabi', 'Firework card game', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Hanabi', 'hanabi', 'Firework card game', GETDATE());
     SELECT @HanabiId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Robinson Crusoe', 'robinson-crusoe', 'Survival adventure', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Robinson Crusoe', 'robinson-crusoe', 'Survival adventure', GETDATE());
     SELECT @RobinsonCrusoeId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('The Mind', 'the-mind', 'Synchronized number play', GETDATE(), @CooperativeId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('The Mind', 'the-mind', 'Synchronized number play', GETDATE());
     SELECT @TheMindId = SCOPE_IDENTITY();
 
-
     -- Deck-building Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Dominion', 'dominion', 'Original deck-builder', GETDATE(), @DeckBuildingId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Dominion', 'dominion', 'Original deck-builder', GETDATE());
     SELECT @DominionId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Clank!', 'clank', 'Deck-building adventure', GETDATE(), @DeckBuildingId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Clank!', 'clank', 'Deck-building adventure', GETDATE());
     SELECT @ClankId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Aeon''s End', 'aeons-end', 'Cooperative deck-builder', GETDATE(), @DeckBuildingId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Aeon''s End', 'aeons-end', 'Cooperative deck-builder', GETDATE());
     SELECT @AeonsEndId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Star Realms', 'star-realms', 'Space combat deck-builder', GETDATE(), @DeckBuildingId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Star Realms', 'star-realms', 'Space combat deck-builder', GETDATE());
     SELECT @StarRealmsId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Legendary: Marvel', 'legendary-marvel', 'Superhero deck-builder', GETDATE(), @DeckBuildingId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Legendary: Marvel', 'legendary-marvel', 'Superhero deck-builder', GETDATE());
     SELECT @LegendaryMarvelId = SCOPE_IDENTITY();
 
-
     -- Eurogames
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Agricola', 'agricola', 'Farming strategy game', GETDATE(), @EurogameId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Agricola', 'agricola', 'Farming strategy game', GETDATE());
     SELECT @AgricolaId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Terra Mystica', 'terra-mystica', 'Fantasy territory control', GETDATE(), @EurogameId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Terra Mystica', 'terra-mystica', 'Fantasy territory control', GETDATE());
     SELECT @TerraMysticaId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Puerto Rico', 'puerto-rico', 'Colonial strategy game', GETDATE(), @EurogameId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Puerto Rico', 'puerto-rico', 'Colonial strategy game', GETDATE());
     SELECT @PuertoRicoId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Castles of Burgundy', 'castles-burgundy', 'Tile-placement strategy', GETDATE(), @EurogameId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Castles of Burgundy', 'castles-burgundy', 'Tile-placement strategy', GETDATE());
     SELECT @CastlesBurgundyId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime, CategoryId)
-    VALUES ('Viticulture', 'viticulture', 'Wine-making strategy', GETDATE(), @EurogameId);
+    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
+    VALUES ('Viticulture', 'viticulture', 'Wine-making strategy', GETDATE());
     SELECT @ViticultureId = SCOPE_IDENTITY();
 
     -- =====================
-    -- 3. Insert Variants
+    -- 3. Create Product-Category Relationships (Many-to-Many)
+    -- =====================
+
+    -- Strategy Games
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@GloomhavenId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TerraformingMarsId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TwilightImperiumId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ScytheId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@RootId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@BrassBirminghamId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SpiritIslandStrategyId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ArkNovaId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@GreatWesternTrailId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DuneImperiumId, @StrategyId);
+
+    -- Family Games
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TicketToRideId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AzulId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingdominoId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PandemicFamilyId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SplendorId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CatanId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DixitId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PatchworkId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@WingspanId, @FamilyId);
+
+    -- Party Games
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CodenamesId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@JustOneId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TelestrationsId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CardsAgainstHumanityId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@WavelengthId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DecryptoId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TheResistanceId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@MonikersId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ConceptId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@JokingHazardId, @PartyId);
+
+    -- Cooperative Games
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PandemicLegacyId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@JawsOfLionId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SpiritIslandCoopId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@MarvelChampionsId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TheCrewId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@MysteriumId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ForbiddenIslandId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@HanabiId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@RobinsonCrusoeId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TheMindId, @CooperativeId);
+
+    -- Deck-building Games
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DominionId, @DeckBuildingId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ClankId, @DeckBuildingId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AeonsEndId, @DeckBuildingId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@StarRealmsId, @DeckBuildingId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@LegendaryMarvelId, @DeckBuildingId);
+
+    -- Eurogames
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AgricolaId, @EurogameId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TerraMysticaId, @EurogameId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PuertoRicoId, @EurogameId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CastlesBurgundyId, @EurogameId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ViticultureId, @EurogameId);
+
+    -- Multi-category games (some games belong to multiple categories)
+    -- Gloomhaven is both Strategy and Cooperative
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@GloomhavenId, @CooperativeId);
+    
+    -- Spirit Island is both Strategy and Cooperative
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SpiritIslandStrategyId, @CooperativeId);
+    
+    -- Pandemic is both Family and Cooperative
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PandemicFamilyId, @CooperativeId);
+    
+    -- Wingspan is both Family and Eurogame
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@WingspanId, @EurogameId);
+    
+    -- Aeon's End is both Deck-building and Cooperative
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AeonsEndId, @CooperativeId);
+    
+    -- Legendary: Marvel is both Deck-building and Cooperative
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@LegendaryMarvelId, @CooperativeId);
+
+    -- =====================
+    -- 4. Insert Variants
     -- =====================
 
     -- Gloomhaven Variants
@@ -393,6 +487,35 @@ BEGIN TRY
     VALUES 
     ('Farmers of the Moor', 'agricola-farmers', 'agricola_farmers.jpg', 49.99, 10, 0, GETDATE(), @AgricolaId),
     ('Revised Edition', 'agricola-revised', 'agricola_revised.jpg', 69.99, 20, 1, GETDATE(), @AgricolaId);
+
+    -- =====================
+    -- 5. Insert Admin User
+    -- =====================
+
+    INSERT INTO [Gnome].[dbo].[AdminUsers] 
+    (
+        [Username],
+        [Email], 
+        [PasswordHash],
+        [FirstName],
+        [LastName],
+        [IsActive],
+        [CreatedDateTime],
+        [LastLoginDateTime],
+        [LastPasswordChangeDateTime]
+    )
+    VALUES 
+    (
+        'gnome',
+        'gnome@mailinator.com',
+        'sD3fPKLnFKZUjnSV4qA/XoJOqsmDfNfxWcZ7kPtLc0I=',
+        'Ajs',
+        'Nigrutin',
+        1,
+        GETDATE(),
+        NULL,
+        GETDATE()
+    );
 
     COMMIT TRANSACTION;
 END TRY
