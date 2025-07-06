@@ -1,0 +1,1525 @@
+openapi: 3.0.3
+info:
+  title: Gnome Board Game Shop API
+  description: |
+    RESTful API for managing board game products, categories, variants, and admin authentication.
+    
+    ## Authentication
+    This API uses JWT Bearer token authentication for admin operations. 
+    - Public endpoints (GET) don't require authentication
+    - Admin endpoints (POST, PUT, DELETE) require valid JWT token with Admin role
+    
+    ## Getting Started
+    1. Use the `/auth/login` endpoint to authenticate and get JWT token
+    2. Include the JWT token in the Authorization header for protected endpoints
+    3. Use `/auth/refresh` to get new tokens when the current one expires
+    
+    ## Rate Limiting
+    - 100 requests per minute per IP address
+    - 1000 requests per hour per authenticated user
+    
+    ## Error Handling
+    All errors return a consistent format with appropriate HTTP status codes.
+  version: 1.0.0
+  contact:
+    name: Gnome Board Game Shop
+    email: support@gnomeboardgames.com
+    url: https://gnomeboardgames.com
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://localhost:7080
+    description: Development server
+  - url: https://api.gnomeboardgames.com
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Admin user login
+      description: Authenticates admin user credentials and returns JWT and refresh tokens for API access
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              admin_login:
+                summary: Admin login example
+                value:
+                  username: "admin"
+                  password: "P@ssw0rd"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                successful_login:
+                  summary: Successful login response
+                  value:
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    expiresAt: "2024-01-15T10:30:00Z"
+                    user:
+                      id: 1
+                      username: "admin"
+                      email: "admin@gnomeboardgames.com"
+                      firstName: "Admin"
+                      lastName: "User"
+                      isActive: true
+                      createdDateTime: "2024-01-01T00:00:00Z"
+                      lastLoginDateTime: "2024-01-15T09:30:00Z"
+        '401':
+          description: Invalid username or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_credentials:
+                  summary: Invalid credentials error
+                  value:
+                    message: "Invalid username or password"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh JWT token
+      description: Generates new JWT and refresh tokens using a valid refresh token. Old refresh token is invalidated.
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+            examples:
+              refresh_request:
+                summary: Refresh token request
+                value:
+                  refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        '200':
+          description: Token refresh successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/validate:
+    post:
+      tags:
+        - Authentication
+      summary: Validate JWT token
+      description: Validates the current JWT token and confirms user authentication status
+      operationId: validateToken
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenValidationResponse'
+              examples:
+                valid_token:
+                  summary: Valid token response
+                  value:
+                    message: "Token is valid"
+        '401':
+          description: Token is invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /product/list:
+    get:
+      tags:
+        - Products
+      summary: Get products list
+      description: Retrieves a paginated list of products with optional filtering by name, date range, and sorting options
+      operationId: listProducts
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page-size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: date-from
+          in: query
+          description: Filter products created from this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: date-to
+          in: query
+          description: Filter products created until this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: name
+          in: query
+          description: Filter products by name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: sort-by
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+            enum: [created-date-time, name, updated-date-time]
+            default: created-date-time
+        - name: sort-order
+          in: query
+          description: Sort order
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+              examples:
+                products_list:
+                  summary: Products list response
+                  value:
+                    items:
+                      - id: 1
+                        name: "Chess Master Pro"
+                        slug: "chess-master-pro"
+                        description: "Professional chess set with premium pieces"
+                        categories:
+                          - id: 1
+                            name: "Strategy Games"
+                            slug: "strategy-games"
+                        variants:
+                          - id: 1
+                            name: "Standard Edition"
+                            price: 29.99
+                            stock: 50
+                            isPrimary: true
+                        createdDateTime: "2024-01-01T00:00:00Z"
+                        updatedDateTime: "2024-01-15T10:00:00Z"
+                    totalCount: 1
+                    pageNumber: 1
+                    pageSize: 10
+                    totalPages: 1
+                    hasPreviousPage: false
+                    hasNextPage: false
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /product/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      description: Retrieves detailed information about a specific product including its categories and variants
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+              examples:
+                product_details:
+                  summary: Product details response
+                  value:
+                    id: 1
+                    name: "Chess Master Pro"
+                    slug: "chess-master-pro"
+                    description: "Professional chess set with premium pieces"
+                    categories:
+                      - id: 1
+                        name: "Strategy Games"
+                        slug: "strategy-games"
+                    variants:
+                      - id: 1
+                        name: "Standard Edition"
+                        slug: "standard-edition"
+                        price: 29.99
+                        stock: 50
+                        isPrimary: true
+                        imageUrl: "https://res.cloudinary.com/example/image/upload/v1/chess-standard.jpg"
+                    createdDateTime: "2024-01-01T00:00:00Z"
+                    updatedDateTime: "2024-01-15T10:00:00Z"
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      description: Permanently deletes a board game product and all its variants. Requires admin authentication.
+      operationId: deleteProduct
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the product to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDeletedResponse'
+              examples:
+                deletion_success:
+                  summary: Successful deletion
+                  value:
+                    success: true
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /product/add:
+    post:
+      tags:
+        - Products
+      summary: Add new product
+      description: Creates a new board game product with specified details and category associations. Requires admin authentication.
+      operationId: addProduct
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddProductRequest'
+            examples:
+              new_product:
+                summary: New product creation
+                value:
+                  name: "New Board Game"
+                  slug: "new-board-game"
+                  description: "An exciting new board game"
+                  categoryIds: "1,2"
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductCreatedResponse'
+              examples:
+                creation_success:
+                  summary: Successful creation
+                  value:
+                    id: 2
+        '400':
+          description: Invalid product data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /product/update:
+    put:
+      tags:
+        - Products
+      summary: Update product
+      description: Updates an existing board game product with new details. Requires admin authentication.
+      operationId: updateProduct
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+            examples:
+              product_update:
+                summary: Product update
+                value:
+                  id: 1
+                  name: "Updated Chess Master Pro"
+                  slug: "updated-chess-master-pro"
+                  description: "Updated description for the chess set"
+                  categoryId: 1
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductUpdatedResponse'
+              examples:
+                update_success:
+                  summary: Successful update
+                  value:
+                    id: 1
+        '400':
+          description: Invalid product data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /category/list:
+    get:
+      tags:
+        - Categories
+      summary: Get categories list
+      description: Retrieves a paginated list of categories with optional filtering and sorting
+      operationId: listCategories
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page-size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: date-from
+          in: query
+          description: Filter categories created from this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: date-to
+          in: query
+          description: Filter categories created until this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: name
+          in: query
+          description: Filter categories by name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: sort-by
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+            enum: [created-date-time, name, updated-date-time]
+            default: created-date-time
+        - name: sort-order
+          in: query
+          description: Sort order
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Categories retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /category/{id}:
+    get:
+      tags:
+        - Categories
+      summary: Get category by ID
+      description: Retrieves detailed information about a specific category with products count
+      operationId: getCategoryById
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the category
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags:
+        - Categories
+      summary: Delete category
+      description: Permanently deletes a category. Requires admin authentication.
+      operationId: deleteCategory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the category to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Category deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDeletedResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /category/add:
+    post:
+      tags:
+        - Categories
+      summary: Add new category
+      description: Creates a new category. Requires admin authentication.
+      operationId: addCategory
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddCategoryRequest'
+      responses:
+        '200':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCreatedResponse'
+        '400':
+          description: Invalid category data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /category/update:
+    put:
+      tags:
+        - Categories
+      summary: Update category
+      description: Updates an existing category. Requires admin authentication.
+      operationId: updateCategory
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryUpdatedResponse'
+        '400':
+          description: Invalid category data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /variant/list:
+    get:
+      tags:
+        - Variants
+      summary: Get variants list
+      description: Retrieves a paginated list of variants with optional filtering and sorting
+      operationId: listVariants
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page-size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: date-from
+          in: query
+          description: Filter variants created from this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: name
+          in: query
+          description: Filter variants by name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: sort-by
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+            enum: [created-date-time, name, price, updated-date-time]
+            default: created-date-time
+        - name: sort-order
+          in: query
+          description: Sort order
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Variants retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariantListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /variant/{id}:
+    get:
+      tags:
+        - Variants
+      summary: Get variant by ID
+      description: Retrieves detailed information about a specific variant with product details
+      operationId: getVariantById
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the variant
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Variant found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariantResponse'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags:
+        - Variants
+      summary: Delete variant
+      description: Permanently deletes a variant. Requires admin authentication.
+      operationId: deleteVariant
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the variant to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Variant deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariantDeletedResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /variant/add:
+    post:
+      tags:
+        - Variants
+      summary: Add new variant
+      description: Creates a new variant with optional image upload to Cloudinary. Requires admin authentication.
+      operationId: addVariant
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddVariantRequest'
+      responses:
+        '200':
+          description: Variant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariantCreatedResponse'
+        '400':
+          description: Invalid variant data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /variant/update:
+    put:
+      tags:
+        - Variants
+      summary: Update variant
+      description: Updates an existing variant with optional image upload. Requires admin authentication.
+      operationId: updateVariant
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateVariantRequest'
+      responses:
+        '200':
+          description: Variant updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariantUpdatedResponse'
+        '400':
+          description: Invalid variant data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Authorization header using the Bearer scheme. Enter your token in the text input below.
+
+  schemas:
+    # Authentication Schemas
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Admin username
+          example: "admin"
+        password:
+          type: string
+          description: Admin password
+          example: "P@ssw0rd"
+          format: password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT access token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+          description: Refresh token for getting new access tokens
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        expiresAt:
+          type: string
+          format: date-time
+          description: Token expiration time
+          example: "2024-01-15T10:30:00Z"
+        user:
+          $ref: '#/components/schemas/AdminUserDto'
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token to use for generating new JWT token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    TokenValidationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Confirmation message that the token is valid
+          example: "Token is valid"
+
+    AdminUserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User ID
+          example: 1
+        username:
+          type: string
+          description: Username
+          example: "admin"
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: "admin@gnomeboardgames.com"
+        firstName:
+          type: string
+          description: First name
+          example: "Admin"
+        lastName:
+          type: string
+          description: Last name
+          example: "User"
+        isActive:
+          type: boolean
+          description: Whether the user account is active
+          example: true
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Account creation date
+          example: "2024-01-01T00:00:00Z"
+        lastLoginDateTime:
+          type: string
+          format: date-time
+          description: Last login date
+          example: "2024-01-15T09:30:00Z"
+
+    # Product Schemas
+    ProductListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductResponse'
+        totalCount:
+          type: integer
+          description: Total number of products
+          example: 1
+        pageNumber:
+          type: integer
+          description: Current page number
+          example: 1
+        pageSize:
+          type: integer
+          description: Number of items per page
+          example: 10
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 1
+        hasPreviousPage:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+        hasNextPage:
+          type: boolean
+          description: Whether there is a next page
+          example: false
+
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Product ID
+          example: 1
+        name:
+          type: string
+          description: Product name
+          example: "Chess Master Pro"
+        slug:
+          type: string
+          description: URL-friendly product name
+          example: "chess-master-pro"
+        description:
+          type: string
+          description: Product description
+          example: "Professional chess set with premium pieces"
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryDto'
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantDto'
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Product creation date
+          example: "2024-01-01T00:00:00Z"
+        updatedDateTime:
+          type: string
+          format: date-time
+          description: Product last update date
+          example: "2024-01-15T10:00:00Z"
+
+    AddProductRequest:
+      type: object
+      required:
+        - name
+        - slug
+        - description
+        - categoryIds
+      properties:
+        name:
+          type: string
+          description: Product name
+          example: "New Board Game"
+        slug:
+          type: string
+          description: URL-friendly product name
+          example: "new-board-game"
+        description:
+          type: string
+          description: Product description
+          example: "An exciting new board game"
+        categoryIds:
+          type: string
+          description: Comma-separated list of category IDs
+          example: "1,2"
+
+    UpdateProductRequest:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+        - description
+        - categoryId
+      properties:
+        id:
+          type: integer
+          description: Product ID to update
+          example: 1
+        name:
+          type: string
+          description: Updated product name
+          example: "Updated Chess Master Pro"
+        slug:
+          type: string
+          description: Updated URL-friendly product name
+          example: "updated-chess-master-pro"
+        description:
+          type: string
+          description: Updated product description
+          example: "Updated description for the chess set"
+        categoryId:
+          type: integer
+          description: Category ID
+          example: 1
+
+    ProductCreatedResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the newly created product
+          example: 2
+
+    ProductUpdatedResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the updated product
+          example: 1
+
+    ProductDeletedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Confirmation that the product was deleted successfully
+          example: true
+
+    # Category Schemas
+    CategoryListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryResponse'
+        totalCount:
+          type: integer
+          description: Total number of categories
+          example: 1
+        pageNumber:
+          type: integer
+          description: Current page number
+          example: 1
+        pageSize:
+          type: integer
+          description: Number of items per page
+          example: 10
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 1
+        hasPreviousPage:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+        hasNextPage:
+          type: boolean
+          description: Whether there is a next page
+          example: false
+
+    CategoryResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Category ID
+          example: 1
+        name:
+          type: string
+          description: Category name
+          example: "Strategy Games"
+        slug:
+          type: string
+          description: URL-friendly category name
+          example: "strategy-games"
+        productsCount:
+          type: integer
+          description: Number of products in this category
+          example: 5
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Category creation date
+          example: "2024-01-01T00:00:00Z"
+        updatedDateTime:
+          type: string
+          format: date-time
+          description: Category last update date
+          example: "2024-01-15T10:00:00Z"
+
+    CategoryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Category ID
+          example: 1
+        name:
+          type: string
+          description: Category name
+          example: "Strategy Games"
+        slug:
+          type: string
+          description: URL-friendly category name
+          example: "strategy-games"
+
+    AddCategoryRequest:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          description: Category name
+          example: "Strategy Games"
+        slug:
+          type: string
+          description: URL-friendly category name
+          example: "strategy-games"
+
+    UpdateCategoryRequest:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+      properties:
+        id:
+          type: integer
+          description: Category ID to update
+          example: 1
+        name:
+          type: string
+          description: Updated category name
+          example: "Updated Strategy Games"
+        slug:
+          type: string
+          description: Updated URL-friendly category name
+          example: "updated-strategy-games"
+
+    CategoryCreatedResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the newly created category
+          example: 2
+
+    CategoryUpdatedResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the updated category
+          example: 1
+
+    CategoryDeletedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Confirmation that the category was deleted successfully
+          example: true
+
+    # Variant Schemas
+    VariantListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantResponse'
+        totalCount:
+          type: integer
+          description: Total number of variants
+          example: 1
+        pageNumber:
+          type: integer
+          description: Current page number
+          example: 1
+        pageSize:
+          type: integer
+          description: Number of items per page
+          example: 10
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 1
+        hasPreviousPage:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+        hasNextPage:
+          type: boolean
+          description: Whether there is a next page
+          example: false
+
+    VariantResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Variant ID
+          example: 1
+        name:
+          type: string
+          description: Variant name
+          example: "Standard Edition"
+        slug:
+          type: string
+          description: URL-friendly variant name
+          example: "standard-edition"
+        price:
+          type: number
+          format: decimal
+          description: Variant price
+          example: 29.99
+        stock:
+          type: integer
+          description: Available stock quantity
+          example: 50
+        isPrimary:
+          type: boolean
+          description: Whether this is the primary variant
+          example: true
+        imageUrl:
+          type: string
+          format: uri
+          description: Variant image URL
+          example: "https://res.cloudinary.com/example/image/upload/v1/chess-standard.jpg"
+        product:
+          $ref: '#/components/schemas/ProductDto'
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Variant creation date
+          example: "2024-01-01T00:00:00Z"
+        updatedDateTime:
+          type: string
+          format: date-time
+          description: Variant last update date
+          example: "2024-01-15T10:00:00Z"
+
+    VariantDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Variant ID
+          example: 1
+        name:
+          type: string
+          description: Variant name
+          example: "Standard Edition"
+        slug:
+          type: string
+          description: URL-friendly variant name
+          example: "standard-edition"
+        price:
+          type: number
+          format: decimal
+          description: Variant price
+          example: 29.99
+        stock:
+          type: integer
+          description: Available stock quantity
+          example: 50
+        isPrimary:
+          type: boolean
+          description: Whether this is the primary variant
+          example: true
+        imageUrl:
+          type: string
+          format: uri
+          description: Variant image URL
+          example: "https://res.cloudinary.com/example/image/upload/v1/chess-standard.jpg"
+
+    ProductDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Product ID
+          example: 1
+        name:
+          type: string
+          description: Product name
+          example: "Chess Master Pro"
+        slug:
+          type: string
+          description: URL-friendly product name
+          example: "chess-master-pro"
+
+    AddVariantRequest:
+      type: object
+      required:
+        - name
+        - slug
+        - price
+        - stock
+        - isPrimary
+        - productId
+      properties:
+        name:
+          type: string
+          description: Variant name
+          example: "Premium Edition"
+        slug:
+          type: string
+          description: URL-friendly variant name
+          example: "premium-edition"
+        price:
+          type: number
+          format: decimal
+          description: Variant price
+          example: 39.99
+        stock:
+          type: integer
+          description: Available stock quantity
+          example: 50
+        isPrimary:
+          type: boolean
+          description: Whether this is the primary variant
+          example: true
+        productId:
+          type: integer
+          description: Product ID this variant belongs to
+          example: 1
+        image:
+          type: string
+          format: binary
+          description: Variant image file
+
+    UpdateVariantRequest:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+        - price
+        - stock
+        - isPrimary
+        - productId
+      properties:
+        id:
+          type: integer
+          description: Variant ID to update
+          example: 1
+        name:
+          type: string
+          description: Updated variant name
+          example: "Updated Premium Edition"
+        slug:
+          type: string
+          description: Updated URL-friendly variant name
+          example: "updated-premium-edition"
+        price:
+          type: number
+          format: decimal
+          description: Updated variant price
+          example: 49.99
+        stock:
+          type: integer
+          description: Updated available stock quantity
+          example: 75
+        isPrimary:
+          type: boolean
+          description: Whether this is the primary variant
+          example: true
+        productId:
+          type: integer
+          description: Product ID this variant belongs to
+          example: 1
+        image:
+          type: string
+          format: binary
+          description: Updated variant image file
+
+    VariantCreatedResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the newly created variant
+          example: 2
+
+    VariantUpdatedResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the updated variant
+          example: 1
+
+    VariantDeletedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Confirmation that the variant was deleted successfully
+          example: true
+
+    # Error Response
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message describing what went wrong
+          example: "Invalid username or password" 

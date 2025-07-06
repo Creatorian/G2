@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f4a8cfb7-12c7-46f3-b6fc-61bf08cb4a4b",
+		"_postman_id": "c31150bb-bc1c-49ee-9466-7d9dad2d0c50",
 		"name": "Gnome API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12622722"
@@ -87,23 +87,22 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Chess Master Pro",
+									"value": "Tester2",
 									"type": "text"
 								},
 								{
 									"key": "slug",
-									"value": "chess-master-pro",
-									"description": ")",
+									"value": "tester2",
 									"type": "text"
 								},
 								{
 									"key": "description",
-									"value": "Advanced chess set with premium pieces",
+									"value": "Advanced test set with premium pieces",
 									"type": "text"
 								},
 								{
-									"key": "category-id",
-									"value": "1",
+									"key": "category-ids",
+									"value": "1,2",
 									"type": "text"
 								}
 							]
@@ -587,6 +586,98 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{BaseURL}}/auth/login",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{BaseURL}}/auth/refresh",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{BaseURL}}/auth/validate",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -614,6 +705,16 @@
 			"key": "BaseURL",
 			"value": "https://localhost:7080",
 			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "jwtToken",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
