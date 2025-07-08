@@ -27,8 +27,8 @@ namespace Gnome.Application.G2.Query.ListProducts
         {
             var page = request.Page;
             var pageSize = request.PageSize;
-            var products = await _productRepository.GetProducts(page, pageSize, request.DateFrom, request.DateTo, name: request.Name, sortBy: request.SortBy, sortOrder: request.SortOrder);
-            var productsCount = await _productRepository.CountProducts(request.DateFrom, request.DateTo, name: request.Name);
+            var products = await _productRepository.GetProducts(page, pageSize, request.Filter, sortBy: request.SortBy, sortOrder: request.SortOrder);
+            var productsCount = await _productRepository.CountProducts(request.Filter);
             int totalPages = (int)Math.Ceiling(productsCount * 1.0 / pageSize);
 
             List<ProductListResponse> productListResponse = _mapper.Map<List<ProductListResponse>>(products);

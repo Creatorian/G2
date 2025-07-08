@@ -22,17 +22,32 @@ namespace Gnome.Domain.Models
         [MaxLength(1000)]
         public string Description { get; set; }
         
-        [MaxLength(500)]
+        [MaxLength(100)]
         public string ShortDescription { get; set; }
+
+        [MaxLength(50)]
+        public string NumberOfPlayers { get; set; }
+
+        [MaxLength(50)]
+        public string PlayingTime { get; set; }
+
+        [MaxLength(50)]
+        public string CommunityAge { get; set; }
+
+        [MaxLength(50)]
+        public string Complexity { get; set; }
+
+        [Column(TypeName = "decimal(3,2)")]
+        public decimal Rating { get; set; }
         
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         
-        public int Stock { get; set; }
+        [Column(TypeName = "nvarchar(max)")]
+        public string Awards { get; set; }
         
-        [Column(TypeName = "decimal(3,2)")]
-        public decimal Rating { get; set; }
+        public int Stock { get; set; }
         
         public DateTime? CreatedDateTime { get; set; }
         

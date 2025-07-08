@@ -116,6 +116,26 @@ namespace Gnome.Infrastructure
                 .Property(p => p.ShortDescription)
                 .HasMaxLength(500);
 
+            modelBuilder.Entity<Product>()
+                .Property(p => p.NumberOfPlayers)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.PlayingTime)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.CommunityAge)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Complexity)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Awards)
+                .HasMaxLength(2000);
+
             modelBuilder.Entity<Image>()
                 .Property(i => i.Url)
                 .IsRequired()

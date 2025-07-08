@@ -1,14 +1,17 @@
 using FluentValidation;
-using Gnome.Application.G2.Query.AddProduct;
+using Gnome.Application.G2.Query.UpdateProduct;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 
 namespace Gnome.Application.Validators
 {
-    public class AddProductCommandValidator : AbstractValidator<AddProductCommand>
+    public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
     {
-        public AddProductCommandValidator()
+        public UpdateProductCommandValidator()
         {
+            RuleFor(x => x.Id)
+                .GreaterThan(0).WithMessage("Product ID must be greater than 0");
+
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Product name is required")
                 .MaximumLength(200).WithMessage("Product name cannot exceed 200 characters")
@@ -22,6 +25,9 @@ namespace Gnome.Application.Validators
             RuleFor(x => x.Description)
                 .MaximumLength(1000).WithMessage("Product description cannot exceed 1000 characters");
 
+            RuleFor(x => x.ShortDescription)
+                .MaximumLength(500).WithMessage("Product short description cannot exceed 500 characters");
+
             RuleFor(x => x.Price)
                 .NotEmpty().WithMessage("Price cannot be empty");
 
@@ -29,11 +35,10 @@ namespace Gnome.Application.Validators
                 .NotEmpty().WithMessage("Stock cannot be empty");
 
             RuleFor(x => x.CategoryIds)
-                    .NotEmpty().WithMessage("At least one category must be selected")
-                    .Must(categoryIds => categoryIds.All(id => id > 0)).WithMessage("All category IDs must be greater than 0");
+                .Must(categoryIds => categoryIds == null || categoryIds.All(id => id > 0))
+                .WithMessage("All category IDs must be greater than 0");
 
             RuleFor(x => x.Complexity)
-                .NotEmpty().WithMessage("Complexity is required")
                 .MaximumLength(50).WithMessage("Complexity cannot exceed 50 characters");
 
             RuleFor(x => x.NumberOfPlayers)

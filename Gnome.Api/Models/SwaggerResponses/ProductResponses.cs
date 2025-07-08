@@ -48,6 +48,12 @@ namespace Gnome.Api.Models.SwaggerResponses
         /// </summary>
         /// <example>false</example>
         public bool HasNextPage { get; set; }
+
+        /// <summary>
+        /// Product complexity
+        /// </summary>
+        /// <example>Medium</example>
+        public string Complexity { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -124,6 +130,12 @@ namespace Gnome.Api.Models.SwaggerResponses
         /// </summary>
         /// <example>2024-01-15T10:00:00Z</example>
         public DateTime UpdatedDateTime { get; set; }
+
+        /// <summary>
+        /// Product complexity
+        /// </summary>
+        /// <example>Medium</example>
+        public string Complexity { get; set; } = string.Empty;
     }
 
     /// <summary>

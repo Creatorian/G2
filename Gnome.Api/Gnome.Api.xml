@@ -11,27 +11,25 @@
         </member>
         <member name="T:Gnome.Api.Bindings.ListCategoriesCommandBinding">
             <summary>
-            
+            Binding configuration for ListCategoriesQueryCommand with comprehensive filtering support
             </summary>
         </member>
         <member name="M:Gnome.Api.Bindings.ListCategoriesCommandBinding.Configure(Gnome.Application.Shared.ModelBinderBuilder{Gnome.Application.G2.Query.ListCategories.ListCategoriesQueryCommand})">
             <summary>
-            
+            Configure all filter properties for category listing
             </summary>
             <param name="builder"></param>
-            
         </member>
         <member name="T:Gnome.Api.Bindings.ListProductsCommandBinding">
             <summary>
-            
+            Binding configuration for ListProductsQueryCommand with comprehensive filtering support
             </summary>
         </member>
         <member name="M:Gnome.Api.Bindings.ListProductsCommandBinding.Configure(Gnome.Application.Shared.ModelBinderBuilder{Gnome.Application.G2.Query.ListProducts.ListProductsQueryCommand})">
             <summary>
-            
+            Configure all filter properties for product listing
             </summary>
             <param name="builder"></param>
-            
         </member>
         <member name="T:Gnome.Api.Controllers.AuthController">
             <summary>
@@ -410,6 +408,12 @@
             </summary>
             <example>false</example>
         </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductListResponse.Complexity">
+            <summary>
+            Product complexity
+            </summary>
+            <example>Medium</example>
+        </member>
         <member name="T:Gnome.Api.Models.SwaggerResponses.ProductResponse">
             <summary>
             Response DTO for product details
@@ -484,6 +488,12 @@
             Product last update date
             </summary>
             <example>2024-01-15T10:00:00Z</example>
+        </member>
+        <member name="P:Gnome.Api.Models.SwaggerResponses.ProductResponse.Complexity">
+            <summary>
+            Product complexity
+            </summary>
+            <example>Medium</example>
         </member>
         <member name="T:Gnome.Api.Models.SwaggerResponses.CategoryDto">
             <summary>

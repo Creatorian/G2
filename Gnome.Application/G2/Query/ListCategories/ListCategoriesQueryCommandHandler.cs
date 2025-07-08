@@ -25,8 +25,8 @@ namespace Gnome.Application.G2.Query.ListCategories
         {
             var page = request.Page;
             var pageSize = request.PageSize;
-            var categories = await _categoryRepository.GetCategories(page, pageSize, request.DateFrom, request.DateTo, name: request.Name, sortBy: request.SortBy, sortOrder: request.SortOrder);
-            var categoriesCount = await _categoryRepository.CountCategories(request.DateFrom, request.DateTo, name: request.Name);
+            var categories = await _categoryRepository.GetCategories(page, pageSize, request.Filter, sortBy: request.SortBy, sortOrder: request.SortOrder);
+            var categoriesCount = await _categoryRepository.CountCategories(request.Filter);
             int totalPages = (int)Math.Ceiling(categoriesCount * 1.0 / pageSize);
 
             return new SortedPagedList<CategoryListResponse>

@@ -23,6 +23,30 @@ namespace Gnome.Api.Bindings
                 .FromForm()
                 .HasParameterName("short-description");
 
+            builder.ForMember(x => x.NumberOfPlayers)
+                .FromForm()
+                .HasParameterName("number-of-players");
+
+
+            builder.ForMember(x => x.PlayingTime)
+                .FromForm()
+                .HasParameterName("playing-time");
+
+
+            builder.ForMember(x => x.CommunityAge)
+                .FromForm()
+                .HasParameterName("community-age");
+
+
+            builder.ForMember(x => x.Complexity)
+                .FromForm()
+                .HasParameterName("complexity");
+
+
+            builder.ForMember(x => x.Rating)
+                .FromForm()
+                .HasParameterName("rating");
+
             builder.ForMember(x => x.Price)
                 .FromForm()
                 .HasParameterName("price");
@@ -30,10 +54,6 @@ namespace Gnome.Api.Bindings
             builder.ForMember(x => x.Stock)
                 .FromForm()
                 .HasParameterName("stock");
-
-            builder.ForMember(x => x.Rating)
-                .FromForm()
-                .HasParameterName("rating");
 
             builder.ForMember(x => x.CategoryIds)
                 .FromForm()

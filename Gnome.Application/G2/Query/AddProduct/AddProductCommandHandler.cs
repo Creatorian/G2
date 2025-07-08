@@ -48,7 +48,12 @@ namespace Gnome.Application.G2.Query.AddProduct
                 Slug = request.Slug,
                 Description = request.Description,
                 ShortDescription = request.ShortDescription,
+                NumberOfPlayers = request.NumberOfPlayers,
+                PlayingTime = request.PlayingTime,
+                CommunityAge = request.CommunityAge,
+                Complexity = request.Complexity,
                 Price = request.Price,
+                Awards = request.Awards != null ? string.Join(",", request.Awards) : null,
                 Stock = request.Stock,
                 Rating = request.Rating,
                 CreatedDateTime = DateTime.UtcNow

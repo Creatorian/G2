@@ -15,13 +15,7 @@ namespace Gnome.Application.G2.Query.ListProducts
     [DataContract]
     public class ListProductsQueryCommand : PagedQuery<SortedPagedList<ProductListResponse>>
     {
-        [DataMember(Name = "dateFrom")]
-        public DateTime DateFrom { get; set; }
-
-        [DataMember(Name = "dateTo")]
-        public DateTime DateTo { get; set; } = DateTime.Now;
-
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
+        [DataMember(Name = "filter")]
+        public ProductFilter Filter { get; set; } = new ProductFilter();
     }
 }

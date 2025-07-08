@@ -13,11 +13,14 @@ BEGIN TRY
     DELETE FROM Variants;
     DELETE FROM Products;
     DELETE FROM Categories;
+    DELETE FROM Images;
+    DELETE FROM AdminUsers;
 
     -- Reset ID counters for all tables
     DBCC CHECKIDENT ('Categories', RESEED, 0);
     DBCC CHECKIDENT ('Products', RESEED, 0);
-    DBCC CHECKIDENT ('Variants', RESEED, 0);
+    DBCC CHECKIDENT ('AdminUsers', RESEED, 0);
+    DBCC CHECKIDENT ('Images', RESEED, 0);
 
     -- ======================
     -- 1. Insert Categories
@@ -109,9 +112,25 @@ BEGIN TRY
             @CastlesBurgundyId INT,
             @ViticultureId INT;
 
+
+			SELECT TOP (1000) [Id]
+      ,[Name]
+      ,[Slug]
+      ,[Description]
+      ,[ShortDescription]
+      ,[NumberOfPlayers]
+      ,[PlayingTime]
+      ,[CommunityAge]
+      ,[Complexity]
+      ,[Rating]
+      ,[Price]
+      ,[Stock]
+      ,[CreatedDateTime]
+  FROM [Gnome].[dbo].[Products]
+
     -- Strategy Games
     INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Gloomhaven', 'gloomhaven', 'Cooperative strategy legacy game', GETDATE());
+    VALUES ('Gloomhaven', 'gloomhaven', 'Cooperative strategy legacy game', GETDATE(), 49.99, 8.6, );
     SELECT @GloomhavenId = SCOPE_IDENTITY();
 
     INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
