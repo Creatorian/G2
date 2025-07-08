@@ -15,17 +15,15 @@ namespace Gnome.Api.Bindings
             // List Query Bindings
             configuration.ApplyConfiguration(new ListProductsCommandBinding());
             configuration.ApplyConfiguration(new ListCategoriesCommandBinding());
-            configuration.ApplyConfiguration(new ListVariantsCommandBinding());
 
             // Add Command Bindings
             configuration.ApplyConfiguration(new AddCategoryCommandBinding());
             configuration.ApplyConfiguration(new AddProductCommandBinding());
-            configuration.ApplyConfiguration(new AddVariantCommandBinding());
+            configuration.ApplyConfiguration(new AddImageCommandBinding());
 
             // Update Command Bindings
             configuration.ApplyConfiguration(new UpdateCategoryCommandBinding());
             configuration.ApplyConfiguration(new UpdateProductCommandBinding());
-            configuration.ApplyConfiguration(new UpdateVariantCommandBinding());
 
             return configuration;
         }

@@ -29,12 +29,10 @@ namespace Gnome.Application.G2.Query.ListCategories
             var categoriesCount = await _categoryRepository.CountCategories(request.DateFrom, request.DateTo, name: request.Name);
             int totalPages = (int)Math.Ceiling(categoriesCount * 1.0 / pageSize);
 
-            List<CategoryListResponse> categoryListResponse = _mapper.Map<List<CategoryListResponse>>(categories);
-
             return new SortedPagedList<CategoryListResponse>
             {
                 TotalCount = categoriesCount,
-                Items = categoryListResponse,
+                Items = categories,
                 Page = page,
                 PageSize = pageSize,
                 TotalPages = totalPages,

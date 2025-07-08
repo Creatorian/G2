@@ -22,5 +22,7 @@ namespace Gnome.Domain.Responses
         public string Slug { get; set; }
         [DataMember(Name = "created-date-time")]
         public DateTime? CreatedDateTime { get; set; }
+        [DataMember(Name = "products-count")]
+        public int ProductsCount { get; set; }
     }
 }

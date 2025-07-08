@@ -47,7 +47,7 @@ namespace Gnome.Api.Controllers
         /// Retrieves a specific product by its ID
         /// </summary>
         /// <param name="id">The unique identifier of the product</param>
-        /// <returns>Product details including categories and variants</returns>
+        /// <returns>Product details including categories and images</returns>
         /// <response code="200">Product found and returned successfully.</response>
         /// <response code="404">Product not found.</response>
         [HttpGet("{id}", Name = "GetProductById_Action")]

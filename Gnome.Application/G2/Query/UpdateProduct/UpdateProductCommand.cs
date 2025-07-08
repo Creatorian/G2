@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +14,11 @@ namespace Gnome.Application.G2.Query.UpdateProduct
         public string Name { get; set; }
         public string Slug { get; set; }
         public string Description { get; set; }
+        public string ShortDescription { get; set; }
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+        public decimal Rating { get; set; }
         public List<int> CategoryIds { get; set; } = new List<int>();
-        public List<UpdateVariantDto> Variants { get; set; } = new();
-
-        public class UpdateVariantDto
-        {
-            public int? VariantId { get; set; } // Null for new variants
-            public string Name { get; set; }
-            public string Slug { get; set; }
-            public string Image { get; set; }
-            public decimal Price { get; set; }
-            public int Stock { get; set; }
-            public bool IsPrimary { get; set; }
-        }
+        public List<IFormFile> Images { get; set; } = new List<IFormFile>();
     }
 }

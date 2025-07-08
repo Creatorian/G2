@@ -15,15 +15,17 @@ namespace Gnome.Application.Mappings
     {
         public ProductProfile() 
         {
-            CreateMap<Product, ProductListResponse>();
+            CreateMap<Product, ProductListResponse>()
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category)))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
             CreateMap<Product, ProductResponse>()
                 .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category)))
-                .ForMember(dest => dest.Variants, opt => opt.MapFrom(src => src.Variants));
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
+
+            CreateMap<Image, ImageResponse>();
 
             CreateMap<AddProductCommand, Product>();
             CreateMap<UpdateProductCommand, Product>();
-            CreateMap<UpdateProductCommand.UpdateVariantDto, Variant>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.VariantId ?? 0));
         }
     }
 }

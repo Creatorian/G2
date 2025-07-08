@@ -83,7 +83,7 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IVariantRepository, VariantRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IAdminUserRepository, AdminUserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -150,7 +150,7 @@ builder.Services.AddSwaggerGen(c =>
     { 
         Title = "Gnome Board Game Shop API", 
         Version = "v1.0.0",
-        Description = "API for managing board game products, categories, variants, and admin authentication.",
+        Description = "API for managing board game products, categories, and admin authentication.",
         Contact = new OpenApiContact
         {
             Name = "Gnome Board Game Shop",
@@ -210,10 +210,8 @@ builder.Services.AddSwaggerGen(c =>
             return new[] { controllerActionDescriptor.ControllerName };
         }
 
-        return new[] { api.RelativePath };
+        throw new InvalidOperationException("Unable to determine tag for endpoint.");
     });
-
-    c.DocInclusionPredicate((name, api) => true);
 });
 
 var app = builder.Build();

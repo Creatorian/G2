@@ -23,6 +23,26 @@ namespace Gnome.Api.Bindings
                 .FromForm()
                 .HasParameterName("description");
 
+            builder.ForMember(x => x.ShortDescription)
+                .FromForm()
+                .HasParameterName("short-description");
+
+            builder.ForMember(x => x.Price)
+                .FromForm()
+                .HasParameterName("price");
+
+            builder.ForMember(x => x.Stock)
+                .FromForm()
+                .HasParameterName("stock");
+
+            builder.ForMember(x => x.Rating)
+                .FromForm()
+                .HasParameterName("rating");
+
+            builder.ForMember(x => x.Images)
+                .FromFormFile()
+                .HasParameterName("images");
+
             builder.ForMember(x => x.CategoryIds)
                 .FromForm()
                 .HasParameterName("category-ids");

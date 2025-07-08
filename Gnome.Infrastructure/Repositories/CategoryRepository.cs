@@ -20,7 +20,10 @@ namespace Gnome.Infrastructure.Repositories
 
         public async Task<List<CategoryListResponse>> GetCategories(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = null, string sortBy = null, string sortOrder = "desc")
         {
-            var categories = _context.Categories.AsQueryable().AsNoTracking();
+            var categories = _context.Categories
+                .Include(c => c.ProductCategories)
+                .AsQueryable()
+                .AsNoTracking();
 
             #region Filters
 
@@ -59,7 +62,8 @@ namespace Gnome.Infrastructure.Repositories
                 Id = categoriesEntity.Id,
                 Name = categoriesEntity.Name,
                 Slug = categoriesEntity.Slug,
-                CreatedDateTime = categoriesEntity.CreatedDateTime
+                CreatedDateTime = categoriesEntity.CreatedDateTime,
+                ProductsCount = categoriesEntity.ProductCategories.Count
             }).ToListAsync();
         }
 

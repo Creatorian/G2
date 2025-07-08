@@ -1,5 +1,6 @@
 using FluentValidation;
 using Gnome.Application.G2.Query.AddProduct;
+using Microsoft.AspNetCore.Http;
 using System.Linq;
 
 namespace Gnome.Application.Validators
@@ -21,9 +22,15 @@ namespace Gnome.Application.Validators
             RuleFor(x => x.Description)
                 .MaximumLength(1000).WithMessage("Product description cannot exceed 1000 characters");
 
+            RuleFor(x => x.Price)
+                .NotEmpty().WithMessage("Price cannot be empty");
+
+            RuleFor(x => x.Stock)
+                .NotEmpty().WithMessage("Stock cannot be empty");
+
             RuleFor(x => x.CategoryIds)
-                .NotEmpty().WithMessage("At least one category must be selected")
-                .Must(categoryIds => categoryIds.All(id => id > 0)).WithMessage("All category IDs must be greater than 0");
+                    .NotEmpty().WithMessage("At least one category must be selected")
+                    .Must(categoryIds => categoryIds.All(id => id > 0)).WithMessage("All category IDs must be greater than 0");
         }
     }
 } 

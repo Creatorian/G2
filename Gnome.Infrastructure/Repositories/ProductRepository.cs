@@ -31,7 +31,7 @@ namespace Gnome.Infrastructure.Repositories
             var products = _context.Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
-                .Include(p => p.Variants)
+                .Include(p => p.Images)
                 .AsQueryable()
                 .AsNoTracking();
 
@@ -61,6 +61,12 @@ namespace Gnome.Infrastructure.Repositories
                     case "name":
                         products = isDescending ? products.OrderByDescending(c => c.Name) : products.OrderBy(c => c.Name);
                         break;
+                    case "price":
+                        products = isDescending ? products.OrderByDescending(c => c.Price) : products.OrderBy(c => c.Price);
+                        break;
+                    case "rating":
+                        products = isDescending ? products.OrderByDescending(c => c.Rating) : products.OrderBy(c => c.Rating);
+                        break;
                 }
             }
 
@@ -73,6 +79,10 @@ namespace Gnome.Infrastructure.Repositories
                 Name = productsEntity.Name,
                 Slug = productsEntity.Slug,
                 Description = productsEntity.Description,
+                ShortDescription = productsEntity.ShortDescription,
+                Price = productsEntity.Price,
+                Stock = productsEntity.Stock,
+                Rating = productsEntity.Rating,
                 CreatedDateTime = productsEntity.CreatedDateTime,
                 Categories = productsEntity.ProductCategories.Select(pc => new CategoryListResponse
                 {
@@ -81,7 +91,15 @@ namespace Gnome.Infrastructure.Repositories
                     Slug = pc.Category.Slug,
                     CreatedDateTime = pc.Category.CreatedDateTime
                 }).ToList(),
-                Variants = _mapper.Map<List<VariantListResponse>>(productsEntity.Variants)
+                Images = productsEntity.Images
+                    .Select(i => new ImageResponse
+                    {
+                        Id = i.Id,
+                        Url = i.Url,
+                        IsPrimary = i.IsPrimary,
+                        CreatedDateTime = i.CreatedDateTime
+                    }).ToList(),
+                ImageCount = productsEntity.Images.Count
             }).ToListAsync();
         }
 
@@ -105,64 +123,6 @@ namespace Gnome.Infrastructure.Repositories
 
         public async Task<int> AddProductAsync(Product product)
         {
-            //try
-            //{
-
-            //    // Prepare parameters
-            //    var productNameParam = new SqlParameter("@ProductName", SqlDbType.NVarChar) { Value = product.Name };
-            //    var productSlugParam = new SqlParameter("@ProductSlug", SqlDbType.NVarChar) { Value = product.Slug };
-            //    var descriptionParam = new SqlParameter("@Description", SqlDbType.NVarChar) { Value = (object?)product.Description ?? DBNull.Value };
-            //    var categoryIdParam = new SqlParameter("@CategoryId", SqlDbType.Int) { Value = product.CategoryId };
-
-
-            //    var sql = @"
-            //        DECLARE @NewProductId INT;
-            //        EXEC [dbo].[CreateProduct]
-            //            @ProductName = @ProductName,
-            //            @ProductSlug = @ProductSlug,
-            //            @Description = @Description,
-            //            @CategoryId = @CategoryId
-            //        SELECT @NewProductId = SCOPE_IDENTITY();
-            //        SELECT @NewProductId AS Id;
-            //    ";
-
-            //    var newProductId = 0;
-            //    using (var command = _context.Database.GetDbConnection().CreateCommand())
-            //    {
-            //        command.CommandText = sql;
-            //        command.CommandType = CommandType.Text;
-            //        command.Parameters.Add(productNameParam);
-            //        command.Parameters.Add(productSlugParam);
-            //        command.Parameters.Add(descriptionParam);
-            //        command.Parameters.Add(categoryIdParam);
-
-            //        if (command.Connection.State != ConnectionState.Open)
-            //            await command.Connection.OpenAsync();
-
-            //        using (var reader = await command.ExecuteReaderAsync())
-            //        {
-            //            while (await reader.ReadAsync())
-            //            {
-            //                newProductId = reader.GetInt32(0);
-            //            }
-            //        }
-            //    }
-
-            //    return newProductId;
-            //}
-            //catch (SqlException ex)
-            //{
-            //    // Log the SQL error (replace with your logger if available)
-            //    // _logger?.LogError(ex, "SQL error occurred while adding product.");
-            //    throw new InvalidOperationException("A database error occurred while adding the product.", ex);
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log the general error (replace with your logger if available)
-            //    // _logger?.LogError(ex, "An error occurred while adding product.");
-            //    throw new InvalidOperationException("An unexpected error occurred while adding the product.", ex);
-            //}
-
             try
             {
                 _context.Products.Add(product);
@@ -189,6 +149,10 @@ namespace Gnome.Infrastructure.Repositories
                 existingProduct.Name = product.Name;
                 existingProduct.Slug = product.Slug;
                 existingProduct.Description = product.Description;
+                existingProduct.ShortDescription = product.ShortDescription;
+                existingProduct.Price = product.Price;
+                existingProduct.Stock = product.Stock;
+                existingProduct.Rating = product.Rating;
 
                 // Handle many-to-many relationship
                 if (product.ProductCategories != null)
@@ -199,11 +163,7 @@ namespace Gnome.Infrastructure.Repositories
                     // Add new category associations
                     foreach (var productCategory in product.ProductCategories)
                     {
-                        existingProduct.ProductCategories.Add(new ProductCategory
-                        {
-                            ProductId = existingProduct.Id,
-                            CategoryId = productCategory.CategoryId
-                        });
+                        existingProduct.ProductCategories.Add(productCategory);
                     }
                 }
 
@@ -221,7 +181,7 @@ namespace Gnome.Infrastructure.Repositories
             return await _context.Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
-                .Include(p => p.Variants)
+                .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -230,7 +190,7 @@ namespace Gnome.Infrastructure.Repositories
             return await _context.Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
-                .Include(p => p.Variants)
+                .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }
 
