@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c31150bb-bc1c-49ee-9466-7d9dad2d0c50",
+		"_postman_id": "ccc900a5-b10f-470b-a250-1a514a0469d7",
 		"name": "Gnome API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12622722"
@@ -12,380 +12,18 @@
 				{
 					"name": "List Products",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&date-to=2024-12-31&name=&sort-by=created-date-time&sort-order=desc",
+							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&name=&sort-by=created-date-time&sort-order=desc",
 							"host": [
 								"{{BaseURL}}"
 							],
 							"path": [
 								"product",
-								"list"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "page-size",
-									"value": "10"
-								},
-								{
-									"key": "date-from",
-									"value": "2024-01-01"
-								},
-								{
-									"key": "date-to",
-									"value": "2024-12-31"
-								},
-								{
-									"key": "name",
-									"value": ""
-								},
-								{
-									"key": "sort-by",
-									"value": "created-date-time"
-								},
-								{
-									"key": "sort-order",
-									"value": "desc"
-								}
-							]
-						},
-						"description": "Get paginated list of products with filtering and sorting"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Product by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BaseURL}}/product/1",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"product",
-								"1"
-							]
-						},
-						"description": "Get a specific product by ID with category and variants"
-					},
-					"response": []
-				},
-				{
-					"name": "Add Product",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Tester2",
-									"type": "text"
-								},
-								{
-									"key": "slug",
-									"value": "tester2",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "Advanced test set with premium pieces",
-									"type": "text"
-								},
-								{
-									"key": "category-ids",
-									"value": "1,2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{BaseURL}}/product/add",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"product",
-								"add"
-							]
-						},
-						"description": "Create a new product (form data)"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Product",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "Updated Chess Master Pro",
-									"type": "text"
-								},
-								{
-									"key": "slug",
-									"value": "updated-chess-master-pro",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "Updated description for the chess set",
-									"type": "text"
-								},
-								{
-									"key": "category-id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{BaseURL}}/product/update",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"product",
-								"update"
-							]
-						},
-						"description": "Update an existing product with variants"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Product",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{BaseURL}}/product/1",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"product",
-								"1"
-							]
-						},
-						"description": "Delete a product by ID"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Categories",
-			"item": [
-				{
-					"name": "List Categories",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BaseURL}}/category/list?page=1&page-size=10&date-from=2024-01-01&date-to=2024-12-31&name=&sort-by=created-date-time&sort-order=desc",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"category",
-								"list"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "page-size",
-									"value": "10"
-								},
-								{
-									"key": "date-from",
-									"value": "2024-01-01"
-								},
-								{
-									"key": "date-to",
-									"value": "2024-12-31"
-								},
-								{
-									"key": "name",
-									"value": ""
-								},
-								{
-									"key": "sort-by",
-									"value": "created-date-time"
-								},
-								{
-									"key": "sort-order",
-									"value": "desc"
-								}
-							]
-						},
-						"description": "Get paginated list of categories with filtering and sorting"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Category by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BaseURL}}/category/1",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"category",
-								"1"
-							]
-						},
-						"description": "Get a specific category by ID with products count"
-					},
-					"response": []
-				},
-				{
-					"name": "Add Category",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Strategy Games",
-									"type": "text"
-								},
-								{
-									"key": "slug",
-									"value": "strategy-games",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{BaseURL}}/category/add",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"category",
-								"add"
-							]
-						},
-						"description": "Create a new category"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Category",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "Updated Strategy Games",
-									"type": "text"
-								},
-								{
-									"key": "slug",
-									"value": "updated-strategy-games",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{BaseURL}}/category/update",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"category",
-								"update"
-							]
-						},
-						"description": "Update an existing category"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Category",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{BaseURL}}/category/1",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"category",
-								"1"
-							]
-						},
-						"description": "Delete a category by ID"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Variants",
-			"item": [
-				{
-					"name": "List Variants",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BaseURL}}/variant/list?page=1&page-size=10&date-from=2024-01-01&name=&sort-by=created-date-time&sort-order=desc",
-							"host": [
-								"{{BaseURL}}"
-							],
-							"path": [
-								"variant",
 								"list"
 							],
 							"query": [
@@ -411,6 +49,96 @@
 									"value": ""
 								},
 								{
+									"key": "slug",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "short-description",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "number-of-players",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "playing-time",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "community-age",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "complexity",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "min-rating",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "max-rating",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "min-price",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "max-price",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "min-stock",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "max-stock",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "awards",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "category-ids",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "category-names",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "has-images",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "in-stock-only",
+									"value": "",
+									"disabled": true
+								},
+								{
 									"key": "sort-by",
 									"value": "created-date-time"
 								},
@@ -420,32 +148,45 @@
 								}
 							]
 						},
-						"description": "Get paginated list of variants with filtering and sorting"
+						"description": "Get paginated list of products with filtering and sorting"
 					},
 					"response": []
 				},
 				{
-					"name": "Get Variant by ID",
+					"name": "Get Product by ID",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseURL}}/variant/1",
+							"raw": "{{BaseURL}}/product/3",
 							"host": [
 								"{{BaseURL}}"
 							],
 							"path": [
-								"variant",
-								"1"
+								"product",
+								"3"
 							]
 						},
-						"description": "Get a specific variant by ID with product details"
+						"description": "Get a specific product by ID with category and variants"
 					},
 					"response": []
 				},
 				{
-					"name": "Add Variant",
+					"name": "Add Product",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -453,12 +194,151 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Premium Edition",
+									"value": "Tester2",
 									"type": "text"
 								},
 								{
 									"key": "slug",
-									"value": "premium-edition",
+									"value": "tester2",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Advanced test set with premium pieces",
+									"type": "text"
+								},
+								{
+									"key": "short-description",
+									"value": "Premium test set",
+									"type": "text"
+								},
+								{
+									"key": "number-of-players",
+									"value": "2-4",
+									"type": "text"
+								},
+								{
+									"key": "playing-time",
+									"value": "30-60",
+									"type": "text"
+								},
+								{
+									"key": "community-age",
+									"value": "8+",
+									"type": "text"
+								},
+								{
+									"key": "complexity",
+									"value": "Medium",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "4.5",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "29.99",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "category-ids",
+									"value": "1,2",
+									"type": "text"
+								},
+								{
+									"key": "awards",
+									"value": "test1,test2,test3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/product/add",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"add"
+							]
+						},
+						"description": "Create a new product (form data)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "6",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Updated Chess Master Pro",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "updated-chess-master-pro",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Updated description for the chess set",
+									"type": "text"
+								},
+								{
+									"key": "short-description",
+									"value": "Updated short description",
+									"type": "text"
+								},
+								{
+									"key": "number-of-players",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "playing-time",
+									"value": "45",
+									"type": "text"
+								},
+								{
+									"key": "community-age",
+									"value": "10+",
+									"type": "text"
+								},
+								{
+									"key": "complexity",
+									"value": "3.5",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "9.99",
 									"type": "text"
 								},
 								{
@@ -468,43 +348,218 @@
 								},
 								{
 									"key": "stock",
-									"value": "50",
+									"value": "25",
 									"type": "text"
 								},
 								{
-									"key": "is-primary",
-									"value": "true",
-									"type": "text"
-								},
-								{
-									"key": "product-id",
+									"key": "category-ids",
 									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "image",
-									"type": "file",
-									"src": []
+									"key": "awards",
+									"value": "test1,test2,test3",
+									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{BaseURL}}/variant/add",
+							"raw": "{{BaseURL}}/product/update",
 							"host": [
 								"{{BaseURL}}"
 							],
 							"path": [
-								"variant",
-								"add"
+								"product",
+								"update"
 							]
 						},
-						"description": "Create a new variant with image upload to Cloudinary"
+						"description": "Update an existing product"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Variant",
+					"name": "Delete Product",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/product/10",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"product",
+								"10"
+							]
+						},
+						"description": "Delete a product by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "List Categories",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/category/list?page=1&page-size=10&date-from=2024-01-01&name=&slug=family-games&has-products=&min-products-count=5&sort-by=created-date-time&sort-order=desc",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page-size",
+									"value": "10"
+								},
+								{
+									"key": "date-from",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "date-to",
+									"value": "2024-12-31",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": ""
+								},
+								{
+									"key": "slug",
+									"value": "family-games"
+								},
+								{
+									"key": "has-products",
+									"value": ""
+								},
+								{
+									"key": "min-products-count",
+									"value": "5"
+								},
+								{
+									"key": "max-products-count",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "sort-by",
+									"value": "created-date-time"
+								},
+								{
+									"key": "sort-order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get paginated list of categories with filtering and sorting"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/category/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"1"
+							]
+						},
+						"description": "Get a specific category by ID with products count"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Testing Games",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "testing-games",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/category/add",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"category",
+								"add"
+							]
+						},
+						"description": "Create a new category"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -512,76 +567,186 @@
 							"formdata": [
 								{
 									"key": "id",
-									"value": "1",
+									"value": "8",
 									"type": "text"
 								},
 								{
 									"key": "name",
-									"value": "Updated Premium Edition",
+									"value": "Updated Testing Games",
 									"type": "text"
 								},
 								{
 									"key": "slug",
-									"value": "updated-premium-edition",
+									"value": "updated-testing-games",
 									"type": "text"
-								},
-								{
-									"key": "price",
-									"value": "49.99",
-									"type": "text"
-								},
-								{
-									"key": "stock",
-									"value": "75",
-									"type": "text"
-								},
-								{
-									"key": "is-primary",
-									"value": "true",
-									"type": "text"
-								},
-								{
-									"key": "product-id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": []
 								}
 							]
 						},
 						"url": {
-							"raw": "{{BaseURL}}/variant/update",
+							"raw": "{{BaseURL}}/category/update",
 							"host": [
 								"{{BaseURL}}"
 							],
 							"path": [
-								"variant",
+								"category",
 								"update"
 							]
 						},
-						"description": "Update an existing variant with optional image upload"
+						"description": "Update an existing category"
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Variant",
+					"name": "Delete Category",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BaseURL}}/variant/1",
+							"raw": "{{BaseURL}}/category/8",
 							"host": [
 								"{{BaseURL}}"
 							],
 							"path": [
-								"variant",
+								"category",
+								"8"
+							]
+						},
+						"description": "Delete a category by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Images",
+			"item": [
+				{
+					"name": "Add Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "productId",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "postman-cloud:///1f03bfed-d2af-4f80-bdc3-e9b893384697"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/image/add",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"image",
+								"add"
+							]
+						},
+						"description": "Add an image to a product"
+					},
+					"response": []
+				},
+				{
+					"name": "Update IsPrimary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imageId",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "isPrimary",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseURL}}/image/set-primary/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"image",
+								"set-primary",
 								"1"
 							]
 						},
-						"description": "Delete a variant by ID"
+						"description": "Update image primary status"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/image/18",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"image",
+								"18"
+							]
+						},
+						"description": "Delete an image by ID"
 					},
 					"response": []
 				}
@@ -592,6 +757,40 @@
 			"item": [
 				{
 					"name": "Login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Set token and refresh token as collection variables\", function () {\r",
+									"    pm.expect(responseData.token).to.exist;\r",
+									"    pm.collectionVariables.set(\"token\", responseData.token);\r",
+									"    \r",
+									"    pm.expect(responseData.refreshToken).to.exist;\r",
+									"    pm.collectionVariables.set(\"refreshToken\", responseData.refreshToken);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -602,7 +801,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+							"raw": "{\n  \"username\": \"gnome\",\n  \"password\": \"P@ssw0rd\"\n}"
 						},
 						"url": {
 							"raw": "{{BaseURL}}/auth/login",
@@ -619,6 +818,30 @@
 				},
 				{
 					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Set token and refresh token as collection variables\", function () {\r",
+									"    pm.expect(responseData.token).to.exist;\r",
+									"    pm.collectionVariables.set(\"token\", responseData.token);\r",
+									"    \r",
+									"    pm.expect(responseData.refreshToken).to.exist;\r",
+									"    pm.collectionVariables.set(\"refreshToken\", responseData.refreshToken);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -652,7 +875,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwtToken}}",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -715,6 +938,10 @@
 			"key": "jwtToken",
 			"value": "",
 			"type": "default"
+		},
+		{
+			"key": "token",
+			"value": ""
 		}
 	]
 }
