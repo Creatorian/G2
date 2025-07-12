@@ -1,4 +1,5 @@
 using Gnome.Application.Shared;
+using Gnome.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -55,6 +56,21 @@ namespace Gnome.Api.Middleware
                     };
                     break;
 
+                case DomainException domainEx:
+                    context.Response.StatusCode = domainEx.HttpStatusCode;
+                    response = new
+                    {
+                        error = new
+                        {
+                            message = GetErrorMessage(domainEx),
+                            details = domainEx.Message,
+                            errorType = domainEx.GetType().Name,
+                            timestamp = DateTime.UtcNow,
+                            traceId = context.TraceIdentifier
+                        }
+                    };
+                    break;
+
                 case InvalidOperationException:
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     response = new
@@ -104,6 +120,18 @@ namespace Gnome.Api.Middleware
             });
 
             await context.Response.WriteAsync(jsonResponse);
+        }
+
+        private static string GetErrorMessage(DomainException exception)
+        {
+            return exception switch
+            {
+                DuplicateEntityException => "Duplicate entity found.",
+                EntityNotFoundException => "Entity not found.",
+                ForeignKeyConstraintException => "Referenced entity not found.",
+                ValidationException => "Validation failed.",
+                _ => "Domain error occurred."
+            };
         }
     }
 } 

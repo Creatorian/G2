@@ -7,7 +7,6 @@ using Gnome.Api.Middleware;
 using Gnome.Application.G2.Query.ListProducts;
 using Gnome.Application.Mappings;
 using Gnome.Application.Services;
-using Gnome.Application.Validators;
 using Gnome.Domain.Interfaces;
 using Gnome.Infrastructure;
 using Gnome.Infrastructure.Repositories;
@@ -56,8 +55,7 @@ builder.Host.UseSerilog();
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(ListProductsQueryCommandHandler).Assembly));
 
-// Add FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining<AddCategoryCommandValidator>();
+
 
 // Access configuration
 var configuration = new ConfigurationBuilder()
@@ -78,7 +76,14 @@ Console.WriteLine($"File Exists: {File.Exists("appsettings.json")}");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("GnomeConnection")));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+})
+.ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

@@ -1,8 +1,11 @@
 using Gnome.Domain.DTOs;
 using Gnome.Domain.Interfaces;
 using Gnome.Domain.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,17 +18,20 @@ namespace Gnome.Application.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly JwtService _jwtService;
         private readonly ILogger<AuthService> _logger;
+        private readonly IConfiguration _configuration;
 
         public AuthService(
             IAdminUserRepository adminUserRepository,
             IRefreshTokenRepository refreshTokenRepository,
             JwtService jwtService,
-            ILogger<AuthService> logger)
+            ILogger<AuthService> logger,
+            IConfiguration configuration)
         {
             _adminUserRepository = adminUserRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _jwtService = jwtService;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
@@ -139,19 +145,6 @@ namespace Gnome.Application.Services
                     LastLoginDateTime = adminUser.LastLoginDateTime
                 }
             };
-        }
-
-        public async Task<bool> ValidateTokenAsync(string token)
-        {
-            try
-            {
-                var principal = _jwtService.GetPrincipalFromExpiredToken(token);
-                return principal != null;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         private bool VerifyPassword(string password, string passwordHash)
