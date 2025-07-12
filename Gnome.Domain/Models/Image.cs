@@ -10,7 +10,7 @@ namespace Gnome.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        [Required]
+        // Database constraints only - validation handled by FluentValidation
         [MaxLength(500)]
         public string Url { get; set; }
         

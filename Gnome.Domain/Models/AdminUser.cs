@@ -11,15 +11,13 @@ namespace Gnome.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        [Required]
+        // Database constraints only - validation handled by FluentValidation
         [MaxLength(100)]
         public string Username { get; set; }
         
-        [Required]
         [MaxLength(255)]
         public string Email { get; set; }
         
-        [Required]
         [MaxLength(255)]
         public string PasswordHash { get; set; }
         

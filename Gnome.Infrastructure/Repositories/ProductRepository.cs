@@ -3,15 +3,10 @@ using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Gnome.Infrastructure.Repositories
@@ -26,6 +21,7 @@ namespace Gnome.Infrastructure.Repositories
             _context = context;
             _mapper = mapper;
         }
+
         public async Task<List<ProductListResponse>> GetProducts(int page, int pageSize, ProductFilter filter, string sortBy = default, string sortOrder = "desc")
         {
             var products = _context.Products
@@ -158,7 +154,6 @@ namespace Gnome.Infrastructure.Repositories
 
             #endregion
 
-
             #region Sort
 
             if (!string.IsNullOrEmpty(sortBy))
@@ -198,39 +193,38 @@ namespace Gnome.Infrastructure.Repositories
             // Execute the query first to get the data
             var productEntities = await products.ToListAsync();
             
-            // Process the results in memory to handle Awards splitting
-            return productEntities.Select(productsEntity => new ProductListResponse
+            return productEntities.Select(productEntity => new ProductListResponse
             {
-                Id = productsEntity.Id,
-                Name = productsEntity.Name,
-                Slug = productsEntity.Slug,
-                Description = productsEntity.Description,
-                ShortDescription = productsEntity.ShortDescription,
-                NumberOfPlayers = productsEntity.NumberOfPlayers,
-                PlayingTime = productsEntity.PlayingTime,
-                CommunityAge = productsEntity.CommunityAge,
-                Complexity = productsEntity.Complexity,
-                Price = productsEntity.Price,
-                Awards = !string.IsNullOrEmpty(productsEntity.Awards) ? productsEntity.Awards.Split(',').ToList() : new List<string>(),
-                Stock = productsEntity.Stock,
-                Rating = productsEntity.Rating,
-                CreatedDateTime = productsEntity.CreatedDateTime,
-                Categories = productsEntity.ProductCategories.Select(pc => new CategoryListResponse
+                Id = productEntity.Id,
+                Name = productEntity.Name,
+                Slug = productEntity.Slug,
+                Description = productEntity.Description,
+                ShortDescription = productEntity.ShortDescription,
+                NumberOfPlayers = productEntity.NumberOfPlayers,
+                PlayingTime = productEntity.PlayingTime,
+                CommunityAge = productEntity.CommunityAge,
+                Complexity = productEntity.Complexity,
+                Rating = productEntity.Rating,
+                Price = productEntity.Price,
+                Stock = productEntity.Stock,
+                Awards = !string.IsNullOrEmpty(productEntity.Awards) ? productEntity.Awards.Split(',').ToList() : new List<string>(),
+                CreatedDateTime = productEntity.CreatedDateTime,
+                Categories = productEntity.ProductCategories.Select(pc => new CategoryListResponse
                 {
                     Id = pc.Category.Id,
                     Name = pc.Category.Name,
                     Slug = pc.Category.Slug,
-                    CreatedDateTime = pc.Category.CreatedDateTime
+                    CreatedDateTime = pc.Category.CreatedDateTime,
+                    ProductsCount = pc.Category.ProductCategories.Count
                 }).ToList(),
-                Images = productsEntity.Images
-                    .Select(i => new ImageResponse
-                    {
-                        Id = i.Id,
-                        Url = i.Url,
-                        IsPrimary = i.IsPrimary,
-                        CreatedDateTime = i.CreatedDateTime
-                    }).ToList(),
-                ImageCount = productsEntity.Images.Count
+                Images = productEntity.Images.Select(img => new ImageResponse
+                {
+                    Id = img.Id,
+                    Url = img.Url,
+                    IsPrimary = img.IsPrimary,
+                    CreatedDateTime = img.CreatedDateTime
+                }).ToList(),
+                ImageCount = productEntity.Images.Count
             }).ToList();
         }
 
@@ -238,7 +232,6 @@ namespace Gnome.Infrastructure.Repositories
         {
             var products = _context.Products
                 .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
                 .Include(p => p.Images)
                 .AsQueryable()
                 .AsNoTracking();
@@ -377,9 +370,13 @@ namespace Gnome.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return product.Id;
             }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
+            {
+                throw new InvalidOperationException("A product with this slug already exists.");
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while adding the product.", ex);
+                throw new InvalidOperationException($"Error adding product: {ex.Message}");
             }
         }
 
@@ -423,9 +420,13 @@ namespace Gnome.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return product.Id;
             }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
+            {
+                throw new InvalidOperationException("A product with this slug already exists.");
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while updating the product.", ex);
+                throw new InvalidOperationException($"Error updating product: {ex.Message}");
             }
         }
 
@@ -461,7 +462,7 @@ namespace Gnome.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while deleting the product.", ex);
+                throw new InvalidOperationException($"Error deleting product: {ex.Message}");
             }
         }
     }

@@ -11,11 +11,10 @@ namespace Gnome.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        [Required]
+        // Database constraints only - validation handled by FluentValidation
         [MaxLength(200)]
         public string Name { get; set; }
         
-        [Required]
         [MaxLength(200)]
         public string Slug { get; set; }
         
@@ -40,7 +39,6 @@ namespace Gnome.Domain.Models
         [Column(TypeName = "decimal(3,2)")]
         public decimal Rating { get; set; }
         
-        [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         

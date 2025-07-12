@@ -1,11 +1,11 @@
 ﻿using Gnome.Domain.Interfaces;
 using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Gnome.Infrastructure.Repositories
@@ -13,6 +13,7 @@ namespace Gnome.Infrastructure.Repositories
     public class CategoryRepository : ICategoryRepository
     {
         private readonly AppDbContext _context;
+
         public CategoryRepository(AppDbContext context)
         {
             _context = context;
@@ -73,7 +74,6 @@ namespace Gnome.Infrastructure.Repositories
             }
 
             #endregion
-
 
             #region Sort
 
@@ -194,9 +194,13 @@ namespace Gnome.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return category.Id;
             }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
+            {
+                throw new InvalidOperationException("A category with this slug already exists.");
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while adding the category.", ex);
+                throw new InvalidOperationException($"Error adding category: {ex.Message}");
             }
         }
 
@@ -214,9 +218,13 @@ namespace Gnome.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return category.Id;
             }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
+            {
+                throw new InvalidOperationException("A category with this slug already exists.");
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while updating the category.", ex);
+                throw new InvalidOperationException($"Error updating category: {ex.Message}");
             }
         }
 
@@ -234,7 +242,7 @@ namespace Gnome.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while deleting the category.", ex);
+                throw new InvalidOperationException($"Error deleting category: {ex.Message}");
             }
         }
     }

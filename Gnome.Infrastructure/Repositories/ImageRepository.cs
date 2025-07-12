@@ -1,6 +1,7 @@
 using Gnome.Domain.Interfaces;
 using Gnome.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,12 @@ namespace Gnome.Infrastructure.Repositories
     public class ImageRepository : IImageRepository
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<ImageRepository> _logger;
 
-        public ImageRepository(AppDbContext context)
+        public ImageRepository(AppDbContext context, ILogger<ImageRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Image> GetImageByIdAsync(int id)
@@ -96,37 +99,59 @@ namespace Gnome.Infrastructure.Repositories
         {
             try
             {
+                _logger.LogInformation("Setting image {ImageId} as primary", imageId);
+                
                 // First, get the image to find its productId
                 var targetImage = await _context.Images
                     .FirstOrDefaultAsync(i => i.Id == imageId);
                 
                 if (targetImage == null)
-                    return false;
-
-                var productId = targetImage.ProductId;
-
-                // Get all images for the product
-                var images = await _context.Images
-                    .Where(i => i.ProductId == productId)
-                    .ToListAsync();
-
-                if (!images.Any())
-                    return false;
-
-                // Set all images as non-primary
-                foreach (var image in images)
                 {
-                    image.IsPrimary = false;
+                    _logger.LogWarning("Image {ImageId} not found", imageId);
+                    return false;
                 }
 
-                // Set the target image as primary
-                targetImage.IsPrimary = true;
+                var productId = targetImage.ProductId;
+                _logger.LogInformation("Found image {ImageId} for product {ProductId}", imageId, productId);
 
-                await _context.SaveChangesAsync();
-                return true;
+                // Use a transaction to ensure atomicity
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                
+                try
+                {
+                    // First, find and update the current primary image (if any)
+                    var currentPrimaryImage = await _context.Images
+                        .FirstOrDefaultAsync(i => i.ProductId == productId && i.IsPrimary);
+                    
+                    if (currentPrimaryImage != null)
+                    {
+                        currentPrimaryImage.IsPrimary = false;
+                        _logger.LogInformation("Set current primary image {ImageId} to non-primary", currentPrimaryImage.Id);
+                        
+                        // Save this change first to avoid constraint violation
+                        await _context.SaveChangesAsync();
+                    }
+
+                    // Now set the target image as primary
+                    targetImage.IsPrimary = true;
+                    _logger.LogInformation("Set image {ImageId} as primary", imageId);
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    
+                    _logger.LogInformation("Successfully set image {ImageId} as primary for product {ProductId}", imageId, productId);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error setting image {ImageId} as primary", imageId);
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while setting the primary image {ImageId}", imageId);
                 throw new InvalidOperationException("An error occurred while setting the primary image.", ex);
             }
         }

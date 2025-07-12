@@ -110,7 +110,7 @@ namespace Gnome.Infrastructure
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.Description)
-                .HasMaxLength(1000);
+                .HasMaxLength(8000);
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.ShortDescription)
