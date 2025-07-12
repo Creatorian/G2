@@ -3,15 +3,10 @@ using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Gnome.Infrastructure.Repositories
@@ -26,26 +21,138 @@ namespace Gnome.Infrastructure.Repositories
             _context = context;
             _mapper = mapper;
         }
-        public async Task<List<ProductListResponse>> GetProducts(int page, int pageSize, DateTime dateFrom, DateTime dateTo, string name = default, string sortBy = default, string sortOrder = "desc")
+
+        public async Task<List<ProductListResponse>> GetProducts(int page, int pageSize, ProductFilter filter, string sortBy = default, string sortOrder = "desc")
         {
             var products = _context.Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
-                .Include(p => p.Variants)
+                .Include(p => p.Images)
                 .AsQueryable()
                 .AsNoTracking();
 
             #region Filters
 
-            products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= dateFrom && x.CreatedDateTime <= dateTo);
-
-            if(name != default)
+            // Date range filter
+            if (filter.DateFrom.HasValue)
             {
-                products = products.Where(x => x.Name.Equals(name));
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= filter.DateFrom.Value);
+            }
+            if (filter.DateTo.HasValue)
+            {
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
+            }
+
+            // Text-based filters (case-insensitive contains search)
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                products = products.Where(x => EF.Functions.Like(x.Name, $"%{filter.Name}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Slug))
+            {
+                products = products.Where(x => EF.Functions.Like(x.Slug, $"%{filter.Slug}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Description))
+            {
+                products = products.Where(x => x.Description != null && EF.Functions.Like(x.Description, $"%{filter.Description}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.ShortDescription))
+            {
+                products = products.Where(x => x.ShortDescription != null && EF.Functions.Like(x.ShortDescription, $"%{filter.ShortDescription}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.NumberOfPlayers))
+            {
+                products = products.Where(x => x.NumberOfPlayers != null && EF.Functions.Like(x.NumberOfPlayers, $"%{filter.NumberOfPlayers}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.PlayingTime))
+            {
+                products = products.Where(x => x.PlayingTime != null && EF.Functions.Like(x.PlayingTime, $"%{filter.PlayingTime}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.CommunityAge))
+            {
+                products = products.Where(x => x.CommunityAge != null && EF.Functions.Like(x.CommunityAge, $"%{filter.CommunityAge}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Complexity))
+            {
+                products = products.Where(x => x.Complexity != null && EF.Functions.Like(x.Complexity, $"%{filter.Complexity}%"));
+            }
+
+            // Numeric range filters
+            if (filter.MinRating.HasValue)
+            {
+                products = products.Where(x => x.Rating >= filter.MinRating.Value);
+            }
+
+            if (filter.MaxRating.HasValue)
+            {
+                products = products.Where(x => x.Rating <= filter.MaxRating.Value);
+            }
+
+            if (filter.MinPrice.HasValue)
+            {
+                products = products.Where(x => x.Price >= filter.MinPrice.Value);
+            }
+
+            if (filter.MaxPrice.HasValue)
+            {
+                products = products.Where(x => x.Price <= filter.MaxPrice.Value);
+            }
+
+            if (filter.MinStock.HasValue)
+            {
+                products = products.Where(x => x.Stock >= filter.MinStock.Value);
+            }
+
+            if (filter.MaxStock.HasValue)
+            {
+                products = products.Where(x => x.Stock <= filter.MaxStock.Value);
+            }
+
+            // Awards filter
+            if (filter.Awards != null && filter.Awards.Any())
+            {
+                products = products.Where(x => !string.IsNullOrEmpty(x.Awards) && 
+                    filter.Awards.Any(award => EF.Functions.Like(x.Awards, $"%{award}%")));
+            }
+
+            // Category filters
+            if (filter.CategoryIds != null && filter.CategoryIds.Any())
+            {
+                products = products.Where(x => x.ProductCategories.Any(pc => filter.CategoryIds.Contains(pc.CategoryId)));
+            }
+
+            if (filter.CategoryNames != null && filter.CategoryNames.Any())
+            {
+                products = products.Where(x => x.ProductCategories.Any(pc => 
+                    filter.CategoryNames.Any(name => EF.Functions.Like(pc.Category.Name, $"%{name}%"))));
+            }
+
+            // Boolean filters
+            if (filter.HasImages.HasValue)
+            {
+                if (filter.HasImages.Value)
+                {
+                    products = products.Where(x => x.Images.Any());
+                }
+                else
+                {
+                    products = products.Where(x => !x.Images.Any());
+                }
+            }
+
+            if (filter.InStockOnly.HasValue && filter.InStockOnly.Value)
+            {
+                products = products.Where(x => x.Stock > 0);
             }
 
             #endregion
-
 
             #region Sort
 
@@ -61,41 +168,193 @@ namespace Gnome.Infrastructure.Repositories
                     case "name":
                         products = isDescending ? products.OrderByDescending(c => c.Name) : products.OrderBy(c => c.Name);
                         break;
+                    case "price":
+                        products = isDescending ? products.OrderByDescending(c => c.Price) : products.OrderBy(c => c.Price);
+                        break;
+                    case "rating":
+                        products = isDescending ? products.OrderByDescending(c => c.Rating) : products.OrderBy(c => c.Rating);
+                        break;
+                    case "stock":
+                        products = isDescending ? products.OrderByDescending(c => c.Stock) : products.OrderBy(c => c.Stock);
+                        break;
+                    case "complexity":
+                        products = isDescending ? products.OrderByDescending(c => c.Complexity) : products.OrderBy(c => c.Complexity);
+                        break;
+                    case "playing-time":
+                        products = isDescending ? products.OrderByDescending(c => c.PlayingTime) : products.OrderBy(c => c.PlayingTime);
+                        break;
                 }
             }
 
             #endregion
 
             products = products.Skip(pageSize * (page - 1)).Take(pageSize);
-            return await products.Select(productsEntity => new ProductListResponse
+            
+            // Execute the query first to get the data
+            var productEntities = await products.ToListAsync();
+            
+            return productEntities.Select(productEntity => new ProductListResponse
             {
-                Id = productsEntity.Id,
-                Name = productsEntity.Name,
-                Slug = productsEntity.Slug,
-                Description = productsEntity.Description,
-                CreatedDateTime = productsEntity.CreatedDateTime,
-                Categories = productsEntity.ProductCategories.Select(pc => new CategoryListResponse
+                Id = productEntity.Id,
+                Name = productEntity.Name,
+                Slug = productEntity.Slug,
+                Description = productEntity.Description,
+                ShortDescription = productEntity.ShortDescription,
+                NumberOfPlayers = productEntity.NumberOfPlayers,
+                PlayingTime = productEntity.PlayingTime,
+                CommunityAge = productEntity.CommunityAge,
+                Complexity = productEntity.Complexity,
+                Rating = productEntity.Rating,
+                Price = productEntity.Price,
+                Stock = productEntity.Stock,
+                Awards = !string.IsNullOrEmpty(productEntity.Awards) ? productEntity.Awards.Split(',').ToList() : new List<string>(),
+                CreatedDateTime = productEntity.CreatedDateTime,
+                Categories = productEntity.ProductCategories.Select(pc => new CategoryListResponse
                 {
                     Id = pc.Category.Id,
                     Name = pc.Category.Name,
                     Slug = pc.Category.Slug,
-                    CreatedDateTime = pc.Category.CreatedDateTime
+                    CreatedDateTime = pc.Category.CreatedDateTime,
+                    ProductsCount = pc.Category.ProductCategories.Count
                 }).ToList(),
-                Variants = _mapper.Map<List<VariantListResponse>>(productsEntity.Variants)
-            }).ToListAsync();
+                Images = productEntity.Images.Select(img => new ImageResponse
+                {
+                    Id = img.Id,
+                    Url = img.Url,
+                    IsPrimary = img.IsPrimary,
+                    CreatedDateTime = img.CreatedDateTime
+                }).ToList(),
+                ImageCount = productEntity.Images.Count
+            }).ToList();
         }
 
-        public async Task<int> CountProducts(DateTime dateFrom, DateTime dateTo, string name = default)
+        public async Task<int> CountProducts(ProductFilter filter)
         {
-            var products = _context.Products.AsQueryable().AsNoTracking();
+            var products = _context.Products
+                .Include(p => p.ProductCategories)
+                .Include(p => p.Images)
+                .AsQueryable()
+                .AsNoTracking();
 
             #region Filters
 
-            products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= dateFrom && x.CreatedDateTime <= dateTo);
-
-            if (name != default)
+            // Date range filter
+            if (filter.DateFrom.HasValue)
             {
-                products = products.Where(x => x.Name.Equals(name));
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= filter.DateFrom.Value);
+            }
+            if (filter.DateTo.HasValue)
+            {
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
+            }
+
+            // Text-based filters (case-insensitive contains search)
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                products = products.Where(x => EF.Functions.Like(x.Name, $"%{filter.Name}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Slug))
+            {
+                products = products.Where(x => EF.Functions.Like(x.Slug, $"%{filter.Slug}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Description))
+            {
+                products = products.Where(x => x.Description != null && EF.Functions.Like(x.Description, $"%{filter.Description}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.ShortDescription))
+            {
+                products = products.Where(x => x.ShortDescription != null && EF.Functions.Like(x.ShortDescription, $"%{filter.ShortDescription}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.NumberOfPlayers))
+            {
+                products = products.Where(x => x.NumberOfPlayers != null && EF.Functions.Like(x.NumberOfPlayers, $"%{filter.NumberOfPlayers}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.PlayingTime))
+            {
+                products = products.Where(x => x.PlayingTime != null && EF.Functions.Like(x.PlayingTime, $"%{filter.PlayingTime}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.CommunityAge))
+            {
+                products = products.Where(x => x.CommunityAge != null && EF.Functions.Like(x.CommunityAge, $"%{filter.CommunityAge}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Complexity))
+            {
+                products = products.Where(x => x.Complexity != null && EF.Functions.Like(x.Complexity, $"%{filter.Complexity}%"));
+            }
+
+            // Numeric range filters
+            if (filter.MinRating.HasValue)
+            {
+                products = products.Where(x => x.Rating >= filter.MinRating.Value);
+            }
+
+            if (filter.MaxRating.HasValue)
+            {
+                products = products.Where(x => x.Rating <= filter.MaxRating.Value);
+            }
+
+            if (filter.MinPrice.HasValue)
+            {
+                products = products.Where(x => x.Price >= filter.MinPrice.Value);
+            }
+
+            if (filter.MaxPrice.HasValue)
+            {
+                products = products.Where(x => x.Price <= filter.MaxPrice.Value);
+            }
+
+            if (filter.MinStock.HasValue)
+            {
+                products = products.Where(x => x.Stock >= filter.MinStock.Value);
+            }
+
+            if (filter.MaxStock.HasValue)
+            {
+                products = products.Where(x => x.Stock <= filter.MaxStock.Value);
+            }
+
+            // Awards filter
+            if (filter.Awards != null && filter.Awards.Any())
+            {
+                products = products.Where(x => !string.IsNullOrEmpty(x.Awards) && 
+                    filter.Awards.Any(award => EF.Functions.Like(x.Awards, $"%{award}%")));
+            }
+
+            // Category filters
+            if (filter.CategoryIds != null && filter.CategoryIds.Any())
+            {
+                products = products.Where(x => x.ProductCategories.Any(pc => filter.CategoryIds.Contains(pc.CategoryId)));
+            }
+
+            if (filter.CategoryNames != null && filter.CategoryNames.Any())
+            {
+                products = products.Where(x => x.ProductCategories.Any(pc => 
+                    filter.CategoryNames.Any(name => EF.Functions.Like(pc.Category.Name, $"%{name}%"))));
+            }
+
+            // Boolean filters
+            if (filter.HasImages.HasValue)
+            {
+                if (filter.HasImages.Value)
+                {
+                    products = products.Where(x => x.Images.Any());
+                }
+                else
+                {
+                    products = products.Where(x => !x.Images.Any());
+                }
+            }
+
+            if (filter.InStockOnly.HasValue && filter.InStockOnly.Value)
+            {
+                products = products.Where(x => x.Stock > 0);
             }
 
             #endregion
@@ -105,73 +364,19 @@ namespace Gnome.Infrastructure.Repositories
 
         public async Task<int> AddProductAsync(Product product)
         {
-            //try
-            //{
-
-            //    // Prepare parameters
-            //    var productNameParam = new SqlParameter("@ProductName", SqlDbType.NVarChar) { Value = product.Name };
-            //    var productSlugParam = new SqlParameter("@ProductSlug", SqlDbType.NVarChar) { Value = product.Slug };
-            //    var descriptionParam = new SqlParameter("@Description", SqlDbType.NVarChar) { Value = (object?)product.Description ?? DBNull.Value };
-            //    var categoryIdParam = new SqlParameter("@CategoryId", SqlDbType.Int) { Value = product.CategoryId };
-
-
-            //    var sql = @"
-            //        DECLARE @NewProductId INT;
-            //        EXEC [dbo].[CreateProduct]
-            //            @ProductName = @ProductName,
-            //            @ProductSlug = @ProductSlug,
-            //            @Description = @Description,
-            //            @CategoryId = @CategoryId
-            //        SELECT @NewProductId = SCOPE_IDENTITY();
-            //        SELECT @NewProductId AS Id;
-            //    ";
-
-            //    var newProductId = 0;
-            //    using (var command = _context.Database.GetDbConnection().CreateCommand())
-            //    {
-            //        command.CommandText = sql;
-            //        command.CommandType = CommandType.Text;
-            //        command.Parameters.Add(productNameParam);
-            //        command.Parameters.Add(productSlugParam);
-            //        command.Parameters.Add(descriptionParam);
-            //        command.Parameters.Add(categoryIdParam);
-
-            //        if (command.Connection.State != ConnectionState.Open)
-            //            await command.Connection.OpenAsync();
-
-            //        using (var reader = await command.ExecuteReaderAsync())
-            //        {
-            //            while (await reader.ReadAsync())
-            //            {
-            //                newProductId = reader.GetInt32(0);
-            //            }
-            //        }
-            //    }
-
-            //    return newProductId;
-            //}
-            //catch (SqlException ex)
-            //{
-            //    // Log the SQL error (replace with your logger if available)
-            //    // _logger?.LogError(ex, "SQL error occurred while adding product.");
-            //    throw new InvalidOperationException("A database error occurred while adding the product.", ex);
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log the general error (replace with your logger if available)
-            //    // _logger?.LogError(ex, "An error occurred while adding product.");
-            //    throw new InvalidOperationException("An unexpected error occurred while adding the product.", ex);
-            //}
-
             try
             {
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
                 return product.Id;
             }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
+            {
+                throw new InvalidOperationException("A product with this slug already exists.");
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while adding the product.", ex);
+                throw new InvalidOperationException($"Error adding product: {ex.Message}");
             }
         }
 
@@ -189,6 +394,15 @@ namespace Gnome.Infrastructure.Repositories
                 existingProduct.Name = product.Name;
                 existingProduct.Slug = product.Slug;
                 existingProduct.Description = product.Description;
+                existingProduct.ShortDescription = product.ShortDescription;
+                existingProduct.NumberOfPlayers = product.NumberOfPlayers;
+                existingProduct.PlayingTime = product.PlayingTime;
+                existingProduct.CommunityAge = product.CommunityAge;
+                existingProduct.Complexity = product.Complexity;
+                existingProduct.Price = product.Price;
+                existingProduct.Awards = product.Awards;
+                existingProduct.Stock = product.Stock;
+                existingProduct.Rating = product.Rating;
 
                 // Handle many-to-many relationship
                 if (product.ProductCategories != null)
@@ -199,20 +413,20 @@ namespace Gnome.Infrastructure.Repositories
                     // Add new category associations
                     foreach (var productCategory in product.ProductCategories)
                     {
-                        existingProduct.ProductCategories.Add(new ProductCategory
-                        {
-                            ProductId = existingProduct.Id,
-                            CategoryId = productCategory.CategoryId
-                        });
+                        existingProduct.ProductCategories.Add(productCategory);
                     }
                 }
 
                 await _context.SaveChangesAsync();
                 return product.Id;
             }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
+            {
+                throw new InvalidOperationException("A product with this slug already exists.");
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while updating the product.", ex);
+                throw new InvalidOperationException($"Error updating product: {ex.Message}");
             }
         }
 
@@ -221,7 +435,7 @@ namespace Gnome.Infrastructure.Repositories
             return await _context.Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
-                .Include(p => p.Variants)
+                .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -230,7 +444,7 @@ namespace Gnome.Infrastructure.Repositories
             return await _context.Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
-                .Include(p => p.Variants)
+                .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }
 
@@ -248,7 +462,7 @@ namespace Gnome.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while deleting the product.", ex);
+                throw new InvalidOperationException($"Error deleting product: {ex.Message}");
             }
         }
     }

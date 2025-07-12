@@ -15,15 +15,43 @@ namespace Gnome.Application.Mappings
     {
         public ProductProfile() 
         {
-            CreateMap<Product, ProductListResponse>();
+            CreateMap<Product, ProductListResponse>()
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category)))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Awards, opt => opt.MapFrom(src =>
+                    string.IsNullOrEmpty(src.Awards)
+                        ? new List<string>()
+                        : src.Awards.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(a => a.Trim())
+                            .Where(a => !string.IsNullOrEmpty(a))
+                            .ToList()
+                ));
             CreateMap<Product, ProductResponse>()
                 .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category)))
-                .ForMember(dest => dest.Variants, opt => opt.MapFrom(src => src.Variants));
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Awards, opt => opt.MapFrom(src =>
+                    string.IsNullOrEmpty(src.Awards)
+                        ? new List<string>()
+                        : src.Awards.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(a => a.Trim())
+                            .Where(a => !string.IsNullOrEmpty(a))
+                            .ToList()
+                ));
 
-            CreateMap<AddProductCommand, Product>();
-            CreateMap<UpdateProductCommand, Product>();
-            CreateMap<UpdateProductCommand.UpdateVariantDto, Variant>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.VariantId ?? 0));
+            CreateMap<Image, ImageResponse>();
+
+            CreateMap<AddProductCommand, Product>()
+                .ForMember(dest => dest.Awards, opt => opt.MapFrom(src =>
+                    src.Awards != null && src.Awards.Any()
+                        ? string.Join(",", src.Awards.Where(a => !string.IsNullOrWhiteSpace(a)).Select(a => a.Trim()))
+                        : null
+                ));
+            CreateMap<UpdateProductCommand, Product>()
+                .ForMember(dest => dest.Awards, opt => opt.MapFrom(src =>
+                    src.Awards != null && src.Awards.Any()
+                        ? string.Join(",", src.Awards.Where(a => !string.IsNullOrWhiteSpace(a)).Select(a => a.Trim()))
+                        : null
+                ));
         }
     }
 }

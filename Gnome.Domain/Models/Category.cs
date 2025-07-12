@@ -13,9 +13,10 @@ namespace Gnome.Domain.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Required]
+        // Database constraints only - validation handled by FluentValidation
+        [MaxLength(100)]
         public string Name { get; set; }
-        [Required]
+        [MaxLength(100)]
         public string Slug { get; set; }
         public DateTime? CreatedDateTime { get; set; } = DateTime.Now;
         public List<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();

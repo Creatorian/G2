@@ -33,4 +33,8 @@
     <ProjectReference Include="..\Gnome.Domain\Gnome.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

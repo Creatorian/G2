@@ -7,7 +7,6 @@ using Gnome.Api.Middleware;
 using Gnome.Application.G2.Query.ListProducts;
 using Gnome.Application.Mappings;
 using Gnome.Application.Services;
-using Gnome.Application.Validators;
 using Gnome.Domain.Interfaces;
 using Gnome.Infrastructure;
 using Gnome.Infrastructure.Repositories;
@@ -56,8 +55,7 @@ builder.Host.UseSerilog();
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(ListProductsQueryCommandHandler).Assembly));
 
-// Add FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining<AddCategoryCommandValidator>();
+
 
 // Access configuration
 var configuration = new ConfigurationBuilder()
@@ -78,12 +76,19 @@ Console.WriteLine($"File Exists: {File.Exists("appsettings.json")}");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("GnomeConnection")));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+})
+.ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IVariantRepository, VariantRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IAdminUserRepository, AdminUserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -150,7 +155,7 @@ builder.Services.AddSwaggerGen(c =>
     { 
         Title = "Gnome Board Game Shop API", 
         Version = "v1.0.0",
-        Description = "API for managing board game products, categories, variants, and admin authentication.",
+        Description = "API for managing board game products, categories, and admin authentication.",
         Contact = new OpenApiContact
         {
             Name = "Gnome Board Game Shop",
@@ -210,10 +215,8 @@ builder.Services.AddSwaggerGen(c =>
             return new[] { controllerActionDescriptor.ControllerName };
         }
 
-        return new[] { api.RelativePath };
+        throw new InvalidOperationException("Unable to determine tag for endpoint.");
     });
-
-    c.DocInclusionPredicate((name, api) => true);
 });
 
 var app = builder.Build();

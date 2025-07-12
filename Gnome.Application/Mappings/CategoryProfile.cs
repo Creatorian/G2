@@ -15,7 +15,6 @@ namespace Gnome.Application.Mappings
     {
         public CategoryProfile()
         {
-            CreateMap<Category, CategoryListResponse>();
             CreateMap<Category, CategoryResponse>()
                 .ForMember(dest => dest.ProductsCount, opt => opt.MapFrom(src => src.ProductCategories.Count));
 

@@ -10,14 +10,16 @@ BEGIN TRY
 
     -- Drop existing data (in reverse dependency order)
     DELETE FROM ProductCategories;
-    DELETE FROM Variants;
     DELETE FROM Products;
     DELETE FROM Categories;
+    DELETE FROM Images;
+    DELETE FROM AdminUsers;
 
     -- Reset ID counters for all tables
     DBCC CHECKIDENT ('Categories', RESEED, 0);
     DBCC CHECKIDENT ('Products', RESEED, 0);
-    DBCC CHECKIDENT ('Variants', RESEED, 0);
+    DBCC CHECKIDENT ('AdminUsers', RESEED, 0);
+    DBCC CHECKIDENT ('Images', RESEED, 0);
 
     -- ======================
     -- 1. Insert Categories
@@ -27,466 +29,187 @@ BEGIN TRY
             @FamilyId INT,
             @PartyId INT,
             @CooperativeId INT,
-            @DeckBuildingId INT,
-            @EurogameId INT;
+            @CardId INT,
+            @EducationalId INT,
+			@FantasyId INT;
 
     INSERT INTO Categories (Name, Slug, CreatedDateTime)
-    VALUES ('Strategy', 'strategy', GETDATE());
+    VALUES ('Strategy Games', 'strategy-games', GETDATE());
     SELECT @StrategyId = SCOPE_IDENTITY();
 
     INSERT INTO Categories (Name, Slug, CreatedDateTime)
-    VALUES ('Family', 'family', GETDATE());
+    VALUES ('Family Games', 'family-games', GETDATE());
     SELECT @FamilyId = SCOPE_IDENTITY();
 
     INSERT INTO Categories (Name, Slug, CreatedDateTime)
-    VALUES ('Party', 'party', GETDATE());
+    VALUES ('Party Games', 'party-games', GETDATE());
     SELECT @PartyId = SCOPE_IDENTITY();
 
     INSERT INTO Categories (Name, Slug, CreatedDateTime)
-    VALUES ('Cooperative', 'cooperative', GETDATE());
+    VALUES ('Cooperative Games', 'cooperative-games', GETDATE());
     SELECT @CooperativeId = SCOPE_IDENTITY();
 
     INSERT INTO Categories (Name, Slug, CreatedDateTime)
-    VALUES ('Deck-building', 'deck-building', GETDATE());
-    SELECT @DeckBuildingId = SCOPE_IDENTITY();
+    VALUES ('Card Games', 'card-games', GETDATE());
+    SELECT @CardId = SCOPE_IDENTITY();
 
     INSERT INTO Categories (Name, Slug, CreatedDateTime)
-    VALUES ('Eurogame', 'eurogame', GETDATE());
-    SELECT @EurogameId = SCOPE_IDENTITY();
+    VALUES ('Educational Games', 'educational-games', GETDATE());
+    SELECT @EducationalId = SCOPE_IDENTITY();
+	
+    INSERT INTO Categories (Name, Slug, CreatedDateTime)
+    VALUES ('Fantasy Games', 'fantasy-games', GETDATE());
+    SELECT @FantasyId = SCOPE_IDENTITY();
 
     -- =====================
     -- 2. Insert Products
     -- =====================
 
-    DECLARE @GloomhavenId INT,
-            @TerraformingMarsId INT,
-            @TwilightImperiumId INT,
-            @ScytheId INT,
-            @RootId INT,
-            @BrassBirminghamId INT,
-            @SpiritIslandStrategyId INT,
-            @ArkNovaId INT,
-            @GreatWesternTrailId INT,
-            @DuneImperiumId INT,
+    DECLARE @CatanId INT,
             @TicketToRideId INT,
             @CarcassonneId INT,
-            @AzulId INT,
-            @KingdominoId INT,
-            @PandemicFamilyId INT,
-            @SplendorId INT,
-            @CatanId INT,
-            @DixitId INT,
-            @PatchworkId INT,
-            @WingspanId INT,
-            @CodenamesId INT,
-            @JustOneId INT,
-            @TelestrationsId INT,
-            @CardsAgainstHumanityId INT,
-            @WavelengthId INT,
-            @DecryptoId INT,
-            @TheResistanceId INT,
-            @MonikersId INT,
-            @ConceptId INT,
-            @JokingHazardId INT,
-            @PandemicLegacyId INT,
-            @JawsOfLionId INT,
-            @SpiritIslandCoopId INT,
-            @MarvelChampionsId INT,
-            @TheCrewId INT,
-            @MysteriumId INT,
-            @ForbiddenIslandId INT,
-            @HanabiId INT,
-            @RobinsonCrusoeId INT,
-            @TheMindId INT,
-            @DominionId INT,
-            @ClankId INT,
-            @AeonsEndId INT,
-            @StarRealmsId INT,
-            @LegendaryMarvelId INT,
-            @AgricolaId INT,
-            @TerraMysticaId INT,
-            @PuertoRicoId INT,
-            @CastlesBurgundyId INT,
-            @ViticultureId INT;
+            @7WondersId INT,
+            @KingOfTokyoId INT;
 
-    -- Strategy Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Gloomhaven', 'gloomhaven', 'Cooperative strategy legacy game', GETDATE());
-    SELECT @GloomhavenId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Terraforming Mars', 'terraforming-mars', 'Engineer Mars ecosystem', GETDATE());
-    SELECT @TerraformingMarsId = SCOPE_IDENTITY();
+    INSERT INTO Products (Name, Slug, Description, ShortDescription, NumberOfPlayers, PlayingTime, CommunityAge, Complexity, Price, Rating, Stock, Awards, CreatedDateTime)
+    VALUES ('Catan', 'catan', 'In CATAN (formerly The Settlers of Catan), players try to be the dominant force on the island of Catan by building settlements, cities and roads. On each turn dice are rolled to determine which resources the island produces. Players build structures by ''spending'' resources (sheep, wheat, wood, brick and ore) which are represented by the relevant resource cards; each land type, with the exception of the unproductive desert, produces a specific resource: hills produce brick, forests produce wood, mountains produce ore, fields produce wheat, and pastures produce sheep.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Twilight Imperium IV', 'twilight-imperium-4', 'Epic space empire building', GETDATE());
-    SELECT @TwilightImperiumId = SCOPE_IDENTITY();
+Set-up includes randomly placing large hexagonal tiles (each depicting one of the five resource-producing terrain types--or the desert) in a honeycomb shape and surrounding them with water tiles, some of which contain ports of exchange. A number disk, the value of which will correspond to the roll of two 6-sided dice, are placed on each terrain tile. Each player is given two settlements (think: houses) and roads (sticks) which are placed on intersections and borders of the terrain tiles. Players collect a hand of resource cards based on which terrain tiles their last-placed settlement is adjacent to. A robber pawn is placed on the desert tile.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Scythe', 'scythe', 'Alternate-history 1920s Europe', GETDATE());
-    SELECT @ScytheId = SCOPE_IDENTITY();
+A turn consists of rolling the dice, collecting resource cards based on this dice roll and the position of settlements (or upgraded cities—think: hotels), turning in resource cards (if possible and desired) for improvements, trading cards at a port, possibly playing a development card, or trading resource cards with other players. If the dice roll is a 7, the active player moves the robber to a new terrain tile and steals a resource card from another player who has a settlement adjacent to that tile.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Root', 'root', 'Asymmetric woodland warfare', GETDATE());
-    SELECT @RootId = SCOPE_IDENTITY();
+Points are accumulated by building settlements and cities, having the longest road or the largest army (from some of the development cards), and gathering certain development cards that simply award victory points. When a player has gathered 10 points (some of which may be held in secret), s/he announces this and claims the win.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Brass: Birmingham', 'brass-birmingham', 'Industrial revolution strategy', GETDATE());
-    SELECT @BrassBirminghamId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Spirit Island', 'spirit-island', 'Defend island from invaders', GETDATE());
-    SELECT @SpiritIslandStrategyId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Ark Nova', 'ark-nova', 'Zoo management simulation', GETDATE());
-    SELECT @ArkNovaId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Great Western Trail', 'great-western-trail', 'Cattle drive strategy', GETDATE());
-    SELECT @GreatWesternTrailId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Dune: Imperium', 'dune-imperium', 'Bluffing and worker placement', GETDATE());
-    SELECT @DuneImperiumId = SCOPE_IDENTITY();
-
-    -- Family Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Ticket to Ride', 'ticket-to-ride', 'Railway adventure game', GETDATE());
-    SELECT @TicketToRideId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Carcassonne', 'carcassonne', 'Tile-placement medieval game', GETDATE());
-    SELECT @CarcassonneId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Azul', 'azul', 'Abstract mosaic-building', GETDATE());
-    SELECT @AzulId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Kingdomino', 'kingdomino', 'Domino kingdom-building', GETDATE());
-    SELECT @KingdominoId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Pandemic', 'pandemic', 'Save the world from diseases', GETDATE());
-    SELECT @PandemicFamilyId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Splendor', 'splendor', 'Gemstone trading engine', GETDATE());
-    SELECT @SplendorId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Catan', 'catan', 'Classic resource trading', GETDATE());
+', 'Collect and trade resources to build up the island of Catan in this modern classic.', '3-4', '60-120 Min', '10+', '2.29', 49.99, 7.1, 15, '2025 BoardGameGeek Hall of Fame Inductee,2012 JoTa Best Game Released in Brazil Nominee,2012 JoTa Best Game Released in Brazil Critic Award,2011 Ludo Award Best Board Game Editor''s Choice Winner,2011 Jocul Anului în România Best Game in Romanian Winner,2011 Jocul Anului în România Best Game in Romanian Finalist,2005 Gra Roku Game of the Year Winner,2004 Hra roku Winner,2004 Hra roku Nominee,2002 Japan Boardgame Prize Best Japanese Game Nominee,2001 Origins Awards Hall of Fame Inductee,1996 Origins Awards Best Fantasy or Science Fiction Board Game Winner,1995 Spiel des Jahres Winner,1995 Meeples Choice Award Winner,1995 Meeples Choice Award Nominee,1995 Essener Feder Best Written Rules Winner,1995 Deutscher Spiele Preis Best Family/Adult Game Winner', GETDATE());
     SELECT @CatanId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Dixit', 'dixit', 'Creative storytelling game', GETDATE());
-    SELECT @DixitId = SCOPE_IDENTITY();
+    INSERT INTO Products (Name, Slug, Description, ShortDescription, NumberOfPlayers, PlayingTime, CommunityAge, Complexity, Price, Rating, Stock, Awards, CreatedDateTime)
+    VALUES ('Ticket to Ride', 'ticket-to-ride', 'With elegantly simple gameplay, Ticket to Ride can be learned in under 15 minutes. Players collect cards of various types of train cars they then use to claim railway routes in North America. The longer the routes, the more points they earn. Additional points come to those who fulfill Destination Tickets – goal cards that connect distant cities; and to the player who builds the longest continuous route.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Patchwork', 'patchwork', 'Tetris-like quilting game', GETDATE());
-    SELECT @PatchworkId = SCOPE_IDENTITY();
+"The rules are simple enough to write on a train ticket – each turn you either draw more cards, claim a route, or get additional Destination Tickets," says Ticket to Ride author, Alan R. Moon. "The tension comes from being forced to balance greed – adding more cards to your hand, and fear – losing a critical route to a competitor."
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Wingspan', 'wingspan', 'Bird-collection engine builder', GETDATE());
-    SELECT @WingspanId = SCOPE_IDENTITY();
+Ticket to Ride continues in the tradition of Days of Wonder''s big format board games featuring high-quality illustrations and components including: an oversize board map of North America, 225 custom-molded train cars, 144 illustrated cards, and wooden scoring markers.
 
-    -- Party Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Codenames', 'codenames', 'Word association game', GETDATE());
-    SELECT @CodenamesId = SCOPE_IDENTITY();
+Since its introduction and numerous subsequent awards, Ticket to Ride has become the BoardGameGeek epitome of a "gateway game" -- simple enough to be taught in a few minutes, and with enough action and tension to keep new players involved and in the game for the duration.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Just One', 'just-one', 'Cooperative clue-giving', GETDATE());
-    SELECT @JustOneId = SCOPE_IDENTITY();
+Part of the Ticket to Ride series.', 'All aboard! Collect trains, choo-choo-choose your routes, fulfill your destination!', '2-5', '30-60 Min', '8+', '1.82', 39.99, 7.4, 20, '2025 BoardGameGeek Hall of Fame Inductee,2010 Hungarian Board Game Award Nominee,2008 Ludoteca Ideale Official Selection Winner,2008 Gra Roku Game of the Year Nominee,2006 Japan Boardgame Prize Best Japanese Game Winner,2006 Japan Boardgame Prize Best Japanese Game Nominee,2006 Hra roku Winner,2006 Hra roku Nominee,2005 Vuoden Peli Family Game of the Year Winner,2005 Vuoden Peli Family Game of the Year Nominee,2005 Juego del Año Winner,2005 Juego del Año Finalist,2005 Diana Jones Award for Excellence in Gaming Winner,2005 Diana Jones Award for Excellence in Gaming Nominee,2005 As d''Or - Jeu de l''Année Winner,2005 As d''Or - Jeu de l''Année Nominee,2005 Årets Spill Best Family Game Nominee,2005 Årets Spel Best Family Game Winner,2004 Tric Trac Nominee,2004 Spiel des Jahres Winner,2004 Spiel des Jahres Nominee,2004 Origins Awards Best Board Game Winner,2004 Nederlandse Spellenprijs Nominee,2004 Meeples Choice Award Winner,2004 Meeples Choice Award Nominee,2004 Japan Boardgame Prize Best Advanced Game Winner,2004 Japan Boardgame Prize Best Advanced Game Nominee,2004 International Gamers Awards - General Strategy; Multi-player Nominee', GETDATE());
+    SELECT @TicketToRideId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Telestrations', 'telestrations', 'Pictionary telephone', GETDATE());
-    SELECT @TelestrationsId = SCOPE_IDENTITY();
+    INSERT INTO Products (Name, Slug, Description, ShortDescription, NumberOfPlayers, PlayingTime, CommunityAge, Complexity, Price, Rating, Stock, Awards, CreatedDateTime)
+    VALUES ('Carcassonne', 'carcassonne', 'Carcassonne is a tile placement game in which the players draw and place a tile with a piece of southern French landscape represented on it. The tile might feature a city, a road, a cloister, grassland or some combination thereof, and it must be placed adjacent to tiles that have already been played, in such a way that cities are connected to cities, roads to roads, et cetera. Having placed a tile, the player can then decide to place one of their meeples in one of the areas on it: in the city as a knight, on the road as a robber, in the cloister as a monk, or in the field as a farmer. When that area is complete that meeple scores points for its owner.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Cards Against Humanity', 'cards-against-humanity', 'Adult party game', GETDATE());
-    SELECT @CardsAgainstHumanityId = SCOPE_IDENTITY();
+During a game of Carcassonne, players are faced with decisions like: "Is it really worth putting my last meeple there?" or "Should I use this tile to expand my city, or should I place it near my opponent instead, thus making it a harder for them to complete it and score points?" Since players place only one tile and have the option to place one meeple on it, turns proceed quickly even if it is a game full of options and possibilities.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Wavelength', 'wavelength', 'Psychic guessing game', GETDATE());
-    SELECT @WavelengthId = SCOPE_IDENTITY();
+First game in the Carcassonne series.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Decrypto', 'decrypto', 'Code-breaking team game', GETDATE());
-    SELECT @DecryptoId = SCOPE_IDENTITY();
+', 'Shape the medieval landscape of France, claiming cities, monasteries and farms.', '2-5', '30-45 Min', '7+', '1.89', 29.99, 7.4, 18, '2025 BoardGameGeek Hall of Fame Inductee,2012 Ludo Award Best Board Game Editor''s Choice Winner,2011 Jocul Anului în România Best Game in Romanian Finalist,2004 Vuoden Peli Family Game of the Year Winner,2004 Vuoden Peli Family Game of the Year Nominee,2004 Hra roku Nominee,2002 Årets Spel Best Family Game Winner,2001 Spiel des Jahres Winner,2001 Spiel des Jahres Nominee,2001 Spiel der Spiele Hit mit Freunden Recommended,2001 Nederlandse Spellenprijs Nominee,2001 International Gamers Awards - General Strategy; Multi-player Nominee,2001 Deutscher Spiele Preis Best Family/Adult Game Winner,2000 Meeples Choice Award Winner,2000 Meeples Choice Award Nominee', GETDATE());
+    SELECT @CarcassonneId = SCOPE_IDENTITY();
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('The Resistance', 'the-resistance', 'Social deduction game', GETDATE());
-    SELECT @TheResistanceId = SCOPE_IDENTITY();
+    INSERT INTO Products (Name, Slug, Description, ShortDescription, NumberOfPlayers, PlayingTime, CommunityAge, Complexity, Price, Rating, Stock, Awards, CreatedDateTime)
+    VALUES ('7 Wonders', '7-wonders', 'You are the leader of one of the 7 great cities of the Ancient World. Gather resources, develop commercial routes, and affirm your military supremacy. Build your city and erect an architectural wonder which will transcend future times.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Monikers', 'monikers', 'Progressive charades', GETDATE());
-    SELECT @MonikersId = SCOPE_IDENTITY();
+7 Wonders lasts three ages. In each age, players receive seven cards from a particular deck, choose one of those cards, then pass the remainder to an adjacent player. Players reveal their cards simultaneously, paying resources if needed or collecting resources or interacting with other players in various ways. (Players have individual boards with special powers on which to organize their cards, and the boards are double-sided). Each player then chooses another card from the deck they were passed, and the process repeats until players have six cards in play from that age. After three ages, the game ends.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Concept', 'concept', 'Visual guessing game', GETDATE());
-    SELECT @ConceptId = SCOPE_IDENTITY();
+In essence, 7 Wonders is a card development game. Some cards have immediate effects, while others provide bonuses or upgrades later in the game. Some cards provide discounts on future purchases. Some provide military strength to overpower your neighbors and others give nothing but victory points. Each card is played immediately after being drafted, so you''ll know which cards your neighbor is receiving and how her choices might affect what you''ve already built up. Cards are passed left-right-left over the three ages, so you need to keep an eye on the neighbors in both directions.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Joking Hazard', 'joking-hazard', 'Comic creation game', GETDATE());
-    SELECT @JokingHazardId = SCOPE_IDENTITY();
+Though the box of earlier editions is listed as being for 3–7 players, there is an official 2-player variant included in the instructions.', 'Draft cards to develop your ancient civilization and build its Wonder of the World.', '2-7', '30 Min', '10+', '2.32', 49.99, 7.7, 16, '2012 Ludoteca Ideale Winner,2011/2012 Boardgames Australia Awards Best International Game Nominee,2011 Vuoden Peli Adult Game of the Year Winner,2011 Vuoden Peli Adult Game of the Year Nominee,2011 Spiel des Jahres Kennerspiel Game of the Year Nominee,2011 Spiel des Jahres Kennerspiel des Jahres Winner,2011 Nederlandse Spellenprijs Nominee,2011 Lys Passioné Winner,2011 Lys Passioné Finalist,2011 Lucca Games Best Boardgame Winner,2011 Lucca Games Best Boardgame Nominee,2011 Juego del Año Tico Winner,2011 Juego del Año Tico Nominee,2011 Juego del Año Finalist,2011 JoTa Best Light Board Game Nominee,2011 JoTa Best Light Board Game Critic Award,2011 JoTa Best Light Board Game Audience Award,2011 JoTa Best Card Game Nominee,2011 JoTa Best Card Game Critic Award,2011 JoTa Best Card Game Audience Award,2011 JoTa Best Artwork Nominee,2011 JoTa Best Artwork Critic Award,2011 Japan Boardgame Prize Voters'' Selection Winner,2011 Japan Boardgame Prize Voters'' Selection Nominee,2011 International Gamers Award - General Strategy: Multi-player Winner,2011 International Gamers Award - General Strategy; Multi-player Nominee,2011 Hra roku Winner,2011 Hra roku Nominee,2011 Guldbrikken Best Adult Game Winner,2011 Guldbrikken Best Adult Game Nominee,2011 Gra Roku Game of the Year Nominee,2011 Gouden Ludo Winner,2011 Gouden Ludo Nominee,2011 Golden Geek Most Innovative Board Game Nominee,2011 Golden Geek Best Strategy Board Game Nominee,2011 Golden Geek Best Party Board Game Nominee,2011 Golden Geek Best Family Board Game Winner,2011 Golden Geek Best Family Board Game Nominee,2011 Golden Geek Best Card Game Winner,2011 Golden Geek Best Card Game Nominee,2011 Golden Geek Best Board Game Artwork/Presentation Nominee,2011 Fairplay À la carte Winner,2011 Deutscher Spiele Preis Best Family/Adult Game Winner,2011 As d''Or - Jeu de l''Année Prix du Jury Winner,2011 As d''Or - Jeu de l''Année Nominee,2010 Tric Trac Nominee,2010 Tric Trac d''Or,2010 Swiss Gamers Award Winner,2010 Meeples Choice Award Winner,2010 Meeples Choice Award Nominee', GETDATE());
+    SELECT @7WondersId = SCOPE_IDENTITY();
 
-    -- Cooperative Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Pandemic Legacy: Season 1', 'pandemic-legacy-s1', 'Campaign-style Pandemic', GETDATE());
-    SELECT @PandemicLegacyId = SCOPE_IDENTITY();
+    INSERT INTO Products (Name, Slug, Description, ShortDescription, NumberOfPlayers, PlayingTime, CommunityAge, Complexity, Price, Rating, Stock, Awards, CreatedDateTime)
+    VALUES ('King of Tokyo', 'king-of-tokyo', 'In King of Tokyo, you play mutant monsters, gigantic robots, and strange aliens—all of whom are destroying Tokyo and whacking each other in order to become the one and only King of Tokyo.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Gloomhaven: Jaws of the Lion', 'jaws-of-lion', 'Entry-level Gloomhaven', GETDATE());
-    SELECT @JawsOfLionId = SCOPE_IDENTITY();
+At the start of each turn, you roll six dice, which show the following six symbols: 1, 2, or 3 Victory Points, Energy, Heal, and Attack. Over three successive throws, choose whether to keep or discard each die in order to win victory points, gain energy, restore health, or attack other players into understanding that Tokyo is YOUR territory.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Spirit Island', 'spirit-island-coop', 'Cooperative island defense', GETDATE());
-    SELECT @SpiritIslandCoopId = SCOPE_IDENTITY();
+The fiercest player will occupy Tokyo, and earn extra victory points, but that player can''t heal and must face all the other monsters alone!
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Marvel Champions', 'marvel-champions', 'Superhero card game', GETDATE());
-    SELECT @MarvelChampionsId = SCOPE_IDENTITY();
+Top this off with special cards purchased with energy that have a permanent or temporary effect, such as the growing of a second head which grants you an additional die, body armor, nova death ray, and more.... and it''s one of the most explosive games of the year!
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('The Crew', 'the-crew', 'Trick-taking space game', GETDATE());
-    SELECT @TheCrewId = SCOPE_IDENTITY();
+In order to win the game, one must either destroy Tokyo by accumulating 20 victory points, or be the only surviving monster once the fighting has ended.
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Mysterium', 'mysterium', 'Ghostly murder mystery', GETDATE());
-    SELECT @MysteriumId = SCOPE_IDENTITY();
+First Game in the King of Tokyo series
 
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Forbidden Island', 'forbidden-island', 'Treasure recovery game', GETDATE());
-    SELECT @ForbiddenIslandId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Hanabi', 'hanabi', 'Firework card game', GETDATE());
-    SELECT @HanabiId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Robinson Crusoe', 'robinson-crusoe', 'Survival adventure', GETDATE());
-    SELECT @RobinsonCrusoeId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('The Mind', 'the-mind', 'Synchronized number play', GETDATE());
-    SELECT @TheMindId = SCOPE_IDENTITY();
-
-    -- Deck-building Games
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Dominion', 'dominion', 'Original deck-builder', GETDATE());
-    SELECT @DominionId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Clank!', 'clank', 'Deck-building adventure', GETDATE());
-    SELECT @ClankId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Aeon''s End', 'aeons-end', 'Cooperative deck-builder', GETDATE());
-    SELECT @AeonsEndId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Star Realms', 'star-realms', 'Space combat deck-builder', GETDATE());
-    SELECT @StarRealmsId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Legendary: Marvel', 'legendary-marvel', 'Superhero deck-builder', GETDATE());
-    SELECT @LegendaryMarvelId = SCOPE_IDENTITY();
-
-    -- Eurogames
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Agricola', 'agricola', 'Farming strategy game', GETDATE());
-    SELECT @AgricolaId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Terra Mystica', 'terra-mystica', 'Fantasy territory control', GETDATE());
-    SELECT @TerraMysticaId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Puerto Rico', 'puerto-rico', 'Colonial strategy game', GETDATE());
-    SELECT @PuertoRicoId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Castles of Burgundy', 'castles-burgundy', 'Tile-placement strategy', GETDATE());
-    SELECT @CastlesBurgundyId = SCOPE_IDENTITY();
-
-    INSERT INTO Products (Name, Slug, Description, CreatedDateTime)
-    VALUES ('Viticulture', 'viticulture', 'Wine-making strategy', GETDATE());
-    SELECT @ViticultureId = SCOPE_IDENTITY();
+', 'Prove your dominance by destroying Tokyo or by being the last monster left standing.', '2-6', '30 Min', '8+', '1.48', 39.99, 7.1, 22, '2014 Gra Roku Game of the Year Winner,2014 Gra Roku Game of the Year Nominee,2013 Nederlandse Spellenprijs Best Family Game Winner,2013 Nederlandse Spellenprijs Best Family Game Nominee,2013 Juego del Año Tico Nominee,2013 Hra roku Nominee,2013 Guldbrikken Best Family Game Winner,2013 Guldbrikken Best Family Game Nominee,2013 Boardgames Australia Awards Best International Game Nominee,2012 Ludoteca Ideale Winner,2012 Gouden Ludo Nominee,2012 Golden Geek Best Thematic Board Game Nominee,2012 Golden Geek Best Party Game Winner,2012 Golden Geek Best Party Board Game Nominee,2012 Golden Geek Best Family Board Game Winner,2012 Golden Geek Best Family Board Game Nominee,2012 Golden Geek Best Children''s Game Winner,2012 Golden Geek Best Children''s Board Game Nominee,2012 Golden Geek Best Board Game Artwork/Presentation Nominee,2012 As d''Or - Jeu de l''Année Nominee,2011 Meeples Choice Award Nominee,2011 Lys Grand Public Finalist,2011 Lucca Games Best Family Game Nominee,2011 Japan Boardgame Prize Voters'' Selection Nominee,2011 Golden Geek Best Party Board Game Nominee', GETDATE());
+    SELECT @KingOfTokyoId = SCOPE_IDENTITY();
 
     -- =====================
     -- 3. Create Product-Category Relationships (Many-to-Many)
+	-- For testing purposes, some products will be in all categories
     -- =====================
 
-    -- Strategy Games
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@GloomhavenId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TerraformingMarsId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TwilightImperiumId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ScytheId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@RootId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@BrassBirminghamId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SpiritIslandStrategyId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ArkNovaId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@GreatWesternTrailId, @StrategyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DuneImperiumId, @StrategyId);
-
-    -- Family Games
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TicketToRideId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AzulId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingdominoId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PandemicFamilyId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SplendorId, @FamilyId);
+    -- Catan
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CatanId, @StrategyId);
     INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CatanId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DixitId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PatchworkId, @FamilyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@WingspanId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CatanId, @PartyId);
 
-    -- Party Games
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CodenamesId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@JustOneId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TelestrationsId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CardsAgainstHumanityId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@WavelengthId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DecryptoId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TheResistanceId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@MonikersId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ConceptId, @PartyId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@JokingHazardId, @PartyId);
+    -- Ticket to Ride
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TicketToRideId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TicketToRideId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TicketToRideId, @CardId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TicketToRideId, @EducationalId);
 
-    -- Cooperative Games
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PandemicLegacyId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@JawsOfLionId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SpiritIslandCoopId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@MarvelChampionsId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TheCrewId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@MysteriumId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ForbiddenIslandId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@HanabiId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@RobinsonCrusoeId, @CooperativeId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TheMindId, @CooperativeId);
+    -- Carcassone
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @CardId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @EducationalId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CarcassonneId, @FantasyId);
 
-    -- Deck-building Games
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@DominionId, @DeckBuildingId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ClankId, @DeckBuildingId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AeonsEndId, @DeckBuildingId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@StarRealmsId, @DeckBuildingId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@LegendaryMarvelId, @DeckBuildingId);
+    -- 7 Wonders
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @CardId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @EducationalId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@7WondersId, @FantasyId);
 
-    -- Eurogames
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AgricolaId, @EurogameId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@TerraMysticaId, @EurogameId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PuertoRicoId, @EurogameId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@CastlesBurgundyId, @EurogameId);
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@ViticultureId, @EurogameId);
+    -- King Of Tokyo
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @StrategyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @FamilyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @PartyId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @CooperativeId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @CardId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @EducationalId);
+    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@KingOfTokyoId, @FantasyId);
 
-    -- Multi-category games (some games belong to multiple categories)
-    -- Gloomhaven is both Strategy and Cooperative
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@GloomhavenId, @CooperativeId);
-    
-    -- Spirit Island is both Strategy and Cooperative
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@SpiritIslandStrategyId, @CooperativeId);
-    
-    -- Pandemic is both Family and Cooperative
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@PandemicFamilyId, @CooperativeId);
-    
-    -- Wingspan is both Family and Eurogame
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@WingspanId, @EurogameId);
-    
-    -- Aeon's End is both Deck-building and Cooperative
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@AeonsEndId, @CooperativeId);
-    
-    -- Legendary: Marvel is both Deck-building and Cooperative
-    INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (@LegendaryMarvelId, @CooperativeId);
+
 
     -- =====================
-    -- 4. Insert Variants
+    -- 4. Insert Images
     -- =====================
 
-    -- Gloomhaven Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Standard Edition', 'gloomhaven-standard', 'gloomhaven.jpg', 139.99, 15, 1, GETDATE(), @GloomhavenId),
-    ('Frosthaven', 'gloomhaven-frost', 'frosthaven.jpg', 169.99, 8, 0, GETDATE(), @GloomhavenId);
+	-- Catan Images
+	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332145/gnome/products/3DBox_CATAN_BaseGame_NE_nk1iz7.png', 1, GETDATE(), 1),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332151/gnome/products/Board-Full-on-wood-copy_gjcwy3.webp', 0, GETDATE(), 1),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332157/gnome/products/deluxe-02-boxback_wwegli.jpg', 0, GETDATE(), 1);
 
-    -- Terraforming Mars Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Ares Expedition', 'mars-ares', 'ares.jpg', 49.99, 20, 0, GETDATE(), @TerraformingMarsId),
-    ('Prelude Expansion', 'mars-prelude', 'prelude.jpg', 29.99, 30, 0, GETDATE(), @TerraformingMarsId);
+	-- Ticket To Ride Images
+	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332448/gnome/products/91YNJM4oyhL._UF894_1000_QL80__e86ula.jpg', 1, GETDATE(), 2),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332455/gnome/products/Opened_ppspzi.webp', 0, GETDATE(), 2),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332451/gnome/products/images_cn5xeg.jpg', 0, GETDATE(), 2);
 
-    -- Ticket to Ride Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Europe Edition', 'ticket-europe', 'ticket_europe.jpg', 59.99, 25, 1, GETDATE(), @TicketToRideId),
-    ('Nordic Countries', 'ticket-nordic', 'ticket_nordic.jpg', 54.99, 18, 0, GETDATE(), @TicketToRideId);
+	-- Carcassone Images
+	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332679/gnome/products/ZM7810_box-right_lsok4z.webp', 1, GETDATE(), 3),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332676/gnome/products/images_ln8p3f.jpg', 0, GETDATE(), 3),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332675/gnome/products/Carcassonne_back_pgsaci.png', 0, GETDATE(), 3);
 
-    -- Codenames Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Duet', 'codenames-duet', 'codenames_duet.jpg', 19.99, 40, 0, GETDATE(), @CodenamesId),
-    ('Disney Edition', 'codenames-disney', 'codenames_disney.jpg', 29.99, 15, 0, GETDATE(), @CodenamesId);
-
-	-- Pandemic Legacy Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Season 1', 'pandemic-s1', 'pandemic_s1.jpg', 79.99, 8, 1, GETDATE(), @PandemicLegacyId),
-    ('Season 2', 'pandemic-s2', 'pandemic_s2.jpg', 79.99, 6, 0, GETDATE(), @PandemicLegacyId);
-
-    -- Marvel Champions Expansions
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Red Skull', 'marvel-red-skull', 'marvel_redskull.jpg', 39.99, 15, 0, GETDATE(), @MarvelChampionsId),
-    ('Galaxy''s Most Wanted', 'marvel-galaxy', 'marvel_galaxy.jpg', 44.99, 12, 0, GETDATE(), @MarvelChampionsId);
-
-    -- Azul Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Summer Pavilion', 'azul-summer', 'azul_summer.jpg', 49.99, 20, 0, GETDATE(), @AzulId),
-    ('Stained Glass', 'azul-glass', 'azul_glass.jpg', 44.99, 18, 0, GETDATE(), @AzulId);
-
-    -- Wingspan Expansions
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('European', 'wingspan-europe', 'wingspan_europe.jpg', 29.99, 25, 0, GETDATE(), @WingspanId),
-    ('Oceania', 'wingspan-oceania', 'wingspan_oceania.jpg', 34.99, 20, 0, GETDATE(), @WingspanId);
-
-    -- Catan Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Seafarers', 'catan-seafarers', 'catan_seafarers.jpg', 44.99, 15, 0, GETDATE(), @CatanId),
-    ('Cities & Knights', 'catan-cities', 'catan_cities.jpg', 49.99, 12, 0, GETDATE(), @CatanId);
-
-    -- Scythe Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Wind Gambit', 'scythe-wind', 'scythe_wind.jpg', 29.99, 10, 0, GETDATE(), @ScytheId),
-    ('Invaders from Afar', 'scythe-invaders', 'scythe_invaders.jpg', 34.99, 8, 0, GETDATE(), @ScytheId);
-
-    -- Spirit Island Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Branch & Claw', 'spirit-branch', 'branch_claw.jpg', 49.99, 12, 0, GETDATE(), @SpiritIslandStrategyId),
-    ('Jagged Earth', 'spirit-jagged', 'jagged_earth.jpg', 59.99, 9, 0, GETDATE(), @SpiritIslandStrategyId);
-
-    -- Dominion Expansions
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Seaside', 'dominion-seaside', 'dominion_seaside.jpg', 44.99, 15, 0, GETDATE(), @DominionId),
-    ('Prosperity', 'dominion-prosperity', 'dominion_prosperity.jpg', 49.99, 12, 0, GETDATE(), @DominionId);
-
-    -- Clank! Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Sunken Treasures', 'clank-sunken', 'clank_sunken.jpg', 34.99, 18, 0, GETDATE(), @ClankId),
-    ('Mummy''s Curse', 'clank-mummy', 'clank_mummy.jpg', 39.99, 14, 0, GETDATE(), @ClankId);
-
-    -- Agricola Variants
-    INSERT INTO Variants (Name, Slug, Image, Price, Stock, IsPrimary, CreatedDateTime, ProductId)
-    VALUES 
-    ('Farmers of the Moor', 'agricola-farmers', 'agricola_farmers.jpg', 49.99, 10, 0, GETDATE(), @AgricolaId),
-    ('Revised Edition', 'agricola-revised', 'agricola_revised.jpg', 69.99, 20, 1, GETDATE(), @AgricolaId);
+	-- 7 Wonders Images
+	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332957/gnome/products/images_1_bg74gr.jpg', 1, GETDATE(), 4),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332958/gnome/products/opened_mo821c.jpg', 0, GETDATE(), 4),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332956/gnome/products/7-wonders-board-game-back_1000x_aidbcu.webp', 0, GETDATE(), 4);
+	
+	-- King Of Tokyo Images
+	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333136/gnome/products/3760175513145_epp7fk.webp', 1, GETDATE(), 5),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333143/gnome/products/Opened_joviza.jpg', 0, GETDATE(), 5),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333147/gnome/products/ZBG-IEL002_BACK_yn1ohp.jpg', 0, GETDATE(), 5);
 
     -- =====================
     -- 5. Insert Admin User

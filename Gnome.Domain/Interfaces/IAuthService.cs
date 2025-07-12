@@ -7,6 +7,5 @@ namespace Gnome.Domain.Interfaces
     {
         Task<LoginResponseDto> LoginAsync(LoginDto loginDto);
         Task<LoginResponseDto> RefreshTokenAsync(string refreshToken);
-        Task<bool> ValidateTokenAsync(string token);
     }
 } 

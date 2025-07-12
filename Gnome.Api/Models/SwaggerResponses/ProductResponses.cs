@@ -48,6 +48,12 @@ namespace Gnome.Api.Models.SwaggerResponses
         /// </summary>
         /// <example>false</example>
         public bool HasNextPage { get; set; }
+
+        /// <summary>
+        /// Product complexity
+        /// </summary>
+        /// <example>Medium</example>
+        public string Complexity { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -66,28 +72,52 @@ namespace Gnome.Api.Models.SwaggerResponses
         /// </summary>
         /// <example>Chess Master Pro</example>
         public string Name { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// URL-friendly product name
         /// </summary>
         /// <example>chess-master-pro</example>
         public string Slug { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Product description
         /// </summary>
         /// <example>Professional chess set with premium pieces</example>
         public string Description { get; set; } = string.Empty;
-        
+
+        /// <summary>
+        /// Short description of the product
+        /// </summary>
+        /// <example>Premium chess set for serious players</example>
+        public string ShortDescription { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Product price
+        /// </summary>
+        /// <example>29.99</example>
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// Available stock quantity
+        /// </summary>
+        /// <example>50</example>
+        public int Stock { get; set; }
+
+        /// <summary>
+        /// Product rating
+        /// </summary>
+        /// <example>4.5</example>
+        public decimal Rating { get; set; }
+
         /// <summary>
         /// Associated categories
         /// </summary>
         public List<CategoryDto> Categories { get; set; } = new();
         
         /// <summary>
-        /// Associated variants
+        /// Associated product images
         /// </summary>
-        public List<VariantDto> Variants { get; set; } = new();
+        public List<ImageDto> Images { get; set; } = new();
         
         /// <summary>
         /// Product creation date
@@ -100,6 +130,12 @@ namespace Gnome.Api.Models.SwaggerResponses
         /// </summary>
         /// <example>2024-01-15T10:00:00Z</example>
         public DateTime UpdatedDateTime { get; set; }
+
+        /// <summary>
+        /// Product complexity
+        /// </summary>
+        /// <example>Medium</example>
+        public string Complexity { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -127,51 +163,33 @@ namespace Gnome.Api.Models.SwaggerResponses
     }
 
     /// <summary>
-    /// DTO for variant information in product responses
+    /// DTO for product image information in product responses
     /// </summary>
-    public class VariantDto
+    public class ImageDto
     {
         /// <summary>
-        /// Variant ID
+        /// Image ID
         /// </summary>
         /// <example>1</example>
         public int Id { get; set; }
         
         /// <summary>
-        /// Variant name
+        /// Image URL
         /// </summary>
-        /// <example>Standard Edition</example>
-        public string Name { get; set; } = string.Empty;
+        /// <example>https://res.cloudinary.com/example/image/upload/v1/chess-product.jpg</example>
+        public string Url { get; set; } = string.Empty;
         
         /// <summary>
-        /// URL-friendly variant name
-        /// </summary>
-        /// <example>standard-edition</example>
-        public string Slug { get; set; } = string.Empty;
-        
-        /// <summary>
-        /// Variant price
-        /// </summary>
-        /// <example>29.99</example>
-        public decimal Price { get; set; }
-        
-        /// <summary>
-        /// Available stock quantity
-        /// </summary>
-        /// <example>50</example>
-        public int Stock { get; set; }
-        
-        /// <summary>
-        /// Whether this is the primary variant
+        /// Whether this is the primary image
         /// </summary>
         /// <example>true</example>
         public bool IsPrimary { get; set; }
         
         /// <summary>
-        /// Variant image URL
+        /// Image creation date
         /// </summary>
-        /// <example>https://res.cloudinary.com/example/image/upload/v1/chess-standard.jpg</example>
-        public string? ImageUrl { get; set; }
+        /// <example>2024-01-01T00:00:00Z</example>
+        public DateTime CreatedDateTime { get; set; }
     }
 
     /// <summary>
@@ -187,14 +205,14 @@ namespace Gnome.Api.Models.SwaggerResponses
     }
 
     /// <summary>
-    /// Response DTO for product updates
+    /// Response DTO for product update
     /// </summary>
     public class ProductUpdatedResponse
     {
         /// <summary>
         /// The ID of the updated product
         /// </summary>
-        /// <example>1</example>
+        /// <example>2</example>
         public int Id { get; set; }
     }
 
@@ -204,7 +222,7 @@ namespace Gnome.Api.Models.SwaggerResponses
     public class ProductDeletedResponse
     {
         /// <summary>
-        /// Confirmation that the product was deleted successfully
+        /// Whether the deletion was successful
         /// </summary>
         /// <example>true</example>
         public bool Success { get; set; }

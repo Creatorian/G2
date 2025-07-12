@@ -182,6 +182,28 @@ namespace Gnome.Application.Shared
             }
 
             string casedParam = propertyData.GetCasedParam();
+            Type type = Nullable.GetUnderlyingType(propertyData.PropertyType) ?? propertyData.PropertyType;
+
+            // Handle collections of IFormFile
+            if (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string))
+            {
+                var files = propertyData.HttpContext.Request?.Form.Files.Where(f => f.Name == casedParam).ToList();
+                if (files != null && files.Any())
+                {
+                    object collection = Activator.CreateInstance(type);
+                    foreach (var file in files)
+                    {
+                        if (type.GenericTypeArguments[0].Equals(typeof(IFormFile)) || type.GenericTypeArguments[0].IsAssignableFrom(typeof(IFormFile)))
+                        {
+                            type.GetMethod("Add").Invoke(collection, new object[1] { file });
+                        }
+                    }
+                    return collection;
+                }
+                return propertyData.DefaultValue;
+            }
+
+            // Handle single IFormFile
             IFormFile formFile = (propertyData.HttpContext.Request?.Form.Files)[casedParam];
             if (formFile != null)
             {
