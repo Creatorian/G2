@@ -41,8 +41,19 @@ namespace Gnome.Api.Controllers
         [SwaggerResponse(400, "Invalid query parameters")]
         public async Task<IActionResult> ListCategories([ModelBinder(typeof(LinqModelBinder))] ListCategoriesQueryCommand command)
         {
-            var categories = await _mediator.Send(command);
-            return Ok(categories);
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing your request." });
+            }
         }
 
         /// <summary>
@@ -58,13 +69,24 @@ namespace Gnome.Api.Controllers
         [SwaggerResponse(404, "Category not found")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
-            var command = new GetCategoryByIdCommand { Id = id };
-            var category = await _mediator.Send(command);
-            
-            if (category == null)
-                return NotFound();
+            try
+            {
+                var command = new GetCategoryByIdCommand { Id = id };
+                var category = await _mediator.Send(command);
                 
-            return Ok(category);
+                if (category == null)
+                    return NotFound(new { error = "Category not found" });
+                    
+                return Ok(category);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing your request." });
+            }
         }
 
         /// <summary>
@@ -72,19 +94,32 @@ namespace Gnome.Api.Controllers
         /// </summary>
         /// <param name="command">Category creation data including name and slug</param>
         /// <returns>ID of the newly created category</returns>
-        /// <response code="200">Category created successfully.</response>
+        /// <response code="201">Category created successfully.</response>
         /// <response code="400">Invalid category data.</response>
         /// <response code="401">Unauthorized - Admin access required.</response>
+        /// <response code="409">Category with same slug or name already exists.</response>
         [HttpPost("add", Name = "AddCategory_Action")]
         [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "Add new category", Description = "Creates a new board game category. Requires admin authentication.")]
-        [SwaggerResponse(200, "Category created successfully", typeof(CategoryCreatedResponse))]
+        [SwaggerResponse(201, "Category created successfully", typeof(CategoryCreatedResponse))]
         [SwaggerResponse(400, "Invalid category data")]
         [SwaggerResponse(401, "Unauthorized - Admin access required")]
+        [SwaggerResponse(409, "Category with same slug or name already exists")]
         public async Task<IActionResult> AddCategory([ModelBinder(typeof(LinqModelBinder))] AddCategoryCommand command)
         {
-            var newCategoryId = await _mediator.Send(command);
-            return Ok(new { Id = newCategoryId });
+            try
+            {
+                var result = await _mediator.Send(command);
+                return StatusCode(201, new { id = result });
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing your request." });
+            }
         }
 
         /// <summary>
@@ -96,6 +131,7 @@ namespace Gnome.Api.Controllers
         /// <response code="400">Invalid category data.</response>
         /// <response code="401">Unauthorized - Admin access required.</response>
         /// <response code="404">Category not found.</response>
+        /// <response code="409">Category with same slug or name already exists.</response>
         [HttpPut("update", Name = "UpdateCategory_Action")]
         [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "Update category", Description = "Updates an existing board game category. Requires admin authentication.")]
@@ -103,10 +139,22 @@ namespace Gnome.Api.Controllers
         [SwaggerResponse(400, "Invalid category data")]
         [SwaggerResponse(401, "Unauthorized - Admin access required")]
         [SwaggerResponse(404, "Category not found")]
+        [SwaggerResponse(409, "Category with same slug or name already exists")]
         public async Task<IActionResult> UpdateCategory([ModelBinder(typeof(LinqModelBinder))] UpdateCategoryCommand command)
         {
-            var updatedCategoryId = await _mediator.Send(command);
-            return Ok(new { Id = updatedCategoryId });
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(new { id = result });
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing your request." });
+            }
         }
 
         /// <summary>
@@ -125,13 +173,24 @@ namespace Gnome.Api.Controllers
         [SwaggerResponse(404, "Category not found")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var command = new DeleteCategoryCommand { Id = id };
-            var result = await _mediator.Send(command);
-            
-            if (!result)
-                return NotFound();
+            try
+            {
+                var command = new DeleteCategoryCommand { Id = id };
+                var result = await _mediator.Send(command);
                 
-            return Ok(new { Success = true });
+                if (!result)
+                    return NotFound(new { error = "Category not found" });
+                    
+                return NoContent();
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing your request." });
+            }
         }
     }
 }

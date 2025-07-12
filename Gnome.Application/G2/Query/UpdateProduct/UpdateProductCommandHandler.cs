@@ -39,6 +39,10 @@ namespace Gnome.Application.G2.Query.UpdateProduct
 
         public async Task<int> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("UpdateProductCommand received - Awards count: {AwardsCount}, Awards: {Awards}", 
+                request.Awards?.Count ?? 0, 
+                request.Awards != null ? string.Join(",", request.Awards) : "null");
+
             var product = new Product
             {
                 Id = request.Id,
@@ -55,6 +59,8 @@ namespace Gnome.Application.G2.Query.UpdateProduct
                 Stock = request.Stock,
                 Rating = request.Rating
             };
+
+            _logger.LogInformation("Product Awards field set to: {Awards}", product.Awards);
 
             // Handle many-to-many relationship
             if (request.CategoryIds != null && request.CategoryIds.Any())

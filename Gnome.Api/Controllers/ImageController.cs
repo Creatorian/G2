@@ -90,7 +90,7 @@ namespace Gnome.Api.Controllers
             if (!result)
                 return NotFound();
                 
-            return Ok(new { Success = true });
+            return NoContent();
         }
     }
 } 

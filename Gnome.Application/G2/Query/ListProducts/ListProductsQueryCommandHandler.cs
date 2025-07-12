@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Gnome.Domain.Common;
 using Gnome.Domain.Interfaces;
+using Gnome.Domain.Models;
 using Gnome.Domain.Responses;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,16 +26,41 @@ namespace Gnome.Application.G2.Query.ListProducts
         {
             var page = request.Page;
             var pageSize = request.PageSize;
-            var products = await _productRepository.GetProducts(page, pageSize, request.Filter, sortBy: request.SortBy, sortOrder: request.SortOrder);
-            var productsCount = await _productRepository.CountProducts(request.Filter);
+            
+            // Create filter from individual properties
+            var filter = new ProductFilter
+            {
+                DateFrom = request.DateFrom,
+                DateTo = request.DateTo,
+                Name = request.Name,
+                Slug = request.Slug,
+                Description = request.Description,
+                ShortDescription = request.ShortDescription,
+                NumberOfPlayers = request.NumberOfPlayers,
+                PlayingTime = request.PlayingTime,
+                CommunityAge = request.CommunityAge,
+                Complexity = request.Complexity,
+                MinRating = request.MinRating,
+                MaxRating = request.MaxRating,
+                MinPrice = request.MinPrice,
+                MaxPrice = request.MaxPrice,
+                MinStock = request.MinStock,
+                MaxStock = request.MaxStock,
+                Awards = request.Awards,
+                CategoryIds = request.CategoryIds,
+                CategoryNames = request.CategoryNames,
+                HasImages = request.HasImages,
+                InStockOnly = request.InStockOnly
+            };
+            
+            var products = await _productRepository.GetProducts(page, pageSize, filter, sortBy: request.SortBy, sortOrder: request.SortOrder);
+            var productsCount = await _productRepository.CountProducts(filter);
             int totalPages = (int)Math.Ceiling(productsCount * 1.0 / pageSize);
-
-            List<ProductListResponse> productListResponse = _mapper.Map<List<ProductListResponse>>(products);
 
             return new SortedPagedList<ProductListResponse>
             {
                 TotalCount = productsCount,
-                Items = productListResponse,
+                Items = products,
                 Page = page,
                 PageSize = pageSize,
                 TotalPages = totalPages,

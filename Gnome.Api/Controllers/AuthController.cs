@@ -1,6 +1,5 @@
 using Gnome.Domain.DTOs;
 using Gnome.Domain.Interfaces;
-using Gnome.Api.Models.SwaggerResponses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
