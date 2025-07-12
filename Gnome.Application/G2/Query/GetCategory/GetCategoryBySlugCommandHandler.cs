@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace Gnome.Application.G2.Query.GetCategory
 {
-    public class GetCategoryByIdCommandHandler : IRequestHandler<GetCategoryByIdCommand, CategoryResponse>
+    public class GetCategoryBySlugCommandHandler : IRequestHandler<GetCategoryBySlugCommand, CategoryResponse>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public GetCategoryByIdCommandHandler(ICategoryRepository categoryRepository, IMapper mapper)
+        public GetCategoryBySlugCommandHandler(ICategoryRepository categoryRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
-        public async Task<CategoryResponse> Handle(GetCategoryByIdCommand request, CancellationToken cancellationToken)
+        public async Task<CategoryResponse> Handle(GetCategoryBySlugCommand request, CancellationToken cancellationToken)
         {
-            var category = await _categoryRepository.GetCategoryByIdAsync(request.Id);
+            var category = await _categoryRepository.GetCategoryBySlugAsync(request.Slug);
             
             if (category == null)
                 return null;

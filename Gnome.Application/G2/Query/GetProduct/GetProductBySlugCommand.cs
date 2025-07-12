@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace Gnome.Application.G2.Query.GetProduct
 {
     [DataContract]
-    public class GetProductByIdCommand : IRequest<ProductResponse>
+    public class GetProductBySlugCommand : IRequest<ProductResponse>
     {
-        [DataMember(Name = "id")]
-        public int Id { get; set; }
+        [DataMember(Name = "slug")]
+        public string Slug { get; set; }
     }
 } 

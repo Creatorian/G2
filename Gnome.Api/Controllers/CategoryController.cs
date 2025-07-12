@@ -57,21 +57,21 @@ namespace Gnome.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves a specific category by its ID
+        /// Retrieves a specific category by its slug
         /// </summary>
-        /// <param name="id">The unique identifier of the category</param>
+        /// <param name="slug">The unique slug identifier of the category</param>
         /// <returns>Category details including products count</returns>
         /// <response code="200">Category found and returned successfully.</response>
         /// <response code="404">Category not found.</response>
-        [HttpGet("{id}", Name = "GetCategoryById_Action")]
-        [SwaggerOperation(Summary = "Get category by ID", Description = "Retrieves detailed information about a specific category including its products count")]
+        [HttpGet("{slug}", Name = "GetCategoryBySlug_Action")]
+        [SwaggerOperation(Summary = "Get category by slug", Description = "Retrieves detailed information about a specific category including its products count using its slug")]
         [SwaggerResponse(200, "Category found", typeof(CategoryResponse))]
         [SwaggerResponse(404, "Category not found")]
-        public async Task<IActionResult> GetCategoryById(int id)
+        public async Task<IActionResult> GetCategoryBySlug(string slug)
         {
             try
             {
-                var command = new GetCategoryByIdCommand { Id = id };
+                var command = new GetCategoryBySlugCommand { Slug = slug };
                 var category = await _mediator.Send(command);
                 
                 if (category == null)

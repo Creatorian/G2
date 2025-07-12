@@ -18,6 +18,9 @@ namespace Gnome.Application.Mappings
             CreateMap<Category, CategoryResponse>()
                 .ForMember(dest => dest.ProductsCount, opt => opt.MapFrom(src => src.ProductCategories.Count));
 
+            CreateMap<Category, CategoryListResponse>()
+                .ForMember(dest => dest.ProductsCount, opt => opt.MapFrom(src => src.ProductCategories.Count));
+
             CreateMap<AddCategoryCommand, Category>();
             CreateMap<UpdateCategoryCommand, Category>();
         }

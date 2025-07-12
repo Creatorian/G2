@@ -267,21 +267,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /product/{id}:
+  /product/{slug}:
     get:
       tags:
         - Products
-      summary: Get product by ID
-      description: Retrieves detailed information about a specific product including its categories and variants
-      operationId: getProductById
+      summary: Get product by slug
+      description: Retrieves detailed information about a specific product including its categories and variants using its slug
+      operationId: getProductBySlug
       parameters:
-        - name: id
+        - name: slug
           in: path
-          description: The unique identifier of the product
+          description: The unique slug identifier of the product
           required: true
           schema:
-            type: integer
-            minimum: 1
+            type: string
+            pattern: '^[a-z0-9-]+$'
       responses:
         '200':
           description: Product found
@@ -537,21 +537,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /category/{id}:
+  /category/{slug}:
     get:
       tags:
         - Categories
-      summary: Get category by ID
-      description: Retrieves detailed information about a specific category with products count
-      operationId: getCategoryById
+      summary: Get category by slug
+      description: Retrieves detailed information about a specific category with products count using its slug
+      operationId: getCategoryBySlug
       parameters:
-        - name: id
+        - name: slug
           in: path
-          description: The unique identifier of the category
+          description: The unique slug identifier of the category
           required: true
           schema:
-            type: integer
-            minimum: 1
+            type: string
+            pattern: '^[a-z0-9-]+$'
       responses:
         '200':
           description: Category found

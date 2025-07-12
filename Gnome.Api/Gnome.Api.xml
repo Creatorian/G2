@@ -78,11 +78,11 @@
             <response code="200">Successfully retrieved the category list.</response>
             <response code="400">Invalid query parameters.</response>
         </member>
-        <member name="M:Gnome.Api.Controllers.CategoryController.GetCategoryById(System.Int32)">
+        <member name="M:Gnome.Api.Controllers.CategoryController.GetCategoryBySlug(System.String)">
             <summary>
-            Retrieves a specific category by its ID
+            Retrieves a specific category by its slug
             </summary>
-            <param name="id">The unique identifier of the category</param>
+            <param name="slug">The unique slug identifier of the category</param>
             <returns>Category details including products count</returns>
             <response code="200">Category found and returned successfully.</response>
             <response code="404">Category not found.</response>
@@ -171,11 +171,11 @@
             <response code="200">Successfully retrieved the product list.</response>
             <response code="400">Invalid query parameters.</response>
         </member>
-        <member name="M:Gnome.Api.Controllers.ProductController.GetProductById(System.Int32)">
+        <member name="M:Gnome.Api.Controllers.ProductController.GetProductBySlug(System.String)">
             <summary>
-            Retrieves a specific product by its ID
+            Retrieves a specific product by its slug
             </summary>
-            <param name="id">The unique identifier of the product</param>
+            <param name="slug">The unique slug identifier of the product</param>
             <returns>Product details including categories and images</returns>
             <response code="200">Product found and returned successfully.</response>
             <response code="404">Product not found.</response>

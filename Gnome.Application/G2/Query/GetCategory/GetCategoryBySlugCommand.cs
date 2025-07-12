@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace Gnome.Application.G2.Query.GetCategory
 {
     [DataContract]
-    public class GetCategoryByIdCommand : IRequest<CategoryResponse>
+    public class GetCategoryBySlugCommand : IRequest<CategoryResponse>
     {
-        [DataMember(Name = "id")]
-        public int Id { get; set; }
+        [DataMember(Name = "slug")]
+        public string Slug { get; set; }
     }
 } 

@@ -54,19 +54,19 @@ namespace Gnome.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves a specific product by its ID
+        /// Retrieves a specific product by its slug
         /// </summary>
-        /// <param name="id">The unique identifier of the product</param>
+        /// <param name="slug">The unique slug identifier of the product</param>
         /// <returns>Product details including categories and images</returns>
         /// <response code="200">Product found and returned successfully.</response>
         /// <response code="404">Product not found.</response>
-        [HttpGet("{id}", Name = "GetProductById_Action")]
-        [SwaggerOperation(Summary = "Get product by ID", Description = "Retrieves detailed information about a specific product")]
-        public async Task<IActionResult> GetProductById(int id)
+        [HttpGet("{slug}", Name = "GetProductBySlug_Action")]
+        [SwaggerOperation(Summary = "Get product by slug", Description = "Retrieves detailed information about a specific product using its slug")]
+        public async Task<IActionResult> GetProductBySlug(string slug)
         {
             try
             {
-                var command = new GetProductByIdCommand { Id = id };
+                var command = new GetProductBySlugCommand { Slug = slug };
                 var product = await _mediator.Send(command);
                 
                 if (product == null)

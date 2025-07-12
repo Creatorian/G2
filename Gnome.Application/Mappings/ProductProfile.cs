@@ -18,6 +18,7 @@ namespace Gnome.Application.Mappings
             CreateMap<Product, ProductListResponse>()
                 .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category)))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.ImageCount, opt => opt.MapFrom(src => src.Images.Count))
                 .ForMember(dest => dest.Awards, opt => opt.MapFrom(src =>
                     string.IsNullOrEmpty(src.Awards)
                         ? new List<string>()
@@ -29,6 +30,7 @@ namespace Gnome.Application.Mappings
             CreateMap<Product, ProductResponse>()
                 .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category)))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.ImageCount, opt => opt.MapFrom(src => src.Images.Count))
                 .ForMember(dest => dest.Awards, opt => opt.MapFrom(src =>
                     string.IsNullOrEmpty(src.Awards)
                         ? new List<string>()
