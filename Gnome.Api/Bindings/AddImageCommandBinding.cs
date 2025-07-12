@@ -8,7 +8,7 @@ namespace Gnome.Api.Bindings
         public void Configure(ModelBinderBuilder<AddProductImageCommand> builder)
         {
             builder.ForMember(x => x.ProductId)
-                .FromQuery()
+                .FromForm()
                 .HasParameterName("productId");
 
             builder.ForMember(x => x.SetAsPrimary)

@@ -21,34 +21,34 @@ namespace Gnome.Api.Bindings
             base.Configure(builder);
 
             // Date range filters
-            builder.ForMember(x => x.Filter.DateFrom)
+            builder.ForMember(x => x.DateFrom)
                 .HasParameterName("date-from")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.DateTo)
+            builder.ForMember(x => x.DateTo)
                 .HasParameterName("date-to")
                 .FromQuery();
 
             // Text-based filters
-            builder.ForMember(x => x.Filter.Name)
+            builder.ForMember(x => x.Name)
                 .HasParameterName("name")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.Slug)
+            builder.ForMember(x => x.Slug)
                 .HasParameterName("slug")
                 .FromQuery();
 
             // Boolean filters
-            builder.ForMember(x => x.Filter.HasProducts)
+            builder.ForMember(x => x.HasProducts)
                 .HasParameterName("has-products")
                 .FromQuery();
 
             // Numeric range filters
-            builder.ForMember(x => x.Filter.MinProductsCount)
+            builder.ForMember(x => x.MinProductsCount)
                 .HasParameterName("min-products-count")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.MaxProductsCount)
+            builder.ForMember(x => x.MaxProductsCount)
                 .HasParameterName("max-products-count")
                 .FromQuery();
         }

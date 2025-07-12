@@ -21,91 +21,91 @@ namespace Gnome.Api.Bindings
             base.Configure(builder);
 
             // Date range filters
-            builder.ForMember(x => x.Filter.DateFrom)
+            builder.ForMember(x => x.DateFrom)
                 .HasParameterName("date-from")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.DateTo)
+            builder.ForMember(x => x.DateTo)
                 .HasParameterName("date-to")
                 .FromQuery();
 
             // Text-based filters
-            builder.ForMember(x => x.Filter.Name)
+            builder.ForMember(x => x.Name)
                 .HasParameterName("name")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.Slug)
+            builder.ForMember(x => x.Slug)
                 .HasParameterName("slug")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.Description)
+            builder.ForMember(x => x.Description)
                 .HasParameterName("description")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.ShortDescription)
+            builder.ForMember(x => x.ShortDescription)
                 .HasParameterName("short-description")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.NumberOfPlayers)
+            builder.ForMember(x => x.NumberOfPlayers)
                 .HasParameterName("number-of-players")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.PlayingTime)
+            builder.ForMember(x => x.PlayingTime)
                 .HasParameterName("playing-time")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.CommunityAge)
+            builder.ForMember(x => x.CommunityAge)
                 .HasParameterName("community-age")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.Complexity)
+            builder.ForMember(x => x.Complexity)
                 .HasParameterName("complexity")
                 .FromQuery();
 
             // Numeric range filters
-            builder.ForMember(x => x.Filter.MinRating)
+            builder.ForMember(x => x.MinRating)
                 .HasParameterName("min-rating")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.MaxRating)
+            builder.ForMember(x => x.MaxRating)
                 .HasParameterName("max-rating")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.MinPrice)
+            builder.ForMember(x => x.MinPrice)
                 .HasParameterName("min-price")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.MaxPrice)
+            builder.ForMember(x => x.MaxPrice)
                 .HasParameterName("max-price")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.MinStock)
+            builder.ForMember(x => x.MinStock)
                 .HasParameterName("min-stock")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.MaxStock)
+            builder.ForMember(x => x.MaxStock)
                 .HasParameterName("max-stock")
                 .FromQuery();
 
             // Array filters
-            builder.ForMember(x => x.Filter.Awards)
+            builder.ForMember(x => x.Awards)
                 .HasParameterName("awards")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.CategoryIds)
+            builder.ForMember(x => x.CategoryIds)
                 .HasParameterName("category-ids")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.CategoryNames)
+            builder.ForMember(x => x.CategoryNames)
                 .HasParameterName("category-names")
                 .FromQuery();
 
             // Boolean filters
-            builder.ForMember(x => x.Filter.HasImages)
+            builder.ForMember(x => x.HasImages)
                 .HasParameterName("has-images")
                 .FromQuery();
 
-            builder.ForMember(x => x.Filter.InStockOnly)
+            builder.ForMember(x => x.InStockOnly)
                 .HasParameterName("in-stock-only")
                 .FromQuery();
         }

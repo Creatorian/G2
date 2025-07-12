@@ -59,6 +59,10 @@ namespace Gnome.Api.Bindings
                 .FromForm()
                 .HasParameterName("stock");
 
+            builder.ForMember(x => x.AwardsString)
+                .FromForm()
+                .HasParameterName("awards");
+
             builder.ForMember(x => x.CategoryIds)
                 .FromForm()
                 .HasParameterName("category-ids");
