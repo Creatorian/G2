@@ -28,11 +28,8 @@ namespace Gnome.Domain.Models
         [DataMember(Name = "complexity")]
         public string Complexity { get; set; }
 
-        [DataMember(Name = "min-rating")]
-        public decimal? MinRating { get; set; }
-
-        [DataMember(Name = "max-rating")]
-        public decimal? MaxRating { get; set; }
+        [DataMember(Name = "rating")]
+        public decimal? Rating { get; set; }
 
         [DataMember(Name = "min-price")]
         public decimal? MinPrice { get; set; }

@@ -78,14 +78,8 @@
 									"disabled": true
 								},
 								{
-									"key": "min-rating",
+									"key": "rating",
 									"value": "4",
-									"disabled": true
-								},
-								{
-									"key": "max-rating",
-									"value": "4.99",
-									"disabled": true
 								},
 								{
 									"key": "min-price",

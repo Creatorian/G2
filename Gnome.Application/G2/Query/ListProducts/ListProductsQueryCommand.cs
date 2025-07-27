@@ -37,11 +37,8 @@ namespace Gnome.Application.G2.Query.ListProducts
         [DataMember(Name = "complexity")]
         public string Complexity { get; set; }
 
-        [DataMember(Name = "minRating")]
-        public decimal? MinRating { get; set; }
-
-        [DataMember(Name = "maxRating")]
-        public decimal? MaxRating { get; set; }
+        [DataMember(Name = "rating")]
+        public decimal? Rating { get; set; }
 
         [DataMember(Name = "minPrice")]
         public decimal? MinPrice { get; set; }

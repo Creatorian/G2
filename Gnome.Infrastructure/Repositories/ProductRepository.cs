@@ -52,25 +52,10 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
             }
 
-            if (!string.IsNullOrEmpty(filter.Complexity))
+            if (filter.Rating.HasValue)
             {
-                if (int.TryParse(filter.Complexity, out int complexityValue))
-                {
-                    products = products.Where(x => x.Complexity != null && 
-                        EF.Functions.Like(x.Complexity, $"%{complexityValue}%"));
-                }
-            }
-
-            if (filter.MinRating.HasValue)
-            {
-                var minRatingValue = filter.MinRating.Value * 2;
-                products = products.Where(x => x.Rating >= minRatingValue);
-            }
-
-            if (filter.MaxRating.HasValue)
-            {
-                var maxRatingValue = filter.MaxRating.Value * 2;
-                products = products.Where(x => x.Rating <= maxRatingValue);
+                var databaseRating = filter.Rating.Value * 2;
+                products = products.Where(x => x.Rating >= databaseRating);
             }
 
             if (filter.MinPrice.HasValue)
@@ -103,6 +88,15 @@ namespace Gnome.Infrastructure.Repositories
 
             var productList = await products.ToListAsync();
 
+            if (!string.IsNullOrEmpty(filter.Complexity))
+            {
+                if (int.TryParse(filter.Complexity, out int complexityValue))
+                {
+                    productList = productList.Where(x => x.Complexity != null && 
+                        decimal.TryParse(x.Complexity, out decimal dbComplexity) && dbComplexity >= complexityValue).ToList();
+                }
+            }
+
             if (!string.IsNullOrEmpty(filter.MinPlayers))
             {
                 var minPlayersValue = int.Parse(filter.MinPlayers);
@@ -126,8 +120,8 @@ namespace Gnome.Infrastructure.Repositories
                 var minPlayingTimeValue = int.Parse(filter.MinPlayingTime);
                 productList = productList.Where(x => x.PlayingTime != null && 
                     (x.PlayingTime.Contains("-") 
-                        ? int.Parse(x.PlayingTime.Substring(x.PlayingTime.IndexOf("-") + 1)) >= minPlayingTimeValue
-                        : int.Parse(x.PlayingTime) >= minPlayingTimeValue)).ToList();
+                        ? int.Parse(x.PlayingTime.Substring(0, x.PlayingTime.IndexOf("-"))) <= minPlayingTimeValue
+                        : int.Parse(x.PlayingTime) <= minPlayingTimeValue)).ToList();
             }
 
             if (!string.IsNullOrEmpty(filter.MaxPlayingTime))
@@ -135,8 +129,8 @@ namespace Gnome.Infrastructure.Repositories
                 var maxPlayingTimeValue = int.Parse(filter.MaxPlayingTime);
                 productList = productList.Where(x => x.PlayingTime != null && 
                     (x.PlayingTime.Contains("-") 
-                        ? int.Parse(x.PlayingTime.Substring(0, x.PlayingTime.IndexOf("-"))) <= maxPlayingTimeValue
-                        : int.Parse(x.PlayingTime) <= maxPlayingTimeValue)).ToList();
+                        ? int.Parse(x.PlayingTime.Substring(x.PlayingTime.IndexOf("-") + 1)) >= maxPlayingTimeValue
+                        : int.Parse(x.PlayingTime) >= maxPlayingTimeValue)).ToList();
             }
 
             #region Sort
@@ -236,25 +230,10 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
             }
 
-            if (!string.IsNullOrEmpty(filter.Complexity))
+            if (filter.Rating.HasValue)
             {
-                if (int.TryParse(filter.Complexity, out int complexityValue))
-                {
-                    products = products.Where(x => x.Complexity != null && 
-                        EF.Functions.Like(x.Complexity, $"%{complexityValue}%"));
-                }
-            }
-
-            if (filter.MinRating.HasValue)
-            {
-                var minRatingValue = filter.MinRating.Value * 2;
-                products = products.Where(x => x.Rating >= minRatingValue);
-            }
-
-            if (filter.MaxRating.HasValue)
-            {
-                var maxRatingValue = filter.MaxRating.Value * 2;
-                products = products.Where(x => x.Rating <= maxRatingValue);
+                var databaseRating = filter.Rating.Value * 2;
+                products = products.Where(x => x.Rating >= databaseRating);
             }
 
             if (filter.MinPrice.HasValue)
@@ -288,7 +267,16 @@ namespace Gnome.Infrastructure.Repositories
             // Execute the query to get data for client-side filtering
             var productList = await products.ToListAsync();
 
-            // Apply complex range filters on the client side
+            // Apply complex filters on the client side
+            if (!string.IsNullOrEmpty(filter.Complexity))
+            {
+                if (int.TryParse(filter.Complexity, out int complexityValue))
+                {
+                    productList = productList.Where(x => x.Complexity != null && 
+                        decimal.TryParse(x.Complexity, out decimal dbComplexity) && dbComplexity >= complexityValue).ToList();
+                }
+            }
+
             if (!string.IsNullOrEmpty(filter.MinPlayers))
             {
                 var minPlayersValue = int.Parse(filter.MinPlayers);

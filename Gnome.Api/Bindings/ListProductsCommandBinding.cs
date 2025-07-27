@@ -58,12 +58,8 @@ namespace Gnome.Api.Bindings
                 .HasParameterName("complexity")
                 .FromQuery();
 
-            builder.ForMember(x => x.MinRating)
-                .HasParameterName("min-rating")
-                .FromQuery();
-
-            builder.ForMember(x => x.MaxRating)
-                .HasParameterName("max-rating")
+            builder.ForMember(x => x.Rating)
+                .HasParameterName("rating")
                 .FromQuery();
 
             builder.ForMember(x => x.MinPrice)
