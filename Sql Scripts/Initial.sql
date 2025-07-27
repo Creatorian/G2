@@ -183,33 +183,33 @@ First Game in the King of Tokyo series
 
 	-- Catan Images
 	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332145/gnome/products/3DBox_CATAN_BaseGame_NE_nk1iz7.png', 1, GETDATE(), 1),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332151/gnome/products/Board-Full-on-wood-copy_gjcwy3.webp', 0, GETDATE(), 1),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332157/gnome/products/deluxe-02-boxback_wwegli.jpg', 0, GETDATE(), 1);
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332145/gnome/products/3DBox_CATAN_BaseGame_NE_nk1iz7.png', 1, GETDATE(), @CatanId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332151/gnome/products/Board-Full-on-wood-copy_gjcwy3.webp', 0, GETDATE(), @CatanId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332157/gnome/products/deluxe-02-boxback_wwegli.jpg', 0, GETDATE(), @CatanId);
 
 	-- Ticket To Ride Images
 	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332448/gnome/products/91YNJM4oyhL._UF894_1000_QL80__e86ula.jpg', 1, GETDATE(), 2),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332455/gnome/products/Opened_ppspzi.webp', 0, GETDATE(), 2),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332451/gnome/products/images_cn5xeg.jpg', 0, GETDATE(), 2);
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332448/gnome/products/91YNJM4oyhL._UF894_1000_QL80__e86ula.jpg', 1, GETDATE(), @TicketToRideId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332455/gnome/products/Opened_ppspzi.webp', 0, GETDATE(), @TicketToRideId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332451/gnome/products/images_cn5xeg.jpg', 0, GETDATE(), @TicketToRideId);
 
 	-- Carcassone Images
 	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332679/gnome/products/ZM7810_box-right_lsok4z.webp', 1, GETDATE(), 3),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332676/gnome/products/images_ln8p3f.jpg', 0, GETDATE(), 3),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332675/gnome/products/Carcassonne_back_pgsaci.png', 0, GETDATE(), 3);
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332679/gnome/products/ZM7810_box-right_lsok4z.webp', 1, GETDATE(), @CarcassonneId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332676/gnome/products/images_ln8p3f.jpg', 0, GETDATE(), @CarcassonneId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332675/gnome/products/Carcassonne_back_pgsaci.png', 0, GETDATE(), @CarcassonneId);
 
 	-- 7 Wonders Images
 	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332957/gnome/products/images_1_bg74gr.jpg', 1, GETDATE(), 4),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332958/gnome/products/opened_mo821c.jpg', 0, GETDATE(), 4),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332956/gnome/products/7-wonders-board-game-back_1000x_aidbcu.webp', 0, GETDATE(), 4);
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332957/gnome/products/images_1_bg74gr.jpg', 1, GETDATE(), @7WondersId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332958/gnome/products/opened_mo821c.jpg', 0, GETDATE(), @7WondersId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752332956/gnome/products/7-wonders-board-game-back_1000x_aidbcu.webp', 0, GETDATE(), @7WondersId);
 	
 	-- King Of Tokyo Images
 	INSERT INTO Images (Url, IsPrimary, CreatedDateTime, ProductId) VALUES
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333136/gnome/products/3760175513145_epp7fk.webp', 1, GETDATE(), 5),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333143/gnome/products/Opened_joviza.jpg', 0, GETDATE(), 5),
-	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333147/gnome/products/ZBG-IEL002_BACK_yn1ohp.jpg', 0, GETDATE(), 5);
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333136/gnome/products/3760175513145_epp7fk.webp', 1, GETDATE(), @KingOfTokyoId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333143/gnome/products/Opened_joviza.jpg', 0, GETDATE(), @KingOfTokyoId),
+	('https://res.cloudinary.com/dtwi4umvq/image/upload/v1752333147/gnome/products/ZBG-IEL002_BACK_yn1ohp.jpg', 0, GETDATE(), @KingOfTokyoId);
 
     -- =====================
     -- 5. Insert Admin User
@@ -232,6 +232,17 @@ First Game in the King of Tokyo series
         'gnome',
         'gnome@mailinator.com',
         'sD3fPKLnFKZUjnSV4qA/XoJOqsmDfNfxWcZ7kPtLc0I=',
+        'Ajs',
+        'Nigrutin',
+        1,
+        GETDATE(),
+        NULL,
+        GETDATE()
+    ),
+	(
+        'admin',
+        'admin@mailinator.com',
+        'XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=',
         'Ajs',
         'Nigrutin',
         1,
