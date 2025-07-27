@@ -31,19 +31,7 @@ namespace Gnome.Infrastructure.Repositories
                 .AsQueryable()
                 .AsNoTracking();
 
-            #region Filters
-
-            // Date range filter
-            if (filter.DateFrom.HasValue)
-            {
-                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= filter.DateFrom.Value);
-            }
-            if (filter.DateTo.HasValue)
-            {
-                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
-            }
-
-            // Text-based filters (case-insensitive contains search)
+            // Apply basic filters
             if (!string.IsNullOrEmpty(filter.Name))
             {
                 products = products.Where(x => EF.Functions.Like(x.Name, $"%{filter.Name}%"));
@@ -54,45 +42,35 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => EF.Functions.Like(x.Slug, $"%{filter.Slug}%"));
             }
 
-            if (!string.IsNullOrEmpty(filter.Description))
+            if (filter.DateFrom.HasValue)
             {
-                products = products.Where(x => x.Description != null && EF.Functions.Like(x.Description, $"%{filter.Description}%"));
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= filter.DateFrom.Value);
             }
 
-            if (!string.IsNullOrEmpty(filter.ShortDescription))
+            if (filter.DateTo.HasValue)
             {
-                products = products.Where(x => x.ShortDescription != null && EF.Functions.Like(x.ShortDescription, $"%{filter.ShortDescription}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filter.NumberOfPlayers))
-            {
-                products = products.Where(x => x.NumberOfPlayers != null && EF.Functions.Like(x.NumberOfPlayers, $"%{filter.NumberOfPlayers}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filter.PlayingTime))
-            {
-                products = products.Where(x => x.PlayingTime != null && EF.Functions.Like(x.PlayingTime, $"%{filter.PlayingTime}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filter.CommunityAge))
-            {
-                products = products.Where(x => x.CommunityAge != null && EF.Functions.Like(x.CommunityAge, $"%{filter.CommunityAge}%"));
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
             }
 
             if (!string.IsNullOrEmpty(filter.Complexity))
             {
-                products = products.Where(x => x.Complexity != null && EF.Functions.Like(x.Complexity, $"%{filter.Complexity}%"));
+                if (int.TryParse(filter.Complexity, out int complexityValue))
+                {
+                    products = products.Where(x => x.Complexity != null && 
+                        EF.Functions.Like(x.Complexity, $"%{complexityValue}%"));
+                }
             }
 
-            // Numeric range filters
             if (filter.MinRating.HasValue)
             {
-                products = products.Where(x => x.Rating >= filter.MinRating.Value);
+                var minRatingValue = filter.MinRating.Value * 2;
+                products = products.Where(x => x.Rating >= minRatingValue);
             }
 
             if (filter.MaxRating.HasValue)
             {
-                products = products.Where(x => x.Rating <= filter.MaxRating.Value);
+                var maxRatingValue = filter.MaxRating.Value * 2;
+                products = products.Where(x => x.Rating <= maxRatingValue);
             }
 
             if (filter.MinPrice.HasValue)
@@ -105,46 +83,17 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.Price <= filter.MaxPrice.Value);
             }
 
-            if (filter.MinStock.HasValue)
-            {
-                products = products.Where(x => x.Stock >= filter.MinStock.Value);
-            }
-
-            if (filter.MaxStock.HasValue)
-            {
-                products = products.Where(x => x.Stock <= filter.MaxStock.Value);
-            }
-
-            // Awards filter
-            if (filter.Awards != null && filter.Awards.Any())
-            {
-                products = products.Where(x => !string.IsNullOrEmpty(x.Awards) && 
-                    filter.Awards.Any(award => EF.Functions.Like(x.Awards, $"%{award}%")));
-            }
-
             // Category filters
             if (filter.CategoryIds != null && filter.CategoryIds.Any())
             {
                 products = products.Where(x => x.ProductCategories.Any(pc => filter.CategoryIds.Contains(pc.CategoryId)));
             }
 
-            if (filter.CategoryNames != null && filter.CategoryNames.Any())
+            if (filter.CategorySlugs != null && filter.CategorySlugs.Any())
             {
-                products = products.Where(x => x.ProductCategories.Any(pc => 
-                    filter.CategoryNames.Any(name => EF.Functions.Like(pc.Category.Name, $"%{name}%"))));
-            }
-
-            // Boolean filters
-            if (filter.HasImages.HasValue)
-            {
-                if (filter.HasImages.Value)
-                {
-                    products = products.Where(x => x.Images.Any());
-                }
-                else
-                {
-                    products = products.Where(x => !x.Images.Any());
-                }
+                products = products.Where(x => 
+                    filter.CategorySlugs.All(requiredSlug => 
+                        x.ProductCategories.Any(pc => pc.Category.Slug == requiredSlug)));
             }
 
             if (filter.InStockOnly.HasValue && filter.InStockOnly.Value)
@@ -152,7 +101,43 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.Stock > 0);
             }
 
-            #endregion
+            var productList = await products.ToListAsync();
+
+            if (!string.IsNullOrEmpty(filter.MinPlayers))
+            {
+                var minPlayersValue = int.Parse(filter.MinPlayers);
+                productList = productList.Where(x => x.NumberOfPlayers != null && 
+                    (x.NumberOfPlayers.Contains("-") 
+                        ? int.Parse(x.NumberOfPlayers.Substring(0, x.NumberOfPlayers.IndexOf("-"))) <= minPlayersValue
+                        : int.Parse(x.NumberOfPlayers) <= minPlayersValue)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.MaxPlayers))
+            {
+                var maxPlayersValue = int.Parse(filter.MaxPlayers);
+                productList = productList.Where(x => x.NumberOfPlayers != null && 
+                    (x.NumberOfPlayers.Contains("-") 
+                        ? int.Parse(x.NumberOfPlayers.Substring(x.NumberOfPlayers.IndexOf("-") + 1)) >= maxPlayersValue
+                        : int.Parse(x.NumberOfPlayers) >= maxPlayersValue)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.MinPlayingTime))
+            {
+                var minPlayingTimeValue = int.Parse(filter.MinPlayingTime);
+                productList = productList.Where(x => x.PlayingTime != null && 
+                    (x.PlayingTime.Contains("-") 
+                        ? int.Parse(x.PlayingTime.Substring(x.PlayingTime.IndexOf("-") + 1)) >= minPlayingTimeValue
+                        : int.Parse(x.PlayingTime) >= minPlayingTimeValue)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.MaxPlayingTime))
+            {
+                var maxPlayingTimeValue = int.Parse(filter.MaxPlayingTime);
+                productList = productList.Where(x => x.PlayingTime != null && 
+                    (x.PlayingTime.Contains("-") 
+                        ? int.Parse(x.PlayingTime.Substring(0, x.PlayingTime.IndexOf("-"))) <= maxPlayingTimeValue
+                        : int.Parse(x.PlayingTime) <= maxPlayingTimeValue)).ToList();
+            }
 
             #region Sort
 
@@ -163,37 +148,31 @@ namespace Gnome.Infrastructure.Repositories
                 switch(sortBy)
                 {
                     case "created-date-time":
-                        products = isDescending ? products.OrderByDescending(c => c.CreatedDateTime) : products.OrderBy(c => c.CreatedDateTime);
+                        productList = isDescending ? productList.OrderByDescending(c => c.CreatedDateTime).ToList() : productList.OrderBy(c => c.CreatedDateTime).ToList();
                         break;
                     case "name":
-                        products = isDescending ? products.OrderByDescending(c => c.Name) : products.OrderBy(c => c.Name);
+                        productList = isDescending ? productList.OrderByDescending(c => c.Name).ToList() : productList.OrderBy(c => c.Name).ToList();
                         break;
                     case "price":
-                        products = isDescending ? products.OrderByDescending(c => c.Price) : products.OrderBy(c => c.Price);
+                        productList = isDescending ? productList.OrderByDescending(c => c.Price).ToList() : productList.OrderBy(c => c.Price).ToList();
                         break;
                     case "rating":
-                        products = isDescending ? products.OrderByDescending(c => c.Rating) : products.OrderBy(c => c.Rating);
+                        productList = isDescending ? productList.OrderByDescending(c => c.Rating).ToList() : productList.OrderBy(c => c.Rating).ToList();
                         break;
                     case "stock":
-                        products = isDescending ? products.OrderByDescending(c => c.Stock) : products.OrderBy(c => c.Stock);
+                        productList = isDescending ? productList.OrderByDescending(c => c.Stock).ToList() : productList.OrderBy(c => c.Stock).ToList();
                         break;
                     case "complexity":
-                        products = isDescending ? products.OrderByDescending(c => c.Complexity) : products.OrderBy(c => c.Complexity);
-                        break;
-                    case "playing-time":
-                        products = isDescending ? products.OrderByDescending(c => c.PlayingTime) : products.OrderBy(c => c.PlayingTime);
+                        productList = isDescending ? productList.OrderByDescending(c => c.Complexity).ToList() : productList.OrderBy(c => c.Complexity).ToList();
                         break;
                 }
             }
 
             #endregion
 
-            products = products.Skip(pageSize * (page - 1)).Take(pageSize);
+            productList = productList.Skip(pageSize * (page - 1)).Take(pageSize).ToList();
             
-            // Execute the query first to get the data
-            var productEntities = await products.ToListAsync();
-            
-            return productEntities.Select(productEntity => new ProductListResponse
+            return productList.Select(productEntity => new ProductListResponse
             {
                 Id = productEntity.Id,
                 Name = productEntity.Name,
@@ -236,19 +215,7 @@ namespace Gnome.Infrastructure.Repositories
                 .AsQueryable()
                 .AsNoTracking();
 
-            #region Filters
-
-            // Date range filter
-            if (filter.DateFrom.HasValue)
-            {
-                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= filter.DateFrom.Value);
-            }
-            if (filter.DateTo.HasValue)
-            {
-                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
-            }
-
-            // Text-based filters (case-insensitive contains search)
+            // Apply basic filters
             if (!string.IsNullOrEmpty(filter.Name))
             {
                 products = products.Where(x => EF.Functions.Like(x.Name, $"%{filter.Name}%"));
@@ -259,45 +226,35 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => EF.Functions.Like(x.Slug, $"%{filter.Slug}%"));
             }
 
-            if (!string.IsNullOrEmpty(filter.Description))
+            if (filter.DateFrom.HasValue)
             {
-                products = products.Where(x => x.Description != null && EF.Functions.Like(x.Description, $"%{filter.Description}%"));
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value >= filter.DateFrom.Value);
             }
 
-            if (!string.IsNullOrEmpty(filter.ShortDescription))
+            if (filter.DateTo.HasValue)
             {
-                products = products.Where(x => x.ShortDescription != null && EF.Functions.Like(x.ShortDescription, $"%{filter.ShortDescription}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filter.NumberOfPlayers))
-            {
-                products = products.Where(x => x.NumberOfPlayers != null && EF.Functions.Like(x.NumberOfPlayers, $"%{filter.NumberOfPlayers}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filter.PlayingTime))
-            {
-                products = products.Where(x => x.PlayingTime != null && EF.Functions.Like(x.PlayingTime, $"%{filter.PlayingTime}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filter.CommunityAge))
-            {
-                products = products.Where(x => x.CommunityAge != null && EF.Functions.Like(x.CommunityAge, $"%{filter.CommunityAge}%"));
+                products = products.Where(x => x.CreatedDateTime.HasValue && x.CreatedDateTime.Value <= filter.DateTo.Value);
             }
 
             if (!string.IsNullOrEmpty(filter.Complexity))
             {
-                products = products.Where(x => x.Complexity != null && EF.Functions.Like(x.Complexity, $"%{filter.Complexity}%"));
+                if (int.TryParse(filter.Complexity, out int complexityValue))
+                {
+                    products = products.Where(x => x.Complexity != null && 
+                        EF.Functions.Like(x.Complexity, $"%{complexityValue}%"));
+                }
             }
 
-            // Numeric range filters
             if (filter.MinRating.HasValue)
             {
-                products = products.Where(x => x.Rating >= filter.MinRating.Value);
+                var minRatingValue = filter.MinRating.Value * 2;
+                products = products.Where(x => x.Rating >= minRatingValue);
             }
 
             if (filter.MaxRating.HasValue)
             {
-                products = products.Where(x => x.Rating <= filter.MaxRating.Value);
+                var maxRatingValue = filter.MaxRating.Value * 2;
+                products = products.Where(x => x.Rating <= maxRatingValue);
             }
 
             if (filter.MinPrice.HasValue)
@@ -310,46 +267,17 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.Price <= filter.MaxPrice.Value);
             }
 
-            if (filter.MinStock.HasValue)
-            {
-                products = products.Where(x => x.Stock >= filter.MinStock.Value);
-            }
-
-            if (filter.MaxStock.HasValue)
-            {
-                products = products.Where(x => x.Stock <= filter.MaxStock.Value);
-            }
-
-            // Awards filter
-            if (filter.Awards != null && filter.Awards.Any())
-            {
-                products = products.Where(x => !string.IsNullOrEmpty(x.Awards) && 
-                    filter.Awards.Any(award => EF.Functions.Like(x.Awards, $"%{award}%")));
-            }
-
             // Category filters
             if (filter.CategoryIds != null && filter.CategoryIds.Any())
             {
                 products = products.Where(x => x.ProductCategories.Any(pc => filter.CategoryIds.Contains(pc.CategoryId)));
             }
 
-            if (filter.CategoryNames != null && filter.CategoryNames.Any())
+            if (filter.CategorySlugs != null && filter.CategorySlugs.Any())
             {
-                products = products.Where(x => x.ProductCategories.Any(pc => 
-                    filter.CategoryNames.Any(name => EF.Functions.Like(pc.Category.Name, $"%{name}%"))));
-            }
-
-            // Boolean filters
-            if (filter.HasImages.HasValue)
-            {
-                if (filter.HasImages.Value)
-                {
-                    products = products.Where(x => x.Images.Any());
-                }
-                else
-                {
-                    products = products.Where(x => !x.Images.Any());
-                }
+                products = products.Where(x => 
+                    filter.CategorySlugs.All(requiredSlug => 
+                        x.ProductCategories.Any(pc => pc.Category.Slug == requiredSlug)));
             }
 
             if (filter.InStockOnly.HasValue && filter.InStockOnly.Value)
@@ -357,9 +285,47 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.Stock > 0);
             }
 
-            #endregion
+            // Execute the query to get data for client-side filtering
+            var productList = await products.ToListAsync();
 
-            return await products.CountAsync();
+            // Apply complex range filters on the client side
+            if (!string.IsNullOrEmpty(filter.MinPlayers))
+            {
+                var minPlayersValue = int.Parse(filter.MinPlayers);
+                productList = productList.Where(x => x.NumberOfPlayers != null && 
+                    (x.NumberOfPlayers.Contains("-") 
+                        ? int.Parse(x.NumberOfPlayers.Substring(0, x.NumberOfPlayers.IndexOf("-"))) <= minPlayersValue
+                        : int.Parse(x.NumberOfPlayers) <= minPlayersValue)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.MaxPlayers))
+            {
+                var maxPlayersValue = int.Parse(filter.MaxPlayers);
+                productList = productList.Where(x => x.NumberOfPlayers != null && 
+                    (x.NumberOfPlayers.Contains("-") 
+                        ? int.Parse(x.NumberOfPlayers.Substring(x.NumberOfPlayers.IndexOf("-") + 1)) >= maxPlayersValue
+                        : int.Parse(x.NumberOfPlayers) >= maxPlayersValue)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.MinPlayingTime))
+            {
+                var minPlayingTimeValue = int.Parse(filter.MinPlayingTime);
+                productList = productList.Where(x => x.PlayingTime != null && 
+                    (x.PlayingTime.Contains("-") 
+                        ? int.Parse(x.PlayingTime.Substring(0, x.PlayingTime.IndexOf("-"))) <= minPlayingTimeValue
+                        : int.Parse(x.PlayingTime) <= minPlayingTimeValue)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.MaxPlayingTime))
+            {
+                var maxPlayingTimeValue = int.Parse(filter.MaxPlayingTime);
+                productList = productList.Where(x => x.PlayingTime != null && 
+                    (x.PlayingTime.Contains("-") 
+                        ? int.Parse(x.PlayingTime.Substring(x.PlayingTime.IndexOf("-") + 1)) >= maxPlayingTimeValue
+                        : int.Parse(x.PlayingTime) >= maxPlayingTimeValue)).ToList();
+            }
+
+            return productList.Count;
         }
 
         public async Task<int> AddProductAsync(Product product)

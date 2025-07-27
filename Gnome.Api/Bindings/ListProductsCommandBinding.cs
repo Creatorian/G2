@@ -38,31 +38,26 @@ namespace Gnome.Api.Bindings
                 .HasParameterName("slug")
                 .FromQuery();
 
-            builder.ForMember(x => x.Description)
-                .HasParameterName("description")
+            builder.ForMember(x => x.MinPlayers)
+                .HasParameterName("min-players")
                 .FromQuery();
 
-            builder.ForMember(x => x.ShortDescription)
-                .HasParameterName("short-description")
+            builder.ForMember(x => x.MaxPlayers)
+                .HasParameterName("max-players")
                 .FromQuery();
 
-            builder.ForMember(x => x.NumberOfPlayers)
-                .HasParameterName("number-of-players")
+            builder.ForMember(x => x.MinPlayingTime)
+                .HasParameterName("min-playing-time")
                 .FromQuery();
 
-            builder.ForMember(x => x.PlayingTime)
-                .HasParameterName("playing-time")
-                .FromQuery();
-
-            builder.ForMember(x => x.CommunityAge)
-                .HasParameterName("community-age")
+            builder.ForMember(x => x.MaxPlayingTime)
+                .HasParameterName("max-playing-time")
                 .FromQuery();
 
             builder.ForMember(x => x.Complexity)
                 .HasParameterName("complexity")
                 .FromQuery();
 
-            // Numeric range filters
             builder.ForMember(x => x.MinRating)
                 .HasParameterName("min-rating")
                 .FromQuery();
@@ -79,30 +74,12 @@ namespace Gnome.Api.Bindings
                 .HasParameterName("max-price")
                 .FromQuery();
 
-            builder.ForMember(x => x.MinStock)
-                .HasParameterName("min-stock")
-                .FromQuery();
-
-            builder.ForMember(x => x.MaxStock)
-                .HasParameterName("max-stock")
-                .FromQuery();
-
-            // Array filters
-            builder.ForMember(x => x.Awards)
-                .HasParameterName("awards")
-                .FromQuery();
-
             builder.ForMember(x => x.CategoryIds)
                 .HasParameterName("category-ids")
                 .FromQuery();
 
-            builder.ForMember(x => x.CategoryNames)
-                .HasParameterName("category-names")
-                .FromQuery();
-
-            // Boolean filters
-            builder.ForMember(x => x.HasImages)
-                .HasParameterName("has-images")
+            builder.ForMember(x => x.CategorySlugs)
+                .HasParameterName("category-slugs")
                 .FromQuery();
 
             builder.ForMember(x => x.InStockOnly)

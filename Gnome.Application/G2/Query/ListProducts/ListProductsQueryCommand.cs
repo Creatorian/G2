@@ -22,20 +22,17 @@ namespace Gnome.Application.G2.Query.ListProducts
         [DataMember(Name = "slug")]
         public string Slug { get; set; }
 
-        [DataMember(Name = "description")]
-        public string Description { get; set; }
+        [DataMember(Name = "minPlayers")]
+        public string MinPlayers { get; set; }
 
-        [DataMember(Name = "shortDescription")]
-        public string ShortDescription { get; set; }
+        [DataMember(Name = "maxPlayers")]
+        public string MaxPlayers { get; set; }
 
-        [DataMember(Name = "numberOfPlayers")]
-        public string NumberOfPlayers { get; set; }
+        [DataMember(Name = "minPlayingTime")]
+        public string MinPlayingTime { get; set; }
 
-        [DataMember(Name = "playingTime")]
-        public string PlayingTime { get; set; }
-
-        [DataMember(Name = "communityAge")]
-        public string CommunityAge { get; set; }
+        [DataMember(Name = "maxPlayingTime")]
+        public string MaxPlayingTime { get; set; }
 
         [DataMember(Name = "complexity")]
         public string Complexity { get; set; }
@@ -52,23 +49,11 @@ namespace Gnome.Application.G2.Query.ListProducts
         [DataMember(Name = "maxPrice")]
         public decimal? MaxPrice { get; set; }
 
-        [DataMember(Name = "minStock")]
-        public int? MinStock { get; set; }
-
-        [DataMember(Name = "maxStock")]
-        public int? MaxStock { get; set; }
-
-        [DataMember(Name = "awards")]
-        public List<string> Awards { get; set; }
-
         [DataMember(Name = "categoryIds")]
         public List<int> CategoryIds { get; set; }
 
-        [DataMember(Name = "categoryNames")]
-        public List<string> CategoryNames { get; set; }
-
-        [DataMember(Name = "hasImages")]
-        public bool? HasImages { get; set; }
+        [DataMember(Name = "categorySlugs")]
+        public List<string> CategorySlugs { get; set; }
 
         [DataMember(Name = "inStockOnly")]
         public bool? InStockOnly { get; set; }

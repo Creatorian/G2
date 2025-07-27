@@ -13,20 +13,17 @@ namespace Gnome.Domain.Models
         [DataMember(Name = "slug")]
         public string Slug { get; set; }
 
-        [DataMember(Name = "description")]
-        public string Description { get; set; }
+        [DataMember(Name = "min-players")]
+        public string MinPlayers { get; set; }
 
-        [DataMember(Name = "short-description")]
-        public string ShortDescription { get; set; }
+        [DataMember(Name = "max-players")]
+        public string MaxPlayers { get; set; }
 
-        [DataMember(Name = "number-of-players")]
-        public string NumberOfPlayers { get; set; }
+        [DataMember(Name = "min-playing-time")]
+        public string MinPlayingTime { get; set; }
 
-        [DataMember(Name = "playing-time")]
-        public string PlayingTime { get; set; }
-
-        [DataMember(Name = "community-age")]
-        public string CommunityAge { get; set; }
+        [DataMember(Name = "max-playing-time")]
+        public string MaxPlayingTime { get; set; }
 
         [DataMember(Name = "complexity")]
         public string Complexity { get; set; }
@@ -42,24 +39,13 @@ namespace Gnome.Domain.Models
 
         [DataMember(Name = "max-price")]
         public decimal? MaxPrice { get; set; }
-
-        [DataMember(Name = "min-stock")]
-        public int? MinStock { get; set; }
-
-        [DataMember(Name = "max-stock")]
-        public int? MaxStock { get; set; }
-
-        [DataMember(Name = "awards")]
         public List<string> Awards { get; set; } = new List<string>();
 
         [DataMember(Name = "category-ids")]
         public List<int> CategoryIds { get; set; } = new List<int>();
 
-        [DataMember(Name = "category-names")]
-        public List<string> CategoryNames { get; set; } = new List<string>();
-
-        [DataMember(Name = "has-images")]
-        public bool? HasImages { get; set; }
+        [DataMember(Name = "category-slugs")]
+        public List<string> CategorySlugs { get; set; } = new List<string>();
 
         [DataMember(Name = "in-stock-only")]
         public bool? InStockOnly { get; set; }
