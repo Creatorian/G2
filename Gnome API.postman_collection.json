@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ccc900a5-b10f-470b-a250-1a514a0469d7",
+		"_postman_id": "d6332487-c361-4b78-b7bb-6ed1efcc6605",
 		"name": "Gnome API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12622722"
@@ -18,7 +18,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&name=&sort-by=created-date-time&sort-order=desc",
+							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&min-players=5&max-players=7&sort-by=created-date-time&sort-order=desc",
 							"host": [
 								"{{BaseURL}}"
 							],
@@ -46,96 +46,60 @@
 								},
 								{
 									"key": "name",
-									"value": ""
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "slug",
-									"value": "",
+									"value": "catan",
 									"disabled": true
 								},
 								{
-									"key": "description",
-									"value": "",
+									"key": "min-players",
+									"value": "5"
+								},
+								{
+									"key": "max-players",
+									"value": "7"
+								},
+								{
+									"key": "min-playing-time",
+									"value": "30",
 									"disabled": true
 								},
 								{
-									"key": "short-description",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "number-of-players",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "playing-time",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "community-age",
-									"value": "",
+									"key": "max-playing-time",
+									"value": "120",
 									"disabled": true
 								},
 								{
 									"key": "complexity",
-									"value": "",
+									"value": "3",
 									"disabled": true
 								},
 								{
 									"key": "min-rating",
-									"value": "",
+									"value": "4",
 									"disabled": true
 								},
 								{
 									"key": "max-rating",
-									"value": "",
+									"value": "4.99",
 									"disabled": true
 								},
 								{
 									"key": "min-price",
-									"value": "",
+									"value": "20.00",
 									"disabled": true
 								},
 								{
 									"key": "max-price",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "min-stock",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "max-stock",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "awards",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "category-ids",
-									"value": "1",
-									"disabled": true
-								},
-								{
-									"key": "category-names",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "has-images",
-									"value": "",
+									"value": "40.00",
 									"disabled": true
 								},
 								{
 									"key": "in-stock-only",
-									"value": "",
+									"value": "true",
 									"disabled": true
 								},
 								{
@@ -145,6 +109,11 @@
 								{
 									"key": "sort-order",
 									"value": "desc"
+								},
+								{
+									"key": "category-slugs",
+									"value": "strategy-games,card-games",
+									"disabled": true
 								}
 							]
 						},
@@ -801,7 +770,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"gnome\",\n  \"password\": \"P@ssw0rd\"\n}"
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\"\n}"
 						},
 						"url": {
 							"raw": "{{BaseURL}}/auth/login",

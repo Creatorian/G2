@@ -210,6 +210,89 @@ paths:
           required: false
           schema:
             type: string
+        - name: slug
+          in: query
+          description: Filter products by slug (partial match)
+          required: false
+          schema:
+            type: string
+        - name: min-players
+          in: query
+          description: Filter products by minimum number of players
+          required: false
+          schema:
+            type: string
+        - name: max-players
+          in: query
+          description: Filter products by maximum number of players
+          required: false
+          schema:
+            type: string
+        - name: min-playing-time
+          in: query
+          description: Filter products by minimum playing time (in minutes)
+          required: false
+          schema:
+            type: string
+        - name: max-playing-time
+          in: query
+          description: Filter products by maximum playing time (in minutes)
+          required: false
+          schema:
+            type: string
+        - name: complexity
+          in: query
+          description: Filter products by complexity level (1-5 scale: 1=Very Easy, 2=Easy, 3=Medium, 4=Hard, 5=Very Hard)
+          required: false
+          schema:
+            type: string
+            pattern: '^[1-5]$'
+        - name: min-rating
+          in: query
+          description: Filter products by minimum rating
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: max-rating
+          in: query
+          description: Filter products by maximum rating
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: min-price
+          in: query
+          description: Filter products by minimum price
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: max-price
+          in: query
+          description: Filter products by maximum price
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: category-ids
+          in: query
+          description: Filter products by category IDs (comma-separated)
+          required: false
+          schema:
+            type: string
+        - name: category-slugs
+          in: query
+          description: Filter products by category slugs (comma-separated, exact match, AND logic)
+          required: false
+          schema:
+            type: string
+        - name: in-stock-only
+          in: query
+          description: Filter to show only products in stock
+          required: false
+          schema:
+            type: boolean
         - name: sort-by
           in: query
           description: Field to sort by
