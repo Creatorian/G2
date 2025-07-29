@@ -138,7 +138,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
   /auth/validate:
-    post:
+    get:
       tags:
         - Authentication
       summary: Validate JWT token

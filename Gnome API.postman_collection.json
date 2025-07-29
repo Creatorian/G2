@@ -79,7 +79,7 @@
 								},
 								{
 									"key": "rating",
-									"value": "4",
+									"value": "4"
 								},
 								{
 									"key": "min-price",
@@ -843,13 +843,8 @@
 								}
 							]
 						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "{{BaseURL}}/auth/validate",
 							"host": [

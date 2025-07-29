@@ -80,7 +80,7 @@ namespace Gnome.Api.Controllers
         /// <returns>Confirmation that the token is valid</returns>
         /// <response code="200">Token is valid and user is authenticated.</response>
         /// <response code="401">Token is invalid or expired.</response>
-        [HttpPost("validate")]
+        [HttpGet("validate")]
         [Authorize]
         [SwaggerOperation(Summary = "Validate JWT token", Description = "Validates the current JWT token and confirms user authentication status")]
         public async Task<IActionResult> ValidateToken()
