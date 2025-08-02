@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d6332487-c361-4b78-b7bb-6ed1efcc6605",
+		"_postman_id": "c9edb6e6-f007-4086-996e-f36c1fc4c03f",
 		"name": "Gnome API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12622722"
@@ -18,7 +18,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&min-players=5&max-players=7&sort-by=created-date-time&sort-order=desc",
+							"raw": "{{BaseURL}}/product/list?page=1&page-size=10&date-from=2024-01-01&min-players=5&max-players=7&rating=4&sort-by=created-date-time&sort-order=desc",
 							"host": [
 								"{{BaseURL}}"
 							],
@@ -219,6 +219,15 @@
 									"key": "awards",
 									"value": "test1,test2,test3",
 									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/C:/Users/PC/Desktop/DSC07311__88846.jpg",
+										"/C:/Users/PC/Desktop/DSC07311__88846.jpg",
+										"/C:/Users/PC/Desktop/DSC07311__88846.jpg"
+									]
 								}
 							]
 						},
