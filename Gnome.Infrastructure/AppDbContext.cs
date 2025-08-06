@@ -82,11 +82,17 @@ namespace Gnome.Infrastructure
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
-                .HasPrecision(18, 2);
+                .HasPrecision(18, 2)
+                .HasDefaultValue(1);
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.Rating)
-                .HasPrecision(3, 2);
+                .HasPrecision(4, 2)
+                .HasDefaultValue(0);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Stock)
+                .HasDefaultValue(0);
 
             modelBuilder.Entity<Category>()
                 .Property(c => c.Name)
@@ -125,12 +131,14 @@ namespace Gnome.Infrastructure
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Product>()
-                .Property(p => p.CommunityAge)
-                .HasMaxLength(50);
+                .Property(p => p.Complexity)
+                .HasPrecision(3, 2)
+                .HasDefaultValue(1);
 
             modelBuilder.Entity<Product>()
-                .Property(p => p.Complexity)
-                .HasMaxLength(50);
+                .Property(p => p.CommunityAge)
+                .IsRequired()
+                .HasDefaultValue(1);
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.Awards)

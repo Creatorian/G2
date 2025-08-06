@@ -30,13 +30,12 @@ namespace Gnome.Domain.Models
         [MaxLength(50)]
         public string PlayingTime { get; set; }
 
-        [MaxLength(50)]
-        public string CommunityAge { get; set; }
-
-        [MaxLength(50)]
-        public string Complexity { get; set; }
+        public int CommunityAge { get; set; }
 
         [Column(TypeName = "decimal(3,2)")]
+        public decimal Complexity { get; set; }
+
+        [Column(TypeName = "decimal(4,2)")]
         public decimal Rating { get; set; }
         
         [Column(TypeName = "decimal(18,2)")]

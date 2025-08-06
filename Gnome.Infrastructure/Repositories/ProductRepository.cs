@@ -88,13 +88,9 @@ namespace Gnome.Infrastructure.Repositories
 
             var productList = await products.ToListAsync();
 
-            if (!string.IsNullOrEmpty(filter.Complexity))
+            if (filter.Complexity.HasValue)
             {
-                if (int.TryParse(filter.Complexity, out int complexityValue))
-                {
-                    productList = productList.Where(x => x.Complexity != null && 
-                        decimal.TryParse(x.Complexity, out decimal dbComplexity) && dbComplexity >= complexityValue).ToList();
-                }
+                productList = productList.Where(x => x.Complexity >= filter.Complexity.Value).ToList();
             }
 
             if (!string.IsNullOrEmpty(filter.MinPlayers))
@@ -264,17 +260,11 @@ namespace Gnome.Infrastructure.Repositories
                 products = products.Where(x => x.Stock > 0);
             }
 
-            // Execute the query to get data for client-side filtering
             var productList = await products.ToListAsync();
 
-            // Apply complex filters on the client side
-            if (!string.IsNullOrEmpty(filter.Complexity))
+            if (filter.Complexity.HasValue)
             {
-                if (int.TryParse(filter.Complexity, out int complexityValue))
-                {
-                    productList = productList.Where(x => x.Complexity != null && 
-                        decimal.TryParse(x.Complexity, out decimal dbComplexity) && dbComplexity >= complexityValue).ToList();
-                }
+                productList = productList.Where(x => x.Complexity >= filter.Complexity.Value).ToList();
             }
 
             if (!string.IsNullOrEmpty(filter.MinPlayers))

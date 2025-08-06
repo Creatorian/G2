@@ -26,7 +26,7 @@ namespace Gnome.Domain.Models
         public string MaxPlayingTime { get; set; }
 
         [DataMember(Name = "complexity")]
-        public string Complexity { get; set; }
+        public decimal? Complexity { get; set; }
 
         [DataMember(Name = "rating")]
         public decimal? Rating { get; set; }

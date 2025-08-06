@@ -37,10 +37,10 @@ namespace Gnome.Domain.Responses
         public string PlayingTime { get; set; }
 
         [DataMember(Name = "community-age")]
-        public string CommunityAge { get; set; }
+        public int CommunityAge { get; set; }
 
         [DataMember(Name = "complexity")]
-        public string Complexity { get; set; }
+        public decimal Complexity { get; set; }
 
         [DataMember(Name = "rating")]
         public decimal Rating { get; set; }

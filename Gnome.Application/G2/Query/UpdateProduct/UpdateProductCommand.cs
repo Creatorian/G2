@@ -17,8 +17,8 @@ namespace Gnome.Application.G2.Query.UpdateProduct
         public string ShortDescription { get; set; }
         public string NumberOfPlayers { get; set; }
         public string PlayingTime { get; set; }
-        public string CommunityAge { get; set; }
-        public string Complexity { get; set; }
+        public int CommunityAge { get; set; }
+        public decimal Complexity { get; set; }
         public decimal Rating { get; set; }
         public decimal Price { get; set; }
         private List<string> _awards = new List<string>();
