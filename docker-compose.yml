@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: gnome-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrongPassword123!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./Sql Scripts:/docker-entrypoint-initdb.d
+    networks:
+      - gnome-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Gnome.Api/Dockerfile
+    container_name: gnome-api
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__GnomeConnection=Server=sqlserver;Database=Gnome;User Id=sa;Password=YourStrongPassword123!;TrustServerCertificate=True;
+      - CLOUDINARY_URL=cloudinary://115781498574878:m-mXBFAnZh6KaEHobHpPCrQ7Jt8@dtwi4umvq
+    depends_on:
+      - sqlserver
+    networks:
+      - gnome-network
+    volumes:
+      - ./Gnome.Api/Logs:/app/Logs
+
+volumes:
+  sqlserver_data:
+
+networks:
+  gnome-network:
+    driver: bridge 
